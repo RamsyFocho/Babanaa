@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Babanaa😁😁</title>
+    <link rel="stylesheet" href="/static/css/nav.css">
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link rel="stylesheet" href="/static/fontawesome-free-6.6.0-web/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/animation.css">
+
+</head>
+<body class="bg-black text-yellow-400 font-sans">
+    <nav class="bg-yellow-500 text-black">
+        <input type="checkbox" name="bar" id="bar">
+        <label for="bar" class="bar">
+            <i class="fas fa-bars text-2xl "></i>
+        </label>
+        <label class="logo"><i class="fas fa-graduation-cap color:white"></i> Babanaa </label>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Book</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+    </nav>
+    <!-- Hero Section -->
+    <section class="relative hero-bg h-screen">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="relative flex justify-center items-center h-full text-center">
+            <div class="text-yellow-400">
+                <h1 class="text-5xl md:text-6xl font-bold mb-4">Welcome to Babanaa.com😁😁</h1>
+                <p class="text-xl mb-8">Your ride, your adventure, anytime!</p>
+                <!-------------------- Modal Button Trigger ------------>
+                <button id="openModal" class="px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-full">Get Started</button>
+            </div>
+        </div>
+        <div class="absolute bottom-10 w-full flex justify-center">
+            <span class="text-yellow-400 animate-bounce">↓ Scroll Down</span>
+        </div>
+        <!-- Floating Bike Animation -->
+        <img src="https://via.placeholder.com/100x50.png?text=Bike" alt="Floating Bike" class="floating-bike">
+    </section>
+
+    <!-- Modal Container -->
+    <div id="myModal" class="absolute modal hidden fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
+        <div class="modal-content bg-yellow-500 p-8 rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl text-black font-bold mb-6">Choose Your Path</h2>
+            <div class="btn space-x-4">
+                <button id="customerButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-green-600 transition">Book a Bike</button>
+                <button id="riderButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-blue-600 transition">Register as a Rider</button>
+            </div>
+            <button id="closeModal" class="mt-4 px-4  bg-black py-4 text-yellow-500 font-semibold rounded-full hover:bg-gray-700 hover:text-gray-300 focus:outline-none transition duration-300">Close</button>
+        </div>
+    </div>
+
+    <!-- Slideshow Section -->
+    <section id="features" class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-8">Our Features</h2>
+            <div class="relative">
+                <div class="carousel w-full overflow-hidden rounded-lg shadow-lg">
+                    <div class="carousel-inner flex transition-transform duration-500 ease-in-out">
+                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('../static/images/babanaa/img3.jpg');"></div>
+                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('../static/images/babanaa/img2.jpg');"></div>
+                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('../static/images/babanaa/img3.jpg');"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center mb-8 text-yellow-600">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
+                    <i class="fas fa-biking fa-3x text-yellow-500 mb-4"></i>
+                    <h3 class="text-2xl font-semibold mt-6">Bike Rentals</h3>
+                    <p class="text-gray-600 mt-4">Choose from a wide variety of bikes tailored to your needs.</p>
+                    <a href="#" class="text-yellow-500 mt-4 inline-block">Learn More</a>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
+                    <i class="fas fa-tools fa-3x text-yellow-500 mb-4"></i>
+                    <h3 class="text-2xl font-semibold mt-6">Maintenance Services</h3>
+                    <p class="text-gray-600 mt-4">Keep your bike in top condition with our expert maintenance services.</p>
+                    <a href="#" class="text-yellow-500 mt-4 inline-block">Learn More</a>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
+                    <i class="fas fa-map-signs fa-3x text-yellow-500 mb-4"></i>
+                    <h3 class="text-2xl font-semibold mt-6">Guided Tours</h3>
+                    <p class="text-gray-600 mt-4">Join our guided tours and explore scenic routes.</p>
+                    <a href="#" class="text-yellow-500 mt-4 inline-block">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="py-12 bg-yellow-500 text-black text-center relative">
+        <h2 class="text-4xl font-bold">Join Us Today!</h2>
+        <p class="text-xl mt-4">Start your journey with us and ride into new adventures</p>
+        <a href="#" class="mt-6 inline-block px-8 py-3 bg-black text-yellow-600 font-semibold rounded-full hover:bg-gray-800 transition text-white">Sign Up Now</a>
+
+        <!-- Floating Elements -->
+        <div class="absolute bottom-20 right-10 w-12 h-12 bg-yellow-500 rounded-full animate-float"></div>
+        <div class="absolute bottom-32 left-16 w-16 h-16 bg-black rounded-full animate-float"></div>
+    </section>
+
+    <script src="/static/Js/index.js" defer></script>
+</body>
+</html>
