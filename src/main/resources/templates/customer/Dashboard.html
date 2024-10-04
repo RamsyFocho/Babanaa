@@ -4,106 +4,148 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customer Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/css/output.css">
+  <link rel="stylesheet" href="/static/fontawesome-free-6.6.0-web/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/Form.css">
+<!--  <script src="https://cdn.tailwindcss.com"></script>-->
 </head>
 <body class="bg-gray-100">
 
 <!-- Dashboard Wrapper -->
-<div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col">
 
-  <!-- Navbar -->
-  <nav class="bg-yellow-500 text-black shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Bike Booking Dashboard</h1>
-        <button class="px-4 py-2 bg-black text-yellow-500 rounded-lg hover:bg-gray-800 transition">Logout</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main Dashboard Content -->
-  <main class="flex-grow">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h2 class="text-3xl font-bold text-center text-yellow-500 mb-8">Welcome, [Customer Name]</h2>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
-        <!-- Profile Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Profile</h3>
-          <div class="text-gray-700">
-            <p><strong>Name:</strong> [Customer Name]</p>
-            <p><strong>Email:</strong> [Customer Email]</p>
-            <p><strong>Phone:</strong> [Customer Phone]</p>
-            <p><strong>Profile Photo:</strong></p>
-            <img src="https://via.placeholder.com/100x100.png?text=Profile" alt="Profile Photo" class="w-24 h-24 rounded-full mt-2">
-            <a href="#" class="text-yellow-500 mt-4 inline-block">Edit Profile</a>
-          </div>
-        </div>
-
-        <!-- Book a Bike Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Book a Bike</h3>
-          <div class="text-gray-700">
-            <p>Ready for your next adventure? Book a bike now!</p>
-            <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">Book Now</a>
-          </div>
-        </div>
-
-        <!-- Booking History Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Booking History</h3>
-          <div class="text-gray-700">
-            <p>Check your past bookings below:</p>
-            <ul class="list-disc list-inside mt-4">
-              <li><strong>Date:</strong> 20 Sep, 2024 | <strong>From:</strong> Location A to Location B</li>
-              <li><strong>Date:</strong> 15 Sep, 2024 | <strong>From:</strong> Location C to Location D</li>
-              <li><strong>Date:</strong> 10 Sep, 2024 | <strong>From:</strong> Location E to Location F</li>
-            </ul>
-            <a href="#" class="text-yellow-500 mt-4 inline-block">View All History</a>
-          </div>
-        </div>
-
-        <!-- Support Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Support</h3>
-          <div class="text-gray-700">
-            <p>Need help? Contact our support team for assistance.</p>
-            <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">Contact Support</a>
-          </div>
-        </div>
-
-        <!-- Account Settings Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Account Settings</h3>
-          <div class="text-gray-700">
-            <p>Manage your account settings and preferences.</p>
-            <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">Account Settings</a>
-          </div>
-        </div>
-
-        <!-- Notifications Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-          <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Notifications</h3>
-          <div class="text-gray-700">
-            <p>Stay updated with the latest news and offers.</p>
-            <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">View Notifications</a>
-          </div>
+    <!-- Navbar -->
+    <nav class="bg-yellow-500 text-black shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold">Babanaa</h1>
+          <button class="px-4 w-24 py-2 bg-black text-yellow-500 rounded-lg hover:bg-gray-800 transition">Logout</button>
         </div>
       </div>
-    </div>
-  </main>
+    </nav>
 
-  <!-- Footer -->
-  <footer class="bg-yellow-500 text-black py-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <p>&copy; 2024 Bike Booking Platform. All rights reserved.</p>
+    <!-- Main Dashboard Content -->
+    <main class="flex-grow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h2 class="text-3xl font-bold text-center text-yellow-500 mb-8">Welcome, [Customer Name]</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          <!-- Profile Card -->
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+            <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Profile</h3>
+            <div class="text-gray-700">
+              <p><strong>Name:</strong> [Customer Name]</p>
+              <p><strong>Email:</strong> [Customer Email]</p>
+              <p><strong>Phone:</strong> [Customer Phone]</p>
+              <p><strong>Profile Photo:</strong></p>
+              <img src="https://via.placeholder.com/100x100.png?text=Profile" alt="Profile Photo" class="w-24 h-24 rounded-full mt-2">
+              <a id="editBtn" href="#" class="text-yellow-500 mt-4 inline-block">Edit Profile</a>
+            </div>
+          </div>
+  <!----------------------------modal form for editing user info---------------------------------------->
+          <div id="loginModal" class="modal ">
+            <div class="form-container">
+              <h2 class="text-black font-bold">Edit Info</h2>
+              <form action="#" method="POST">
+                <!-- user name -->
+                <div>
+                  <label for="name">User Name</label>
+                  <input type="text" id="name" name="name" placeholder="Enter your user name">
+                </div>
+                <!-------- email--------------------->
+                <div>
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" placeholder="Enter your email name">
+                </div>
+                <!-- Phone Number -->
+                <div>
+                  <label for="phone">Phone Number</label>
+                  <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                </div>
+
+                <!-- Profile Photo -->
+                <div>
+                  <label for="profilePhoto">Profile Photo</label>
+                  <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit">Login</button>
+              </form>
+
+              <div class="form-footer">
+                <button class="text-black font-bold" id="closeModal">Cancel</button>
+              </div>
+
+              <!-- Floating decorative element -->
+              <div class="floating-element"></div>
+            </div>
+          </div>
+
+          <!-- Book a Bike Card -->
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+            <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Book a Bike</h3>
+            <div class="text-gray-700">
+              <p>Ready for your next adventure? Book a bike now!</p>
+              <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">Book Now</a>
+            </div>
+          </div>
+
+          <!-- Booking History Card -->
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+            <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Booking History</h3>
+            <div class="text-gray-700">
+              <p>Check your past bookings below:</p>
+              <ul class="list-disc list-inside mt-4">
+                <li><strong>Date:</strong> 20 Sep, 2024 | <strong>From:</strong> Location A to Location B</li>
+                <li><strong>Date:</strong> 15 Sep, 2024 | <strong>From:</strong> Location C to Location D</li>
+                <li><strong>Date:</strong> 10 Sep, 2024 | <strong>From:</strong> Location E to Location F</li>
+              </ul>
+              <a href="#" class="text-yellow-500 mt-4 inline-block">View All History</a>
+            </div>
+          </div>
+
+          <!-- Support Card -->
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+            <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Support</h3>
+            <div class="text-gray-700">
+              <p>Need help? Contact our support team for assistance.</p>
+              <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">Contact Support</a>
+            </div>
+          </div>
+
+          <!-- Account Settings Card -->
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+            <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Account Settings</h3>
+            <div class="text-gray-700">
+              <p>Manage your account settings and preferences.</p>
+              <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">Account Settings</a>
+            </div>
+          </div>
+
+          <!-- Notifications Card -->
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
+            <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Notifications</h3>
+            <div class="text-gray-700">
+              <p>Stay updated with the latest news and offers.</p>
+              <a href="#" class="px-4 py-2 bg-yellow-500 text-black rounded-lg mt-4 inline-block hover:bg-yellow-600 transition">View Notifications</a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </footer>
+    </main>
 
-</div>
+    <!-- Footer -->
+    <footer class="bg-yellow-500 text-black py-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <p>&copy; 2024 Bike Booking Platform. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
 
+  </div>
+<script src="/static/Js/customer/Dashboard.js"></script>
 </body>
 </html>

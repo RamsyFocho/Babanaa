@@ -2,9 +2,11 @@ package com.example.Babanaa.BikeRider;
 
 import com.example.Babanaa.Booking.Booking;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 @Entity
 public class BikeRider {
     @Id
@@ -61,96 +63,48 @@ public class BikeRider {
     }
     //getters and setters
 
-    public Long getRiderId() {
-        return riderId;
-    }
-
     public void setRiderId(Long riderId) {
         this.riderId = riderId;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getLicenseNumber() {
-        return licenseNumber;
     }
 
     public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
-    public String getBikeType() {
-        return bikeType;
-    }
-
     public void setBikeType(String bikeType) {
         this.bikeType = bikeType;
-    }
-
-    public String getBikeColor() {
-        return bikeColor;
     }
 
     public void setBikeColor(String bikeColor) {
         this.bikeColor = bikeColor;
     }
 
-    public String getBikeName() {
-        return bikeName;
-    }
-
     public void setBikeName(String bikeName) {
         this.bikeName = bikeName;
-    }
-
-    public int getBikeYear() {
-        return bikeYear;
     }
 
     public void setBikeYear(int bikeYear) {
         this.bikeYear = bikeYear;
     }
 
-    public String getAvailabilityStatus() {
-        return availabilityStatus;
-    }
-
     public void setAvailabilityStatus(String availabilityStatus) {
         this.availabilityStatus = availabilityStatus;
-    }
-
-    public List<Booking> getBookings() {
-        return bookings;
     }
 
     public void setBookings(List<Booking> bookings) {

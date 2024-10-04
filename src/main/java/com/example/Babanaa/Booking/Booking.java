@@ -3,9 +3,11 @@ package com.example.Babanaa.Booking;
 import com.example.Babanaa.BikeRider.BikeRider;
 import com.example.Babanaa.User.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Date;
 
+@Getter
 @Entity
 public class Booking {
     @Id
@@ -66,80 +68,40 @@ public class Booking {
     }
     // Getters and Setters
 
-    public Long getBookingId() {
-        return bookingId;
-    }
-
     public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public BikeRider getBikeRider() {
-        return bikeRider;
-    }
-
     public void setBikeRider(BikeRider bikeRider) {
         this.bikeRider = bikeRider;
-    }
-
-    public String getPickupLocation() {
-        return pickupLocation;
     }
 
     public void setPickupLocation(String pickupLocation) {
         this.pickupLocation = pickupLocation;
     }
 
-    public String getDropoffLocation() {
-        return dropoffLocation;
-    }
-
     public void setDropoffLocation(String dropoffLocation) {
         this.dropoffLocation = dropoffLocation;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public Date getBookingTime() {
-        return bookingTime;
-    }
-
     public void setBookingTime(Date bookingTime) {
         this.bookingTime = bookingTime;
-    }
-
-    public Date getCompletionTime() {
-        return completionTime;
     }
 
     public void setCompletionTime(Date completionTime) {
         this.completionTime = completionTime;
     }
 
-    public float getFare() {
-        return fare;
-    }
-
     public void setFare(float fare) {
         this.fare = fare;
-    }
-
-    public float getDistance() {
-        return distance;
     }
 
     public void setDistance(float distance) {

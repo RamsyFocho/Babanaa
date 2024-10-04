@@ -13,7 +13,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private int phoneNumber;
+    private String phoneNumber;
     @Lob // Marks the profilePhoto to be stored as a large object
     @Column(name = "profile_photo", columnDefinition = "LONGBLOB")
     private byte[] profilePhoto;
@@ -29,7 +29,7 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, String email, int phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
+    public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -37,8 +37,24 @@ public class User {
         this.profilePhoto = profilePhoto;
         this.bookings = bookings;
     }
+//----------------without profile photo----------------------------------------
+    public User(Long userId, String username, String password, String email, String phoneNumber, List<Booking> bookings) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.bookings = bookings;
+    }
 
-    public User(Long userId, String username, String password, String email, int phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
+    public User(String username, String password, String email, String phoneNumber) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public User(Long userId, String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -81,11 +97,11 @@ public class User {
         this.email = email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
