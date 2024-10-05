@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customer Dashboard</title>
-  <link rel="stylesheet" href="/static/css/output.css">
-  <link rel="stylesheet" href="/static/fontawesome-free-6.6.0-web/css/all.min.css">
-  <link rel="stylesheet" href="/static/css/Form.css">
+  <link rel="stylesheet" th:href="@{/css/output.css}">
+  <link rel="stylesheet" th:href="@{/fontawesome-free-6.6.0-web/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/css/Form.css}">
 <!--  <script src="https://cdn.tailwindcss.com"></script>-->
 </head>
 <body class="bg-gray-100">
@@ -18,7 +18,7 @@
     <nav class="bg-yellow-500 text-black shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-bold">Babanaa</h1>
+          <h1 class="text-2xl font-bold">Babanaa😁😁</h1>
           <button class="px-4 w-24 py-2 bg-black text-yellow-500 rounded-lg hover:bg-gray-800 transition">Logout</button>
         </div>
       </div>
@@ -26,20 +26,21 @@
 
     <!-- Main Dashboard Content -->
     <main class="flex-grow">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 class="text-3xl font-bold text-center text-yellow-500 mb-8">Welcome, [Customer Name]</h2>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" th:if="${user}">
+        <h2 class="text-3xl font-bold text-center text-yellow-500 mb-8" th:text=" ${user.username}">Welcome, [Customer Name]</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
           <!-- Profile Card -->
           <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
             <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Profile</h3>
-            <div class="text-gray-700">
-              <p><strong>Name:</strong> [Customer Name]</p>
-              <p><strong>Email:</strong> [Customer Email]</p>
-              <p><strong>Phone:</strong> [Customer Phone]</p>
-              <p><strong>Profile Photo:</strong></p>
-              <img src="https://via.placeholder.com/100x100.png?text=Profile" alt="Profile Photo" class="w-24 h-24 rounded-full mt-2">
+            <div class="text-gray-700" >
+              <p><strong>Name: </strong><span th:text="${user.username}"></span></p>
+              <p><strong>Email: </strong><span th:text="${user.email}"></span></p>
+              <p><strong>Phone: </strong><span th:text="${user.phoneNumber}"></span> </p>
+              <p><strong>Profile Photo: </strong></p>
+<!--              <img th:src="${user.profilePhoto != null and #strings.bytesToBase64(user.profilePhoto) != '' ? 'data:image/jpeg;base64,' + #strings.bytesToBase64(user.profilePhoto) : 'https://via.placeholder.com/100x100.png?text=Profile'}" />-->
+
               <a id="editBtn" href="#" class="text-yellow-500 mt-4 inline-block">Edit Profile</a>
             </div>
           </div>
@@ -140,12 +141,12 @@
     <footer class="bg-yellow-500 text-black py-4">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center">
-          <p>&copy; 2024 Bike Booking Platform. All rights reserved.</p>
+          <p>&copy; 2024 Babanaa.com😁😁 All rights reserved.</p>
         </div>
       </div>
     </footer>
 
   </div>
-<script src="/static/Js/customer/Dashboard.js"></script>
+<script th:src="@{/Js/customer/Dashboard.js}"></script>
 </body>
 </html>

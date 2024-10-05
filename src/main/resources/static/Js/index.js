@@ -32,6 +32,7 @@ let slideIndex = 0;
      // Function to close modal
      closeModalBtn.onclick = function() {
          modal.style.display = 'none';
+
      }
 
      // Close modal when clicking outside of modal content
