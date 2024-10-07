@@ -48,11 +48,11 @@
           <div id="loginModal" class="modal ">
             <div class="form-container">
               <h2 class="text-black font-bold">Edit Info</h2>
-              <form action="#" method="POST">
+              <form th:action="@{/customer/update}" th:method="POST" enctype="multipart/form-data">
                 <!-- user name -->
                 <div>
                   <label for="name">User Name</label>
-                  <input type="text" id="name" name="name" placeholder="Enter your user name">
+                  <input type="text" id="name" name="username" placeholder="Enter your user name">
                 </div>
                 <!-------- email--------------------->
                 <div>
@@ -62,7 +62,7 @@
                 <!-- Phone Number -->
                 <div>
                   <label for="phone">Phone Number</label>
-                  <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                  <input type="tel" id="phone" name="phoneNumber" placeholder="Enter your phone number">
                 </div>
 
                 <!-- Profile Photo -->
