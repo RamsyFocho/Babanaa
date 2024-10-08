@@ -45,16 +45,16 @@
     </section>
 
     <!-- Modal Container -->
-    <div id="myModal" class="absolute modal hidden fixed inset-0 z-50 none items-center justify-center  bg-opacity-50">
+    <div id="myModal" class="box absolute modal hidden fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
         <div class="modal-content bg-yellow-500 p-8 rounded-lg shadow-lg text-center">
             <h2 class="text-2xl text-black font-bold mb-6">Choose Your Path</h2>
             <div class="btn space-x-4">
-                <a th:href="@{/customer/create}">
+                <a th:href="@{/customer/create}" class="link_book">
                 <button id="customerButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-green-600 transition">Book a Bike</button>
                 </a>
                 <button id="riderButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-blue-600 transition">Register as a Rider</button>
             </div>
-            <button id="closeModal" class="mt-4 px-4  bg-black py-4 text-yellow-500 font-semibold rounded-full hover:bg-gray-700 hover:text-gray-300 focus:outline-none transition duration-300">Close</button>
+            <button id="closeModal" class="mt-4 px-6  bg-black py-4 text-yellow-500 font-semibold rounded-full hover:bg-gray-700 hover:text-gray-300 focus:outline-none transition duration-300">Close</button>
         </div>
     </div>
 

@@ -27,11 +27,15 @@ let slideIndex = 0;
      openModalBtn.onclick = function() {
      console.log("hidden removed")
          modal.style.display = 'flex';
+         modal.form.classList.add('absolute');
+//    form.classList.remove('hidden');
+
      }
 
      // Function to close modal
      closeModalBtn.onclick = function() {
          modal.style.display = 'none';
+//    form.classList.add('hidden');
 
      }
 
