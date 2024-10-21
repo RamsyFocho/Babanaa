@@ -1,22 +1,42 @@
-let slideIndex = 0;
-  const slides = document.querySelectorAll('.carousel-item');
-  const totalSlides = slides.length;
+//let slideIndex = 0;
+//  const slides = document.querySelectorAll('.carousel-item');
+//  const totalSlides = slides.length;
+//
+//  function showSlides() {
+//    // Hide all slides
+//    slides.forEach((slide) => {
+//      slide.style.display = 'none';
+//    });
+//
+//    // Increment slide index, looping back to the start if necessary
+//    slideIndex = (slideIndex + 1) % totalSlides;
+//
+//    // Show the current slide
+//    slides[slideIndex].style.display = 'block';
+//
+//    // Repeat the function every 3 seconds
+//    setTimeout(showSlides, 3000);
+//  }
 
-  function showSlides() {
-    // Hide all slides
-    slides.forEach((slide) => {
-      slide.style.display = 'none';
-    });
+//----------------------------------------slide show---------------------------------------------------------
+    let slideIndex=0;
+    showSlides();
 
-    // Increment slide index, looping back to the start if necessary
-    slideIndex = (slideIndex + 1) % totalSlides;
+    function showSlides(){
+        let slides= document.querySelectorAll('.carousel-item');
+        for(let i=0; i<slides.length; i++){
+            slides[i].style.display="none";
+        }
+        slideIndex++;
+        if(slideIndex>slides.length){
+            slideIndex=1;
+        }
+        slides[slideIndex-1].style.display="block";
+        slides[slideIndex-1].style.transition="all .5s";
 
-    // Show the current slide
-    slides[slideIndex].style.display = 'block';
+        setTimeout(showSlides,3000);
+    }
 
-    // Repeat the function every 3 seconds
-    setTimeout(showSlides, 3000);
-  }
 //  ---------------------modal option------------------------
   // Get modal element
      const modal = document.getElementById("myModal");

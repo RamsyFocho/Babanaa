@@ -1,11 +1,9 @@
-package com.example.Babanaa.Booking;
+package com.bitsvalley.babanaa.domains;
 
-import com.example.Babanaa.BikeRider.BikeRider;
-import com.example.Babanaa.User.User;
 import jakarta.persistence.*;
+import java.util.Date;
 import lombok.Getter;
 
-import java.util.Date;
 
 @Getter
 @Entity

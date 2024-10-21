@@ -1,4 +1,4 @@
-package com.example.Babanaa;
+package com.bitsvalley.babanaa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

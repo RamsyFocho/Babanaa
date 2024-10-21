@@ -1,16 +1,16 @@
-package com.example.Babanaa.BikeRider;
+package com.bitsvalley.babanaa.domains;
 
-import com.example.Babanaa.Booking.Booking;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Entity
 public class BikeRider {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long riderId;
     private String name;
     private String email;
@@ -22,6 +22,8 @@ public class BikeRider {
     private String bikeName;//yamaha, honda, sanili etc
     private int bikeYear;
     private String availabilityStatus;
+    private LocalDateTime created;
+    private LocalDateTime lastUpdated;
 //    TODO:implement location, ratings of the rider
 
 // One-to-many relationship with Bookings
@@ -63,48 +65,107 @@ public class BikeRider {
     }
     //getters and setters
 
-    public void setRiderId(Long riderId) {
-        this.riderId = riderId;
+    public Long getId() {
+        return riderId;
+    }
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
     public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
+    public String getBikeType() {
+        return bikeType;
+    }
+
     public void setBikeType(String bikeType) {
         this.bikeType = bikeType;
+    }
+
+    public String getBikeColor() {
+        return bikeColor;
     }
 
     public void setBikeColor(String bikeColor) {
         this.bikeColor = bikeColor;
     }
 
+    public String getBikeName() {
+        return bikeName;
+    }
+
     public void setBikeName(String bikeName) {
         this.bikeName = bikeName;
+    }
+
+    public int getBikeYear() {
+        return bikeYear;
     }
 
     public void setBikeYear(int bikeYear) {
         this.bikeYear = bikeYear;
     }
 
+    public String getAvailabilityStatus() {
+        return availabilityStatus;
+    }
+
     public void setAvailabilityStatus(String availabilityStatus) {
         this.availabilityStatus = availabilityStatus;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
     }
 
     public void setBookings(List<Booking> bookings) {

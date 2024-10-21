@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/output.css}">
     <link rel="stylesheet" th:href="@{/fontawesome-free-6.6.0-web/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/css/animation.css}">
+    <link rel="icon" href="data:,">
 
 </head>
 <body class="bg-black text-yellow-400 font-sans">
@@ -52,7 +53,9 @@
                 <a th:href="@{/customer/create}" class="link_book">
                 <button id="customerButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-green-600 transition">Book a Bike</button>
                 </a>
-                <button id="riderButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-blue-600 transition">Register as a Rider</button>
+                <a th:href="@{/rider/create}">
+                    <button id="riderButton" class="px-6 py-3 bg-black text-yellow-500 font-semibold rounded-full hover:bg-blue-600 transition">Register as a Rider</button>
+                </a>
             </div>
             <button id="closeModal" class="mt-4 px-6  bg-black py-4 text-yellow-500 font-semibold rounded-full hover:bg-gray-700 hover:text-gray-300 focus:outline-none transition duration-300">Close</button>
         </div>
@@ -65,9 +68,9 @@
             <div class="relative">
                 <div class="carousel w-full overflow-hidden rounded-lg shadow-lg">
                     <div class="carousel-inner flex transition-transform duration-500 ease-in-out">
-                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('../static/images/babanaa/img3.jpg');"></div>
-                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('../static/images/babanaa/img2.jpg');"></div>
-                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('../static/images/babanaa/img3.jpg');"></div>
+                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('/images/babanaa/img1.jpg');">1</div>
+                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('/images/babanaa/img2.jpg');">2</div>
+                        <div class="carousel-item flex-shrink-0 w-full bg-cover bg-center h-64 md:h-96" style="background-image: url('/images/babanaa/img3.jpg');">3</div>
                     </div>
                 </div>
             </div>

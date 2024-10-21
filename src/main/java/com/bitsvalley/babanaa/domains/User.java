@@ -1,6 +1,5 @@
-package com.example.Babanaa.User;
+package com.bitsvalley.babanaa.domains;
 
-import com.example.Babanaa.Booking.Booking;
 import jakarta.persistence.*;
 
 import java.util.List;

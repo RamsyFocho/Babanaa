@@ -1,4 +1,4 @@
-package com.example.Babanaa.Tools;
+package com.bitsvalley.babanaa.Tools;
 
 import jakarta.persistence.Embeddable;
 
