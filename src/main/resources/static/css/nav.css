@@ -54,6 +54,18 @@ nav #bar{
     margin-right: 20px;
     cursor: pointer;
  }
+ nav .adminIcon{
+    float: right;
+    line-height: 80px;
+    margin-right: 12px;
+ }
+ nav .adminIcon i{
+    font-size: 15px;
+    border:1px solid;
+    border-radius:50%;
+    cursor: pointer;
+    padding: 7px;
+ }
 @media (max-width: 952px){
     nav .logo{
         font-size: 25px;
@@ -75,9 +87,10 @@ nav #bar{
     width: 100%;
     height: 100vh;
     background: #2f3640;
-    opacity: 0.9;
+    opacity: 0.98;
     top: 80px;
     left: -100%;
+    z-index: 1;
     text-align: center;
     transition: all .5s;
   }

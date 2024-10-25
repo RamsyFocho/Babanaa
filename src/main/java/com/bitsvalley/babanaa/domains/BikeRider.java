@@ -22,8 +22,9 @@ public class BikeRider {
     private String bikeName;//yamaha, honda, sanili etc
     private int bikeYear;
     private String availabilityStatus;
-    private LocalDateTime created;
+    private LocalDateTime createdAt;
     private LocalDateTime lastUpdated;
+    private String createdBy;
 //    TODO:implement location, ratings of the rider
 
 // One-to-many relationship with Bookings
@@ -149,11 +150,11 @@ public class BikeRider {
     }
 
     public LocalDateTime getCreated() {
-        return created;
+        return createdAt;
     }
 
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
+    public void setCreated() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public LocalDateTime getLastUpdated() {
@@ -161,7 +162,15 @@ public class BikeRider {
     }
 
     public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public List<Booking> getBookings() {
