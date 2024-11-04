@@ -1,6 +1,8 @@
 package com.bitsvalley.babanaa.domains;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Getter;
 
@@ -29,18 +31,18 @@ public class Booking {
     private String status;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date bookingTime;
+    private LocalDateTime bookingTime;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date completionTime;
+    private LocalDateTime completionTime;
 
     private float fare;
     private float distance;
 
     public Booking() {
     }
-
-    public Booking(User user, BikeRider bikeRider, String pickupLocation, String dropoffLocation, String status, Date bookingTime, Date completionTime, float fare, float distance) {
+//----------------------complete booking-----------------------------
+    public Booking(User user, BikeRider bikeRider, String pickupLocation, String dropoffLocation, String status, LocalDateTime bookingTime, LocalDateTime completionTime, float fare, float distance) {
         this.user = user;
         this.bikeRider = bikeRider;
         this.pickupLocation = pickupLocation;
@@ -51,8 +53,18 @@ public class Booking {
         this.fare = fare;
         this.distance = distance;
     }
+// -----------------------   for the request booking-----------------------
+    public Booking(User user, String pickupLocation, String dropoffLocation, String status, LocalDateTime bookingTime, float fare, float distance) {
+        this.user = user;
+        this.pickupLocation = pickupLocation;
+        this.dropoffLocation = dropoffLocation;
+        this.status = status;
+        this.bookingTime = bookingTime;
+        this.fare = fare;
+        this.distance = distance;
+    }
 
-    public Booking(Long bookingId, User user, BikeRider bikeRider, String pickupLocation, String dropoffLocation, String status, Date bookingTime, Date completionTime, float fare, float distance) {
+    public Booking(Long bookingId, User user, BikeRider bikeRider, String pickupLocation, String dropoffLocation, String status, LocalDateTime bookingTime, LocalDateTime completionTime, float fare, float distance) {
         this.bookingId = bookingId;
         this.user = user;
         this.bikeRider = bikeRider;
@@ -90,11 +102,11 @@ public class Booking {
         this.status = status;
     }
 
-    public void setBookingTime(Date bookingTime) {
+    public void setBookingTime(LocalDateTime bookingTime) {
         this.bookingTime = bookingTime;
     }
 
-    public void setCompletionTime(Date completionTime) {
+    public void setCompletionTime(LocalDateTime completionTime) {
         this.completionTime = completionTime;
     }
 
