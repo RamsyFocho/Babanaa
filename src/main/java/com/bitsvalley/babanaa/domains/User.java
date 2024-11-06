@@ -1,5 +1,6 @@
 package com.bitsvalley.babanaa.domains;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +42,7 @@ public class User {
 /// One-to-many relationship with Bookings
     @Getter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference  // Prevent circular reference when serializing this side
     private List<Booking> bookings;
 
     // Constructors

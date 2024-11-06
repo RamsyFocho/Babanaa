@@ -1,5 +1,6 @@
 package com.bitsvalley.babanaa.domains;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "userId")
+    @JsonBackReference  // Prevent serialization of the user in this object
     private User user;
 
     @ManyToOne
