@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link rel="stylesheet" href="/static/css/admin/filterTable.css">
+    <link rel="stylesheet" href="/static/css/admin/tab.css">
+    <link rel="stylesheet" href="/static/fontAwesome-free-6.6.0-web/css/all.min.css">
+</head>
+<body class="bg-gray-100 flex">
+
+<!-- Sidebar -->
+
+    <div class="side-bar bg-gray-900 h-screen text-white w-64 space-y-8 py-7 px-4 fixed inset-y-0 left-0 transform md:relative transition duration-200 ease-in-out">
+        <h1 class="text-3xl font-bold text-center text-yellow-500">Admin Dashboard</h1>
+        <nav class="space-y-4">
+            <a href="#" class="tabs flex items-center font-bold px-3 py-2 text-gray-300 hover:bg-yellow-500 hover:text-gray-900 focus:bg-yellow-500 focus:text-gray-900 rounded-lg transition duration-150">
+                <i class="fas fa-tachometer-alt mr-3"></i> <span> Dashboard Overview</span>
+            </a>
+            <a href="#" class="tabs flex items-center font-bold px-3 py-2 text-gray-300 hover:bg-yellow-500 hover:text-gray-900 focus:bg-yellow-500 focus:text-gray-900 rounded-lg transition duration-150" >
+                <i class="fas fa-motorcycle mr-3"></i> <span>Riders Management</span>
+            </a>
+            <a href="#" class="tabs flex items-center font-bold px-3 py-2 text-gray-300 hover:bg-yellow-500 hover:text-gray-900 focus:bg-yellow-500 focus:text-gray-900 rounded-lg transition duration-150" >
+                <i class="fas fa-users mr-3"></i> <span>Customers Management</span>
+            </a>
+            <a href="#" class="tabs flex items-center font-bold px-3 py-2 text-gray-300 hover:bg-yellow-500 hover:text-gray-900 focus:bg-yellow-500 focus:text-gray-900 rounded-lg transition duration-150" >
+                <i class="fas fa-book mr-3"></i><span> Bookings Management</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content flex flex-1 p-10 items-center flex-col w-full h-screen  hidden">
+        <h2 class="text-4xl font-semibold text-gray-800 mb-6">Welcome, Admin!</h2>
+        <p class="text-gray-600 text-lg mb-4">Manage Riders, Customers, and Bookings from the sidebar.</p>
+    </div>
+
+    <!-- Modals for Popups -->
+    <!--<div id="ridersModal" class="content fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">-->
+    <div id="ridersModal" class="content flex flex-1 p-10 items-center flex-col w-full  h-screen hidden">
+
+        <div class="bg-white w-full md:w-1/2 lg:w-full p-6 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-semibold text-gray-700">Riders Management</h3>
+                <button onclick="closeModal('ridersModal')" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times"></i></button>
+            </div>
+            <!-----------------------------filter table------------------------------------------>
+            <input type="text" class="myInput" id="myInput1" onkeyup="myFunction1()" placeholder="Search for names.." title="Type in a name">
+
+            <table class="myTable" id="myTable1">
+                <tr class="header">
+                    <th style="width:40%;">Name</th>
+                    <th style="width:40%;">email</th>
+                    <th style="width:20%;">Option</th>
+
+                </tr>
+                <tr th:each="riders:${riders}">
+                    <td th:text="${riders.name}">Alfreds Futterkiste</td>
+                    <td th:text="${riders.email}">Germany</td>
+                    <td>
+                        <button class="bg-blue-500 rounded p-2 hover:bg-blue-600 text-white font-bold ">View <i class="fas fa-edit"></i> </button>
+                        <button class="bg-red-500 rounded p-2 hover:bg-red-600 text-white font-bold ">Delete <i class="fas fa-trash"></i> </button>
+                    </td>
+                </tr>
+
+            </table>
+            <p class="text-gray-600">Manage riders here.</p>
+        </div>
+    </div>
+
+    <div id="customersModal" class="content flex flex-1 p-10 items-center flex-col w-full h-screen  hidden">
+        <div class="bg-white w-11/12 md:w-1/2 lg:w-full p-6 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-semibold text-gray-700">Customers Management</h3>
+                <button onclick="closeModal('customersModal')" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times"></i></button>
+            </div>
+    <!-----------------------------filter table------------------------------------------>
+            <input type="text" class="myInput" id="myInput2" onkeyup="myFunction2()" placeholder="Search for names.." title="Type in a name">
+
+            <table class="myTable" id="myTable2">
+                <tr class="header">
+                    <th style="width:40%;">Name</th>
+                    <th style="width:40%;">Email</th>
+                    <th style="width:20%;">Option</th>
+                </tr>
+                <tr th:each="user:${users}">
+                    <td th:text="${user.username}">Alfreds Futterkiste</td>
+                    <td th:text="${user.email}">Germany</td>
+                    <td>
+                        <button class="bg-blue-500 rounded p-2 hover:bg-blue-600 text-white font-bold ">View <i class="fas fa-edit"></i> </button>
+                        <button class="bg-red-500 rounded p-2 hover:bg-red-600 text-white font-bold ">Delete <i class="fas fa-trash"></i> </button>
+                    </td>
+                </tr>
+            </table>
+
+            <p class="text-gray-600">Manage customers here.</p>
+        </div>
+    </div>
+
+    <div id="bookingsModal" class="content fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+        <div class="bg-white w-11/12 md:w-1/2 lg:w-full p-6 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-semibold text-gray-700">Bookings Management</h3>
+                <button onclick="closeModal('bookingsModal')" class="text-gray-500 hover:text-gray-800"><i class="fas fa-times"></i></button>
+            </div>
+            <blockquote>TO Be implemented</blockquote>
+            <p class="text-gray-600">Manage bookings here.</p>
+        </div>
+    </div>
+
+    <script src="/static/Js/admin/dashboard.js"></script>
+    <script src="/static/Js/admin/filterTable.js"></script>
+</body>
+</html>

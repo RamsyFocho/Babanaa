@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider Dashboard</title>
+
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+    <!-- Leaflet CSS (for OpenStreetMap) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 300px; }
+    </style>
+</head>
+<body class="bg-gray-100" th:if="${rider}">
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-4 text-yellow-500">Rider Dashboard</h1>
+
+    <!-- Rider Profile -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Profile Card -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Profile</h2>
+            <p class="text-gray-600">Name: <span id="riderName" th:text="${rider.name}">John Doe</span></p>
+            <p class="text-gray-600">Email: <span id="riderEmail" th:text="${rider.email}">johndoe@email.com</span></p>
+            <p class="text-gray-600">Phone Number: <span id="riderPhoneNumber" th:text="${rider.phoneNumber}">652023882</span></p>
+            <p class="text-gray-600">Status: <span id="availabilityStatus" class="text-green-500">Available</span></p>
+        </div>
+
+        <!-- Availability Toggle Card -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Availability</h2>
+            <button id="toggleAvailability" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 mt-4 w-full">
+                Toggle Availability
+            </button>
+        </div>
+
+        <!-- Incoming Ride Requests Card -->
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Incoming Ride Requests</h2>
+            <div id="rideRequests" class="mt-4">
+                <!-- Ride requests will be dynamically rendered here -->
+                <p id="message" class="text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Ride (if any) -->
+    <div id="currentRide" class="bg-white shadow-lg rounded-lg p-6 mt-6 hidden">
+        <h2 class="text-2xl font-semibold text-gray-800">Current Ride</h2>
+        <p>Pickup Location: <span id="pickupLocation"></span></p>
+        <p>Dropoff Location: <span id="dropoffLocation"></span></p>
+        <p>Fare: <span id="fareAmount"></span></p>
+        <button id="completeRide" class="bg-blue-500 text-white px-4 py-2 mt-4 rounded hover:bg-blue-600">
+            Complete Ride
+        </button>
+    </div>
+
+    <!-- OpenStreetMap -->
+    <div id="map" class="mt-6 w-full h-96"></div>
+</div>
+
+<!-- Leaflet JS (for OpenStreetMap) -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- Rider UI - JavaScript for handling WebSocket connections -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:src="@{/Js/rider/rideRequest.js}"></script>
+</body>
+</html>
