@@ -4,17 +4,11 @@ import com.bitsvalley.babanaa.domains.User;
 import com.bitsvalley.babanaa.services.BookingService;
 import com.bitsvalley.babanaa.services.UserService;
 import com.bitsvalley.babanaa.webdomains.BikeRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,15 +23,6 @@ public class BookingController {
     private BookingService bookingService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
-//    @PostMapping("/ride/request")
-//    public String getRequest(@RequestParam("pickupLoc") String pickup,
-//                           @RequestParam("dropoffLoc") String dropoff,
-//                           // TODO: Implement for fare
-//                           @RequestParam("bike") String bikeType,
-//                           HttpSession session){
-//        get all variables
-
 
     @PostMapping("/ride/request")
     public String getBikeRequest(@ModelAttribute("bikeRequest") BikeRequest bikeRequest,HttpSession session) throws Exception {
@@ -57,12 +42,12 @@ public class BookingController {
 
         return "redirect:/booking";
     }
-    @GetMapping("/booking/requests")
-    public List<Booking> getAllBookingRequests() {
-        // Fetch bookings and return them as a list (array in JavaScript)
-        System.out.println("List of requests: "+bookingService.getRideRequest());
-        return bookingService.getRideRequest();
-    }
+//    @GetMapping("/booking/requests")
+//    public List<Booking> getAllBookingRequests() {
+//        // Fetch bookings and return them as a list (array in JavaScript)
+//        System.out.println("List of requests: "+bookingService.getRideRequest());
+//        return bookingService.getRideRequest();
+//    }
 
     public void sendNewRequest(Booking booking) {
 //        retrieve the bookings from the database

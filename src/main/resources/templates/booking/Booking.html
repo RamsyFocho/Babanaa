@@ -34,12 +34,12 @@
 
               <div class="mb-4">
                   <label for="dropoff" class="block text-sm font-medium">Drop-off Location</label>
-                  <input type="text" id="dropoff" name="dropoffLocation" class="w-full mt-1 p-2 border rounded-md" placeholder="Enter your destination" required>
+                  <input type="text" id="dropoff" name="dropoffLocation" th:field="*{dropOff}" class="w-full mt-1 p-2 border rounded-md" placeholder="e.g douala rond point deido" required>
               </div>
 
               <div class="mb-4">
 <!--                  <label for="dropOffLoc" class="block text-sm font-medium">Drop-off Location</label>-->
-                  <input type="hidden" id="dropOffLoc" name="dropoffLoc" th:field="*{dropOff}" class="w-full mt-1 p-2 border rounded-md" readonly placeholder="Enter your destination" required>
+                  <input type="hidden" id="dropOffLoc" name="dropoffLoc"  class="w-full mt-1 p-2 border rounded-md" readonly placeholder="Enter your destination" required>
               </div>
               <div class="mb-4">
                   <label for="bike" class="block text-sm font-medium">Bike Type</label>
@@ -57,7 +57,7 @@
               </div>
 
               <div class="text-center mt-2">
-                  <button type="submit" class="bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600 transition">
+                  <button id="submitBtn" type="submit" class="bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600 transition">
                       <i class="fas fa-biking"></i> Request Ride
                   </button>
               </div>

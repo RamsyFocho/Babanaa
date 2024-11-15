@@ -3,11 +3,21 @@ alert("Please wait for the page to load...");
 let pickupLat, pickupLng; // Declare globally for access in multiple functions
 let dropoffMarker; // Declare dropoffMarker globally so it can be updated
 let routingControl; // Declare routingControl globally to update the route
+var dropoffLocation;
+//----------disable the submit button till the drop off location is inputted--------------
+submitBtn.disabled = true;
+function submitButton(val) {
+    const submitBtn = document.getElementById("submitBtn");
+    if(val==null){
+        submitBtn.disabled = true;
+    } else {
+        submitBtn.disabled = false; // Enable the button otherwise
+    }
+}
 
-var dropoffLocation=[];
 // Initialize the map with a higher zoom level (18)
 const map = L.map('map').setView([51.505, -0.09], 18); // Zoom level 18 for more details
-
+//disable the submit button till the location has been picked
 // Load OpenStreetMap tiles with a higher zoom level (up to 19)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19, // Allow up to zoom level 19 for more detail
@@ -27,7 +37,9 @@ if (navigator.geolocation) {
       .bindPopup('Pick-up Location').openPopup();
 
     // Update pickup location input field
-    document.getElementById('pickup').value = `${pickupLat},${pickupLng}`;
+//    document.getElementById('pickup').value = `${pickupLat},${pickupLng}`;
+     // Fetch and display the place name
+      getPlaceName(pickupLat, pickupLng);
 
     // Set map view to the user's location
     map.setView([pickupLat, pickupLng], 18);
@@ -40,10 +52,33 @@ if (navigator.geolocation) {
   alert("Geolocation is not supported by this browser.");
 }
 
+//convert the pickup location into the actual place
+function getPlaceName(lat, lng) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.address) {
+        const placeName = data.display_name;
+        console.log("Place Name:", placeName);
+
+        // Optionally update the UI
+        document.getElementById('pickup').value = placeName;
+
+      } else {
+        alert("Could not retrieve place name.");
+      }
+    })
+    .catch(error => {
+      console.error("Error with reverse geocoding:", error);
+    });
+}
+
 // Handle dropoff input change
 const dropoffInput = document.getElementById('dropoff');
 dropoffInput.addEventListener('change', function() {
-dropoffLocation=dropoffInput.value;
+   dropoffLocation = dropoffInput.value;
   // Use a Geocoding API like Nominatim for getting coordinates from the address
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dropoffLocation)}`)
     .then(response => response.json())
@@ -120,6 +155,7 @@ dropoffLocation=dropoffInput.value;
 
 
 // Form submission handler
+submitButton(document.getElementById('dropOffLoc'));
 const form = document.getElementById('rideRequestForm');
 form.addEventListener('submit', function(event) {
   event.preventDefault(); // Prevent form submission until the route and fare are displayed

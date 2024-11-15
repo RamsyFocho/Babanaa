@@ -51,12 +51,98 @@
                 <p><strong>Fare:</strong> ${booking.fare}frs</p>
                 <div class="flex justify-between mt-4">
                     <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}')">Accept</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}')">View</button>
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600"
+                        onclick="viewRideDetails('${booking.pickupLocation}', '${booking.dropoffLocation}')">
+                            View
+                    </button>
                     <button class="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600">Reject</button>
                 </div>
             </div>
         `;
       })
+    }
+    // Initialize OpenStreetMap
+    const map = L.map('map').setView([51.505, -0.09], 18);
+    let markers = [];
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+//------------------view rides----------------------------------------
+//---------------get the rider's actual location---------------
+
+    // Function to clear all markers
+    function clearMarkers() {
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
+    }
+    // Function to get user's current location
+    function getCurrentLocation(callback) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(callback, () => {
+                alert("Unable to retrieve your location.");
+            }, {
+                enableHighAccuracy: true
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+    // Function to convert address to coordinates
+    function getCoordinates(address, callback) {
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+                    callback(coords);
+                } else {
+                    alert("No coordinates found for address: " + address);
+                }
+            }).catch(error => console.error("Error fetching coordinates: ", error));
+    }
+    // Function to view ride details and plot on map
+    function viewRideDetails(pickupAddress, dropoffAddress) {
+        getCurrentLocation(function(position) {
+            const driverLocation = [position.coords.latitude, position.coords.longitude];
+
+            clearMarkers(); // Clear previous markers
+
+            // Add marker for driver's location
+            const driverMarker = L.marker(driverLocation, { draggable: false })
+                .addTo(map)
+                .bindPopup('Driver Location').openPopup();
+            markers.push(driverMarker);
+
+            // Get coordinates for pickup location
+            getCoordinates(pickupAddress, function(pickupCoords) {
+                const pickupMarker = L.marker(pickupCoords, { draggable: false })
+                    .addTo(map)
+                    .bindPopup('Pickup Location').openPopup();
+                markers.push(pickupMarker);
+
+                // Get coordinates for dropoff location
+                getCoordinates(dropoffAddress, function(dropoffCoords) {
+                    const dropoffMarker = L.marker(dropoffCoords, { draggable: false })
+                        .addTo(map)
+                        .bindPopup('Dropoff Location').openPopup();
+                    markers.push(dropoffMarker);
+
+                    // Adjust map view to include all markers
+                    const bounds = L.latLngBounds([driverLocation, pickupCoords, dropoffCoords]);
+                    map.fitBounds(bounds);
+
+                    // Draw the route
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(driverLocation),
+                            L.latLng(pickupCoords),
+                            L.latLng(dropoffCoords)
+                        ],
+                        routeWhileDragging: true
+                    }).addTo(map);
+                });
+            });
+        });
     }
 
     // Accept Ride
@@ -86,9 +172,3 @@
         }
     });
 
-    // Initialize OpenStreetMap
-    const map = L.map('map').setView([51.505, -0.09], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
