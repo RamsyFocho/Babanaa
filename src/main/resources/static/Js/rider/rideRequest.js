@@ -41,7 +41,7 @@
       rideRequest.forEach(function(booking){
         console.log(booking.pickupLocation+"\n");
         // Ensure `notification` is set to true/false based on your logic before this point.
-                const bgColorClass = newRequest ? 'bg-red-500 text-white' : 'bg-gray-100';
+                const bgColorClass = newRequest ? 'bg-gray-300 text-white' : 'bg-gray-100';
 
         rideRequestsContainer.innerHTML += `
             <div class="${bgColorClass} p-4 rounded-lg shadow mb-4">
@@ -64,6 +64,7 @@
     // Initialize OpenStreetMap
     const map = L.map('map').setView([51.505, -0.09], 18);
     let markers = [];
+    let routingControl = null;
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
@@ -72,9 +73,14 @@
 
     // Function to clear all markers
     function clearMarkers() {
-        markers.forEach(marker => map.removeLayer(marker));
-        markers = [];
+      markers.forEach(marker => map.removeLayer(marker)); // Remove all markers
+      markers = [];
+      if (routingControl) {
+        map.removeControl(routingControl); // Remove the routing control if it exists
+        routingControl = null;
+      }
     }
+
     // Function to get user's current location
     function getCurrentLocation(callback) {
         if (navigator.geolocation) {
@@ -100,6 +106,15 @@
                 }
             }).catch(error => console.error("Error fetching coordinates: ", error));
     }
+    //    customized icons:
+       // Define custom icons using FontAwesome and Tailwind CSS
+    const driverIcon = L.divIcon({
+        html: '<i class="fas fa-biking text-blue-500 text-2xl"></i>',
+        className: 'text-center', // Tailwind CSS class for additional styling if needed
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
+    });
     // Function to view ride details and plot on map
     function viewRideDetails(pickupAddress, dropoffAddress) {
         getCurrentLocation(function(position) {
@@ -108,10 +123,14 @@
             clearMarkers(); // Clear previous markers
 
             // Add marker for driver's location
-            const driverMarker = L.marker(driverLocation, { draggable: false })
-                .addTo(map)
-                .bindPopup('Driver Location').openPopup();
-            markers.push(driverMarker);
+            const driverMarker = L.marker(driverLocation, {
+             icon: driverIcon,
+             draggable: false,
+            })
+             .addTo(map)
+              .bindPopup('Your Location')
+              .openPopup();
+             markers.push(driverMarker);
 
             // Get coordinates for pickup location
             getCoordinates(pickupAddress, function(pickupCoords) {
@@ -132,13 +151,14 @@
                     map.fitBounds(bounds);
 
                     // Draw the route
-                    L.Routing.control({
+                    routingControl = L.Routing.control({
                         waypoints: [
                             L.latLng(driverLocation),
                             L.latLng(pickupCoords),
                             L.latLng(dropoffCoords)
                         ],
-                        routeWhileDragging: true
+                        routeWhileDragging: true,
+                        createMarker: () => null // Prevent adding default markers
                     }).addTo(map);
                 });
             });
