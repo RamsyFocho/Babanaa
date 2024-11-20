@@ -29,7 +29,7 @@
           <form id="rideRequestForm" method="POST" th:action="@{/ride/request}" th:object="${bikeRequest}" class="space-y-4">
               <div class="mb-4">
                   <label for="pickup" class="block text-sm font-medium">Pick-up Location</label>
-                  <input type="text" id="pickup" th:field="*{pickup}" name="pickupLoc" readonly class="w-full mt-1 p-2 border rounded-md" placeholder="Fetching your current location...">
+                  <input type="text" id="pickup" th:field="*{pickup}" name="pickupLoc" readonly class="w-full mt-1 p-2 border rounded-md" placeholder="Fetching your current location..." required>
               </div>
 
               <div class="mb-4">

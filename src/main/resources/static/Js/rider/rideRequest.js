@@ -173,11 +173,8 @@
         document.getElementById('fareAmount').textContent = fare;
 
         // Update map markers for pickup and dropoff
-        const pickupLatLng = pickup.split(',').map(Number);
-        const dropoffLatLng = dropoff.split(',').map(Number);
-        L.marker(pickupLatLng).addTo(map).bindPopup('Pickup Location').openPopup();
-        L.marker(dropoffLatLng).addTo(map).bindPopup('Dropoff Location').openPopup();
-        map.setView(pickupLatLng, 13);
+//        TODO: Once accepted, send the information to the db, updating the riderId.
+//        TODO: Then display a big map on the screen which would take the whole screen showing him in real time moving to the customers location
     }
 
     // Toggle rider availability
