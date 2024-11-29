@@ -17,6 +17,6 @@ public class rideRequestsAPI {
     @GetMapping("/requests")
     public List<Booking> getAllBookingRequests() {
         // Return booking requests as JSON
-        return bookingService.getRideRequest();
+        return bookingService.getRideRequest(); 
     }
 }

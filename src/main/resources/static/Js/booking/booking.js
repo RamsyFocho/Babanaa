@@ -1,38 +1,51 @@
+       alert("Clicked");
 
-// ----------------------MAP-------------------------
- var map = L.map('map').setView([51.505, -0.09], 13);  // Default map view (London)
- var pickupLocation=[];
- var dropOffLocation=[];
-  // Load OpenStreetMap tiles
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
-
-  // Geolocation: Get the user's current location
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-          var lat = position.coords.latitude;
-          var lng = position.coords.longitude;
-
-          // Update the map view to user's location
-          map.setView([lat, lng], 13);
-
-          // Add a marker at the user's location
-          L.marker([lat, lng]).addTo(map)
-              .bindPopup('You are here!')
-              .openPopup();
-
-          // Update the pickup location input with the coordinates
-          document.getElementById('pickup').value = lat + ", " + lng;
-          pickupLocation = [lat, lng];
-      }, function() {
-          alert("Unable to fetch your location. Please allow location access.");
-      });
-  } else {
-      alert("Geolocation is not supported by your browser.");
-  }
 //   JavaScript for Form
-     document.getElementById('rideRequestForm').addEventListener('submit', function(e) {
+     document.getElementById('rideRequestForm').addEventListener('submit',async function(e) {
        e.preventDefault();
-       document.getElementById('pendingMessage').classList.remove('hidden');
+       alert("Clicked");
+       const formData = new FormData(this);
+       const formObject = {
+            pickup: formData.get("pickupLoc"),
+            dropOff: formData.get("dropOff"),
+            bikeType: formData.get("bikeType"),
+//            TODO collect the fare from the UI
+       }
+       try{
+            const response = await fetch('/ride/request',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(formObject),
+            });
+            if(response.ok){
+                const res = await response.json();
+                console.log("Ride requested successfully:", res);
+                document.getElementById('pendingMessage').classList.remove('hidden');
+
+                //------------------ start listening for rider acceptance----------
+                listenForRiderAcceptance(res.bookingId);
+            }else {
+                console.error("Error in response:", response);
+            }
+       } catch (error) {
+            console.error("Request failed:", error);
+       }
+
      });
+function listenForRiderAcceptance(bookingId){
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected to WebSocket: ' + frame);
+        stompClient.subscribe(`/ride/${bookingId}/acceptance`, function (message) {
+            const data = JSON.parse(message.body);
+            console.log("Rider accepted the booking:", data);
+            // Update UI with rider info
+            document.getElementById("pendingMessage").classList.add("hidden");
+            //TODO: displayRiderInfo(data);
+        }
+    }
+}

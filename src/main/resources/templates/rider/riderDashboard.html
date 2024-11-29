@@ -7,8 +7,11 @@
 
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+
     <!--font awesome icons-->
     <link rel="stylesheet" th:href="@{/fontawesome-free-6.6.0-web/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/rider/rider.css}">
 
     <!-- Leaflet CSS (for OpenStreetMap) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -19,8 +22,16 @@
     </style>
 </head>
 <body class="bg-gray-100" th:if="${rider}">
+
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-bold mb-4 text-yellow-500">Rider Dashboard</h1>
+
+        <!-------------------Big map for the rider to view his path to the client----------------------->
+        <div class="mapContainer z-10">
+            <i onclick="displayMap2()" class=" fas fa-times text-white text-2xl font-bold absolute top-2 right-2 pointer mb-4"></i>
+            <div class="map z-50 mt-8 w-full" id="map2"></div>
+        </div>
+            <button onclick="displayMap2()">Scale Map</button>
 
         <!-- Rider Profile -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -74,5 +85,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script th:src="@{/Js/rider/rideRequest.js}"></script>
+    <script>
+
+    </script>
 </body>
 </html>

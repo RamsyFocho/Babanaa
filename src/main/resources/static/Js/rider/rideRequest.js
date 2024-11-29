@@ -8,7 +8,8 @@
                      showRideRequests(data,false);
           })
         .catch(error => console.error('Error fetching initial bookings:', error));
-
+// -----------------------------initialize map---------------------------------
+     initializeMainMap()
         const socket = new SockJS('/ws'); // Match with WebSocket endpoint in Spring
         const stompClient = Stomp.over(socket);
 
@@ -62,29 +63,37 @@
       })
     }
     // Initialize OpenStreetMap
-    const map = L.map('map').setView([51.505, -0.09], 18);
-    let markers = [];
-    let routingControl = null;
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+
+        let markers = [];
+        let routingControl = null;
+        let mainMapInstance;
+        let map2Instance;
+    function initializeMainMap(){
+        if(!mainMapInstance){
+             mainMapInstance = L.map('map').setView([51.505, -0.09], 18);
+        }
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mainMapInstance);
+    }
 //------------------view rides----------------------------------------
 //---------------get the rider's actual location---------------
 
     // Function to clear all markers
     function clearMarkers() {
-      markers.forEach(marker => map.removeLayer(marker)); // Remove all markers
+      markers.forEach(marker => mainMapInstance.removeLayer(marker)); // Remove all markers
       markers = [];
       if (routingControl) {
-        map.removeControl(routingControl); // Remove the routing control if it exists
+        mainMapInstance.removeControl(routingControl); // Remove the routing control if it exists
         routingControl = null;
       }
     }
 
-    // Function to get user's current location
+    // Function to get user's current location as he moves
     function getCurrentLocation(callback) {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(callback, () => {
+//            navigator.geolocation.watchPosition(callback, () => {
                 alert("Unable to retrieve your location.");
             }, {
                 enableHighAccuracy: true
@@ -115,8 +124,20 @@
         iconAnchor: [15, 30],
         popupAnchor: [0, -30]
     });
+    const userIcon = L.divIcon({
+            html: '<i class="fas fa-user text-blue-500 text-2xl"></i>',
+            className: 'text-center', // Tailwind CSS class for additional styling if needed
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30]
+    });
     // Function to view ride details and plot on map
+    const mainMapView = document.getElementById("map");
     function viewRideDetails(pickupAddress, dropoffAddress) {
+        initializeMainMap();
+//        when clicked, it should scroll till the map
+        mainMapView.scrollIntoView({behaviour: 'smooth'})
+
         getCurrentLocation(function(position) {
             const driverLocation = [position.coords.latitude, position.coords.longitude];
 
@@ -127,28 +148,28 @@
              icon: driverIcon,
              draggable: false,
             })
-             .addTo(map)
+             .addTo(mainMapInstance)
               .bindPopup('Your Location')
               .openPopup();
              markers.push(driverMarker);
 
             // Get coordinates for pickup location
             getCoordinates(pickupAddress, function(pickupCoords) {
-                const pickupMarker = L.marker(pickupCoords, { draggable: false })
-                    .addTo(map)
+                const pickupMarker = L.marker(pickupCoords, {icon:userIcon, draggable: false })
+                    .addTo(mainMapInstance)
                     .bindPopup('Pickup Location').openPopup();
                 markers.push(pickupMarker);
 
                 // Get coordinates for dropoff location
                 getCoordinates(dropoffAddress, function(dropoffCoords) {
                     const dropoffMarker = L.marker(dropoffCoords, { draggable: false })
-                        .addTo(map)
+                        .addTo(mainMapInstance)
                         .bindPopup('Dropoff Location').openPopup();
                     markers.push(dropoffMarker);
 
-                    // Adjust map view to include all markers
+                    // Adjust mainMapInstance view to include all markers
                     const bounds = L.latLngBounds([driverLocation, pickupCoords, dropoffCoords]);
-                    map.fitBounds(bounds);
+                    mainMapInstance.fitBounds(bounds);
 
                     // Draw the route
                     routingControl = L.Routing.control({
@@ -159,22 +180,101 @@
                         ],
                         routeWhileDragging: true,
                         createMarker: () => null // Prevent adding default markers
-                    }).addTo(map);
+                    }).addTo(mainMapInstance);
                 });
             });
         });
     }
+    function displayMap2(pickupAddress, dropoffAddress) {
+       alert("yo");
+       const map = document.querySelector('.mapContainer');
+       map.classList.toggle('scale');
+       // Check if the class has been toggled
+        if (map.classList.contains('scale')) {
+            console.log('The scale class has been added.');
+            if(mainMapInstance){
+                mainMapInstance.remove();
+                mainMapInstance = null;
+            }
+            // ----------------initialize the 2nd map if it doesn't exist---------------------
+            if(!map2Instance){
+                 map2Instance = L.map('map2').setView([51.505, -0.09], 18);
+            }
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map2Instance);
+             // Tile Layer (OpenStreetMap)
+            getCurrentLocation(function(position) {
+                        const driverLocation = [position.coords.latitude, position.coords.longitude];
 
+                        //clearMarkers(); // Clear previous markers
+
+                        // Add marker for driver's location
+                        const driverMarker = L.marker(driverLocation, {
+                         icon: driverIcon,
+                         draggable: false,
+                        })
+                         .addTo(map2Instance)
+                          .bindPopup('Your Location')
+                          .openPopup();
+                         markers.push(driverMarker);
+
+                        // Get coordinates for pickup location
+                        getCoordinates(pickupAddress, function(pickupCoords) {
+                            const pickupMarker = L.marker(pickupCoords, {icon:userIcon, draggable: false })
+                                .addTo(map2Instance)
+                                .bindPopup('Pickup Location').openPopup();
+                            markers.push(pickupMarker);
+
+                            // Get coordinates for dropoff location
+                            getCoordinates(dropoffAddress, function(dropoffCoords) {
+                                const dropoffMarker = L.marker(dropoffCoords, { draggable: false })
+                                    .addTo(map2Instance)
+                                    .bindPopup('Dropoff Location').openPopup();
+                                markers.push(dropoffMarker);
+
+                                // Adjust map view to include all markers
+                                const bounds = L.latLngBounds([driverLocation, pickupCoords, dropoffCoords]);
+                                map2Instance.fitBounds(bounds);
+
+                                // Draw the route
+                                routingControl = L.Routing.control({
+                                    waypoints: [
+                                        L.latLng(driverLocation),
+                                        L.latLng(pickupCoords),
+                                        L.latLng(dropoffCoords)
+                                    ],
+                                    routeWhileDragging: true,
+                                    createMarker: () => null // Prevent adding default markers
+                                }).addTo(map2Instance);
+                            });
+                        });
+            });
+        }
+        else {
+            console.log('The scale class has been removed.');
+             console.log('Hiding popup map.');
+             if (map2Instance) {
+                  map2Instance.remove();
+                  map2Instance = null; // Clear the reference
+             }
+             // Optionally reinitialize the main map
+             initializeMainMap()
+        }
+    }
     // Accept Ride
-    function acceptRide(pickup, dropoff, fare) {
+    async function acceptRide(pickup, dropoff, fare) {
         document.getElementById('currentRide').classList.remove('hidden');
         document.getElementById('pickupLocation').textContent = pickup;
         document.getElementById('dropoffLocation').textContent = dropoff;
         document.getElementById('fareAmount').textContent = fare;
+//        display the map
+        displayMap2(pickup,dropoff);
 
-        // Update map markers for pickup and dropoff
 //        TODO: Once accepted, send the information to the db, updating the riderId.
+
 //        TODO: Then display a big map on the screen which would take the whole screen showing him in real time moving to the customers location
+
     }
 
     // Toggle rider availability

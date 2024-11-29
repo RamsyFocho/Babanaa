@@ -4,20 +4,15 @@ let pickupLat, pickupLng; // Declare globally for access in multiple functions
 let dropoffMarker; // Declare dropoffMarker globally so it can be updated
 let routingControl; // Declare routingControl globally to update the route
 var dropoffLocation;
-//----------disable the submit button till the drop off location is inputted--------------
-submitBtn.disabled = true;
-function submitButton(val) {
-    const submitBtn = document.getElementById("submitBtn");
-    if(val==null){
-        submitBtn.disabled = true;
-    } else {
-        submitBtn.disabled = false; // Enable the button otherwise
-    }
-}
+var submitBtn = document.getElementById("submitBtn");
+//--------------disable the submitBtn till everything is inserted
+//var submitBtn = document.getElementById("submitBtn");
+//submitBtn.disabled=true;
+//submit.classList.
+//TODO: disable button till all requirements are met
 
 // Initialize the map with a higher zoom level (18)
 const map = L.map('map').setView([51.505, -0.09], 18); // Zoom level 18 for more details
-//disable the submit button till the location has been picked
 // Load OpenStreetMap tiles with a higher zoom level (up to 19)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19, // Allow up to zoom level 19 for more detail
@@ -102,8 +97,8 @@ dropoffInput.addEventListener('change', function() {
         }
 //---------TAG THE HIDDEN INPUT TO STORE THE DROP OFF VARIABLE----------
 
-      const dropoffLoc = document.getElementById('dropOffLoc');
-      dropoffLoc.value = `${dropoffLocation[0]},${dropoffLocation[1]}`; // Using the stored dropoffLng
+//      const dropoffLoc = document.getElementById('dropOffLoc');
+//      dropoffLoc.value = `${dropoffLocation[0]},${dropoffLocation[1]}`; // Using the stored dropoffLng
 
         // Routing from pickup to dropoff
         if (pickupLat && pickupLng) {
@@ -147,26 +142,29 @@ dropoffInput.addEventListener('change', function() {
         }
       } else {
         alert("Drop-off location not found!");
+
+
+
       }
     })
     .catch(error => console.error('Error fetching dropoff location:', error));
 });
 
-
-
-// Form submission handler
-submitButton(document.getElementById('dropOffLoc'));
-const form = document.getElementById('rideRequestForm');
-form.addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent form submission until the route and fare are displayed
-
-  // Assuming the user has already seen the route and fare
-  alert("Form submitted successfully!");
-   const message = document.getElementById('pendingMessage');
-   message.classList.remove('hidden');
-
-  // Update the form action
-
-     form.action = '/ride/request';
-     form.submit();
-});
+//
+//
+//// Form submission handler
+//submitButton(document.getElementById('dropOffLoc'));
+//const form = document.getElementById('rideRequestForm');
+//form.addEventListener('submit', function(event) {
+//  event.preventDefault(); // Prevent form submission until the route and fare are displayed
+//
+//  // Assuming the user has already seen the route and fare
+//  alert("Form submitted successfully!");
+//   const message = document.getElementById('pendingMessage');
+//   message.classList.remove('hidden');
+//
+//  // Update the form action
+//
+//     form.action = '/ride/request';
+//     form.submit();
+//});

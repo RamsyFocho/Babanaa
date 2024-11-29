@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import org.springframework.http.HttpStatus; // For status codes like BAD_REQUEST or OK
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +29,8 @@ public class BookingController {
     private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/ride/request")
-    public String getBikeRequest(@ModelAttribute("bikeRequest") BikeRequest bikeRequest,HttpSession session) throws Exception {
+    @ResponseBody
+    public ResponseEntity<?> getBikeRequest(@RequestBody BikeRequest bikeRequest,HttpSession session) throws Exception {
 
 
         String dropOff = bikeRequest.getDropOff();
@@ -33,6 +38,8 @@ public class BookingController {
         String bikeType = bikeRequest.getBikeType();
 
         Long Id = (Long) session.getAttribute("CusId");
+        System.out.println("Customer Id is: "+ Id);
+
         User user = userService.getUserById(Id);
 //        TODO: Implement dynamically fare and distance
         Booking booking = new Booking(user,pickup,dropOff,"pending", LocalDateTime.now(),500,2);
@@ -40,7 +47,7 @@ public class BookingController {
         bookingService.newBookingRequest(booking);
         sendNewRequest(booking);
 
-        return "redirect:/booking";
+        return ResponseEntity.ok(Map.of("status","success","bookingId",booking.getBookingId()));
     }
 //    @GetMapping("/booking/requests")
 //    public List<Booking> getAllBookingRequests() {
