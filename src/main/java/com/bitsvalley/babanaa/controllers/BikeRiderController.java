@@ -1,27 +1,27 @@
 package com.bitsvalley.babanaa.controllers;
 
 import com.bitsvalley.babanaa.domains.BikeRider;
+import com.bitsvalley.babanaa.webdomains.Location;
 import com.bitsvalley.babanaa.services.BikeRiderService;
 import com.bitsvalley.babanaa.domains.Booking;
 import com.bitsvalley.babanaa.services.BookingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @Controller
 public class BikeRiderController {
     Long globalRiderId;
 
     @Autowired
-    BikeRiderService bikeRiderService;@Autowired
+    BikeRiderService bikeRiderService;
+    @Autowired
     private BookingService bookingService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -103,6 +103,32 @@ public class BikeRiderController {
              return "rider/riderDashboard";
         }
     }
+    @PostMapping("/ride/accept")
+    @ResponseBody
+    public ResponseEntity<?> acceptRideRequest(@RequestBody Long bookingId,HttpSession session) {
+        Long riderId = (Long) session.getAttribute("riderId");
+        BikeRider rider = bikeRiderService.getBikeRiderById(riderId);
+//       update the booking with the rider's Id
+        bookingService.updateBooking(bookingId,rider);
+//        session the booking id
+        session.setAttribute("bookingId",bookingId);
+//        notify the customers
+        sendRiderDetailsToCustomer(bookingId);
+        return ResponseEntity.ok(Map.of("status","success"));
+    }
 
+    private void sendRiderDetailsToCustomer(Long bookingId) {
+        Booking booking = bookingService.getBooKingById(bookingId);
+        BikeRider rider = bikeRiderService.getBikeRiderById(booking.getBikeRider().getRiderId());
+        messagingTemplate.convertAndSend("/all/riderAccepted/"+booking.getBookingId(),rider);
+    }
+//    --------------------automatically collect location and send to the customer in real time
+    @PostMapping("/ride/location")
+    @ResponseBody
+    public ResponseEntity<?> updateLocation(@RequestBody Location location,HttpSession session){
+        Long bookingId = (Long) session.getAttribute("bookingId");
+        messagingTemplate.convertAndSend("/all/location/"+bookingId,location);
+        return  ResponseEntity.ok("Location updated");
+    }
 
 }

@@ -17,7 +17,7 @@
             console.log('Connected to WebSocket: ' + frame);
 
             // Subscribe to ride requests
-            stompClient.subscribe('/all/messages', function (message) {
+            stompClient.subscribe('/all/bookings', function (message) {
                 const rideRequest = JSON.parse(message.body);
                 console.log('Received rideRequest:', rideRequest);
                  // If the WebSocket message is not an array, wrap it in an array
@@ -46,6 +46,7 @@
 
         rideRequestsContainer.innerHTML += `
             <div class="${bgColorClass} p-4 rounded-lg shadow mb-4">
+                <p class="hidden" id="bookingId">${booking.bookingId}</p>
                 <p><strong>Pickup:</strong> ${booking.pickupLocation}</p>
                 <p><strong>Dropoff:</strong> ${booking.dropoffLocation}</p>
                 <p><strong>Time:</strong> ${booking.bookingTime}</p>
@@ -264,6 +265,7 @@
     }
     // Accept Ride
     async function acceptRide(pickup, dropoff, fare) {
+        const bookingId = document.getElementById("bookingId").textContent;
         document.getElementById('currentRide').classList.remove('hidden');
         document.getElementById('pickupLocation').textContent = pickup;
         document.getElementById('dropoffLocation').textContent = dropoff;
@@ -272,11 +274,52 @@
         displayMap2(pickup,dropoff);
 
 //        TODO: Once accepted, send the information to the db, updating the riderId.
-
-//        TODO: Then display a big map on the screen which would take the whole screen showing him in real time moving to the customers location
+        try{
+            const response =  await fetch('/ride/accept'{
+                method:'POST',
+                headers:{
+                  'Content-Type':'application/json' ;
+                },
+                credentials:'include',
+                body: JSON.stringify({bookingId}),
+            });
+            if(response.ok){
+                const res = await response.json();
+                console.log("Ride accepted",res);
+                //----start sharing location in realtime ------------
+                 startLocationSharing();
+            }else{
+                alert("Failed to accept the ride. Please try again.")
+            }
+        }catch(error){
+            console.error("Error accepting ride ",error);
+        }
 
     }
-
+    function startLocationSharing(){
+        if(!navigation.geolocation){
+            alert("Geolocation is not supported by your browser!!!");
+            return;
+        }
+        const locationInterval = setInterval(()=>{
+        // TODO: Send the current location to the server
+            navigator.geolocation.getCurrentPosition(async (position)=>{
+                const {latitude, longitude} = position.coords;
+                try{
+                    await fetch('/ride/location',{
+                        method:'POST',
+                        headers:{
+                          'Content-Type':'application/json' ;
+                        },
+                        credentials:'include',
+                        body: JSON.stringify({latitude, longitude}),
+                    });
+                }catch(error){
+                    console.error("Failed to share location: ",error);
+                }
+            });
+        },5000);//update location every after 5 sec
+    }
     // Toggle rider availability
     document.getElementById('toggleAvailability').addEventListener('click', function() {
         const availabilityStatus = document.getElementById('availabilityStatus');

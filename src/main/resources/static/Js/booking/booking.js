@@ -1,6 +1,6 @@
        alert("Clicked");
 
-//   JavaScript for Form
+//   JavaScript for Form to collect data and send to the backend
      document.getElementById('rideRequestForm').addEventListener('submit',async function(e) {
        e.preventDefault();
        alert("Clicked");
@@ -40,12 +40,36 @@ function listenForRiderAcceptance(bookingId){
     const stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected to WebSocket: ' + frame);
-        stompClient.subscribe(`/ride/${bookingId}/acceptance`, function (message) {
+        stompClient.subscribe(`/all/riderAccepted/${bookingId}`, function (message) {
             const data = JSON.parse(message.body);
             console.log("Rider accepted the booking:", data);
+            if(data !=null) {
+                listenForRiderLocation(bookingId);
+            }
             // Update UI with rider info
             document.getElementById("pendingMessage").classList.add("hidden");
             //TODO: displayRiderInfo(data);
         }
     }
 }
+function listenForRiderLocation(bookingId){
+    const socket = new SockJs('/ws');
+    const stompClient =  Stomp.over(socket);
+    stompClient.connect({},function(frame){
+        console.log("Connected to Websocket "+ frame);
+        stompClient.subscribe('/all/location/'+bookingId, (data)=>{
+            const location = JSON.parse(data.body);
+//           update Rider Marker on the map
+            updateRiderMarker(location.latitude,location.longitude);
+         });
+    });
+}
+//let rideMarker; // Keep track of the rider's marker on the map'
+//export function updateRiderMarker(lat, lng){
+//    if(!rideMarker){
+//        rideMarker = L.marker([lat, lng)).addTo(map).bindPopup("Rider's position");
+//
+//    }else{
+//        riderMarker.setLatLng([lat,lng]);
+//    }
+//}

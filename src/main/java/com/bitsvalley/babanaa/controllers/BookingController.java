@@ -49,6 +49,8 @@ public class BookingController {
 
         return ResponseEntity.ok(Map.of("status","success","bookingId",booking.getBookingId()));
     }
+
+
 //    @GetMapping("/booking/requests")
 //    public List<Booking> getAllBookingRequests() {
 //        // Fetch bookings and return them as a list (array in JavaScript)
@@ -59,6 +61,6 @@ public class BookingController {
     public void sendNewRequest(Booking booking) {
 //        retrieve the bookings from the database
         System.out.println("Broadcasting booking data: " + booking);
-        messagingTemplate.convertAndSend("/all/messages", booking);  // Send directly to topic
+        messagingTemplate.convertAndSend("/all/bookings", booking);  // Send directly to topic
     }
 }

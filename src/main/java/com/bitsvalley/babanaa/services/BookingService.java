@@ -1,5 +1,6 @@
 package com.bitsvalley.babanaa.services;
 
+import com.bitsvalley.babanaa.domains.BikeRider;
 import com.bitsvalley.babanaa.domains.Booking;
 import com.bitsvalley.babanaa.repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +33,23 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
+
+    public void updateBooking(Long bookingId, BikeRider rider) {
+        System.out.println("In the booking, the Booking Id is "+bookingId);
+        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
+        if(bookingById.isPresent()) {
+            bookingById.get().setBikeRider(rider);
+        }else{
+            throw new IllegalStateException("Booking not found");
+        }
+    }
+
+    public Booking getBooKingById(Long bookingId) {
+        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
+        if(bookingById.isPresent()){
+            return bookingById.get();
+        } else{
+            throw new IllegalStateException("Booking not found");
+        }
+    }
 }
