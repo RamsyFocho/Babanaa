@@ -155,10 +155,12 @@ public class UserController {
     @GetMapping("/booking")
     public String book(Model model, HttpSession session){
         Long userId = (Long) session.getAttribute("CusId");
+        System.out.println("In the booking page, the Customer is "+userId);
         if(userId == null ||userId==0){
             return "redirect:/customer/create";
         }else{
             model.addAttribute("bikeRequest", new BikeRequest());
+            session.setAttribute("CusId",userId);
             return "/booking/Booking";
         }
     }

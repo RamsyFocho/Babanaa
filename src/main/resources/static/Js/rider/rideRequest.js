@@ -52,7 +52,7 @@
                 <p><strong>Time:</strong> ${booking.bookingTime}</p>
                 <p><strong>Fare:</strong> ${booking.fare}frs</p>
                 <div class="flex justify-between mt-4">
-                    <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}')">Accept</button>
+                    <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}', '${booking.bookingId}')">Accept</button>
                     <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600"
                         onclick="viewRideDetails('${booking.pickupLocation}', '${booking.dropoffLocation}')">
                             View
@@ -264,21 +264,21 @@
         }
     }
     // Accept Ride
-    async function acceptRide(pickup, dropoff, fare) {
-        const bookingId = document.getElementById("bookingId").textContent;
+    async function acceptRide(pickup, dropoff, fare,bookingId) {
+        console.log("In ride acceptance, the Booking Id is "+bookingId)
         document.getElementById('currentRide').classList.remove('hidden');
         document.getElementById('pickupLocation').textContent = pickup;
         document.getElementById('dropoffLocation').textContent = dropoff;
         document.getElementById('fareAmount').textContent = fare;
-//        display the map
+        //        display the map
         displayMap2(pickup,dropoff);
 
-//        TODO: Once accepted, send the information to the db, updating the riderId.
+        //  TODO: Once accepted, send the information to the db, updating the riderId.
         try{
-            const response =  await fetch('/ride/accept'{
+            const response =  await fetch('/ride/accept',{
                 method:'POST',
                 headers:{
-                  'Content-Type':'application/json' ;
+                  'Content-Type':'application/json' ,
                 },
                 credentials:'include',
                 body: JSON.stringify({bookingId}),
@@ -287,7 +287,7 @@
                 const res = await response.json();
                 console.log("Ride accepted",res);
                 //----start sharing location in realtime ------------
-                 startLocationSharing();
+                 startLocationSharing(bookingId);
             }else{
                 alert("Failed to accept the ride. Please try again.")
             }
@@ -296,8 +296,8 @@
         }
 
     }
-    function startLocationSharing(){
-        if(!navigation.geolocation){
+    function startLocationSharing(bookingId){
+        if(!navigator.geolocation){
             alert("Geolocation is not supported by your browser!!!");
             return;
         }
@@ -309,7 +309,7 @@
                     await fetch('/ride/location',{
                         method:'POST',
                         headers:{
-                          'Content-Type':'application/json' ;
+                          'Content-Type':'application/json' ,
                         },
                         credentials:'include',
                         body: JSON.stringify({latitude, longitude}),

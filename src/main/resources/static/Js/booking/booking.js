@@ -1,4 +1,4 @@
-       alert("Clicked");
+
 
 //   JavaScript for Form to collect data and send to the backend
      document.getElementById('rideRequestForm').addEventListener('submit',async function(e) {
@@ -49,18 +49,19 @@ function listenForRiderAcceptance(bookingId){
             // Update UI with rider info
             document.getElementById("pendingMessage").classList.add("hidden");
             //TODO: displayRiderInfo(data);
-        }
-    }
+        });
+    });
 }
 function listenForRiderLocation(bookingId){
-    const socket = new SockJs('/ws');
+    const socket = new SockJS('/ws');
     const stompClient =  Stomp.over(socket);
     stompClient.connect({},function(frame){
         console.log("Connected to Websocket "+ frame);
         stompClient.subscribe('/all/location/'+bookingId, (data)=>{
             const location = JSON.parse(data.body);
+            console.log("Rider's location: "+location);
 //           update Rider Marker on the map
-            updateRiderMarker(location.latitude,location.longitude);
+            window.updateRiderMarker(location.latitude,location.longitude);
          });
     });
 }

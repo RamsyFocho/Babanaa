@@ -105,21 +105,25 @@ public class BikeRiderController {
     }
     @PostMapping("/ride/accept")
     @ResponseBody
-    public ResponseEntity<?> acceptRideRequest(@RequestBody Long bookingId,HttpSession session) {
+    public ResponseEntity<?> acceptRideRequest(@RequestBody Map<String, Long> jsonBookingId,HttpSession session) {
         Long riderId = (Long) session.getAttribute("riderId");
         BikeRider rider = bikeRiderService.getBikeRiderById(riderId);
+        long bookingId = jsonBookingId.get("bookingId");
 //       update the booking with the rider's Id
         bookingService.updateBooking(bookingId,rider);
 //        session the booking id
         session.setAttribute("bookingId",bookingId);
 //        notify the customers
         sendRiderDetailsToCustomer(bookingId);
-        return ResponseEntity.ok(Map.of("status","success"));
+        return ResponseEntity.ok(Map.of("status","success","bookingId",bookingId));
     }
 
     private void sendRiderDetailsToCustomer(Long bookingId) {
         Booking booking = bookingService.getBooKingById(bookingId);
         BikeRider rider = bikeRiderService.getBikeRiderById(booking.getBikeRider().getRiderId());
+        System.out.println("In the sendRiderDetailsToCustomer method,");
+        System.out.println("the riderId is "+booking.getBikeRider().getRiderId());
+        System.out.println("The booking id is "+bookingId);
         messagingTemplate.convertAndSend("/all/riderAccepted/"+booking.getBookingId(),rider);
     }
 //    --------------------automatically collect location and send to the customer in real time

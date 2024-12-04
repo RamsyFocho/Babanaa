@@ -47,9 +47,9 @@ if (navigator.geolocation) {
   alert("Geolocation is not supported by this browser.");
 }
 //-----------rider marker--------------
-let rideMarker; // Keep track of the rider's marker on the map'
-export function updateRiderMarker(lat, lng){
-    if(!rideMarker){
+let riderMarker; // Keep track of the rider's marker on the map'
+ function updateRiderMarker(lat, lng){
+    if(!riderMarker){
         rideMarker = L.marker([lat, lng]).addTo(map).bindPopup("Rider's position").openPopup();
 
     }else{
@@ -78,15 +78,7 @@ function getPlaceName(lat, lng) {
       console.error("Error with reverse geocoding:", error);
     });
 }
-let rideMarker; // Keep track of the rider's marker on the map'
-export function updateRiderMarker(lat, lng){
-    if(!rideMarker){
-        rideMarker = L.marker([lat, lng)).addTo(map).bindPopup("Rider's position");
 
-    }else{
-        riderMarker.setLatLng([lat,lng]);
-    }
-}
 // Handle dropoff input change
 const dropoffInput = document.getElementById('dropoff');
 dropoffInput.addEventListener('change', function() {

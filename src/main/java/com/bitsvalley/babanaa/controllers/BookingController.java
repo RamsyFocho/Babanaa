@@ -38,6 +38,7 @@ public class BookingController {
         String bikeType = bikeRequest.getBikeType();
 
         Long Id = (Long) session.getAttribute("CusId");
+
         System.out.println("Customer Id is: "+ Id);
 
         User user = userService.getUserById(Id);
