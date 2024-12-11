@@ -106,9 +106,13 @@ public class BikeRiderController {
     @PostMapping("/ride/accept")
     @ResponseBody
     public ResponseEntity<?> acceptRideRequest(@RequestBody Map<String, Long> jsonBookingId,HttpSession session) {
+        System.out.println("Rider wants to accept ride in the Accept ride");
         Long riderId = (Long) session.getAttribute("riderId");
+        System.out.println("rider id is "+riderId);
         BikeRider rider = bikeRiderService.getBikeRiderById(riderId);
         long bookingId = jsonBookingId.get("bookingId");
+        System.out.println("Booking id is "+bookingId);
+
 //       update the booking with the rider's Id
         bookingService.updateBooking(bookingId,rider);
 //        session the booking id

@@ -204,6 +204,10 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map2Instance);
+            // Adjust map size after display
+                setTimeout(() => {
+                    map2Instance.invalidateSize();
+                }, 300);
              // Tile Layer (OpenStreetMap)
             getCurrentLocation(function(position) {
                         const driverLocation = [position.coords.latitude, position.coords.longitude];
@@ -270,8 +274,7 @@
         document.getElementById('pickupLocation').textContent = pickup;
         document.getElementById('dropoffLocation').textContent = dropoff;
         document.getElementById('fareAmount').textContent = fare;
-        //        display the map
-        displayMap2(pickup,dropoff);
+
 
         //  TODO: Once accepted, send the information to the db, updating the riderId.
         try{
@@ -286,6 +289,8 @@
             if(response.ok){
                 const res = await response.json();
                 console.log("Ride accepted",res);
+                //        display the map
+                displayMap2(pickup,dropoff);
                 //----start sharing location in realtime ------------
                  startLocationSharing(bookingId);
             }else{

@@ -21,7 +21,7 @@ public class BikeRiderService {
         if(bikeRiderOptional.isPresent()){
             return bikeRiderOptional.get();
         }else{
-            throw new IllegalStateException("User not found");
+            throw new IllegalStateException("Rider not found");
         }
     }
 //    ------------------Login and registration--------------

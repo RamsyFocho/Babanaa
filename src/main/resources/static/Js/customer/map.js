@@ -6,10 +6,20 @@ let routingControl; // Declare routingControl globally to update the route
 var dropoffLocation;
 var submitBtn = document.getElementById("submitBtn");
 //--------------disable the submitBtn till everything is inserted
-//var submitBtn = document.getElementById("submitBtn");
-//submitBtn.disabled=true;
-//submit.classList.
-//TODO: disable button till all requirements are met
+var submitBtn = document.getElementById("submitBtn");
+buttonDisable(true);
+function buttonDisable(disable){
+    if(disable){
+        submitBtn.disabled=true;
+        submitBtn.classList.add("bg-gray-500", "cursor-not-allowed", "text-black");
+        submitBtn.classList.remove("bg-yellow-500", "cursor-pointer","text-white","hover:bg-yellow-600");
+    }else{
+         submitBtn.disabled=false;
+         submitBtn.classList.remove("bg-gray-500", "cursor-not-allowed", "text-black");
+         submitBtn.classList.add("bg-yellow-500", "cursor-pointer","text-white","hover:bg-yellow-600");
+
+    }
+}
 
 // Initialize the map with a higher zoom level (18)
 const map = L.map('map').setView([51.505, -0.09], 18); // Zoom level 18 for more details
@@ -20,6 +30,13 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Automatically fetch the user's current location
+const userIcon = L.divIcon({
+     html: '<i class="fas fa-user text-blue-500 text-2xl"></i>',
+     className: 'text-center', // Tailwind CSS class for additional styling if needed
+     iconSize: [30, 30],
+     iconAnchor: [15, 30],
+     popupAnchor: [0, -30]
+});
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(position => {
     pickupLat = position.coords.latitude; // User's latitude
@@ -27,13 +44,12 @@ if (navigator.geolocation) {
 
 
     const pickupMarker = L.marker([pickupLat, pickupLng], {
+//      icon:userIcon,
       draggable: false // Ensure pickup marker is not draggable
     }).addTo(map)
       .bindPopup('Pick-up Location').openPopup();
 
-    // Update pickup location input field
-//    document.getElementById('pickup').value = `${pickupLat},${pickupLng}`;
-     // Fetch and display the place name
+        // Fetch and display the place name
       getPlaceName(pickupLat, pickupLng);
 
     // Set map view to the user's location
@@ -139,7 +155,10 @@ dropoffInput.addEventListener('change', function() {
 
               // Display fare and distance in the UI
               document.getElementById('fareAmount').innerText = `${estimatedFare} FCFA`;
-//              document.getElementById('distanceAmount').innerText = `${distanceInKm.toFixed(2)} km`;
+              if(estimatedFare!=0 || estimatedFare!=null){
+                buttonDisable(false);
+              }
+              // document.getElementById('distanceAmount').innerText = `${distanceInKm.toFixed(2)} km`;
 
               // Optional: console log for debugging
               console.log(`Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`);
