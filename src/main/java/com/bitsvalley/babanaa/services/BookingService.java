@@ -6,6 +6,7 @@ import com.bitsvalley.babanaa.repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +20,11 @@ public class BookingService {
     // retrieve all bookings
         return bookingRepository.findAll();
     }
-    public List<Booking> getRideRequest(){
-        // retrieve all requests for bookings
-        return bookingRepository.findAllByRiderIsEmpty();
+    public List<Booking> getRecentRideRequest(){
+        // retrieve all requests for bookings where the Rider
+        // is null and the bookinig time is less thn 5 mins
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(5);
+        return bookingRepository.findAllByRiderIsEmpty(timeThreshold);
     }
 
 //    public List<Booking> getBookingsByRider(Long riderId) {

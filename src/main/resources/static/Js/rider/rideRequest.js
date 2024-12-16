@@ -1,68 +1,92 @@
 // Establish WebSocket connection
 //    const notification=false;
+function loadRequests(update){
+   fetch('/ride/requests')
+    .then(response => response.json())
+    .then(data => {
+        console.log('Initial ride requests:', data); // Log to check the response
+        if(update){
+            showRideRequests(data,false,true);
+        }else{
+            showRideRequests(data,false,false);
+        }
+     })
+    .catch(error => console.error('Error fetching initial bookings:', error));
+}
      document.addEventListener("DOMContentLoaded", function() {
-        fetch('/ride/requests')
-        .then(response => response.json())
-          .then(data => {
-                     console.log('Initial ride requests:', data); // Log to check the response
-                     showRideRequests(data,false);
-          })
-        .catch(error => console.error('Error fetching initial bookings:', error));
-// -----------------------------initialize map---------------------------------
-     initializeMainMap()
+        loadRequests(false);
+          // -------------------------initialize map---------------------------------
+        initializeMainMap()
         const socket = new SockJS('/ws'); // Match with WebSocket endpoint in Spring
         const stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, function (frame) {
+        stompClient.connect({}, function(frame) {
             console.log('Connected to WebSocket: ' + frame);
 
-            // Subscribe to ride requests
+            // Subscribe to ride requests to get Incoming request
             stompClient.subscribe('/all/bookings', function (message) {
                 const rideRequest = JSON.parse(message.body);
-                console.log('Received rideRequest:', rideRequest);
+                console.log('Received rideRequest: ', rideRequest);
                  // If the WebSocket message is not an array, wrap it in an array
                  if(rideRequest==null){
-                    document.getElementById("message").innerHTML="No ride requests for now!!!";
+                    document.getElementById("message").innerHTML="No new ride requests for now!!!";
                  }
                  else if (!Array.isArray(rideRequest)) {
-                     showRideRequests([rideRequest],true);
+                     showRideRequests([rideRequest],true,false);
                  } else {
-                     showRideRequests(rideRequest,true);
+                     showRideRequests(rideRequest,true,false);
                  }
             });
+            stompClient.subscribe('/all/riderAccepted/updateList', function(){
+                console.log("Trying to update the list of ride requests");
+                loadRequests(true)
+            })
         });
      });
 
     // Show all ride request in the UI
-    function showRideRequests(rideRequest,newRequest) {
+    function showRideRequests(rideRequest,newRequest,update) {
         const rideRequestsContainer = document.getElementById('rideRequests');
-//        rideRequestsContainer.innerHTML ='';
-
-        // ---------------------loop through all the list----------
-      rideRequest.forEach(function(booking){
-        console.log(booking.pickupLocation+"\n");
-        // Ensure `notification` is set to true/false based on your logic before this point.
-                const bgColorClass = newRequest ? 'bg-gray-300 text-white' : 'bg-gray-100';
-
-        rideRequestsContainer.innerHTML += `
-            <div class="${bgColorClass} p-4 rounded-lg shadow mb-4">
-                <p class="hidden" id="bookingId">${booking.bookingId}</p>
-                <p><strong>Pickup:</strong> ${booking.pickupLocation}</p>
-                <p><strong>Dropoff:</strong> ${booking.dropoffLocation}</p>
-                <p><strong>Time:</strong> ${booking.bookingTime}</p>
-                <p><strong>Fare:</strong> ${booking.fare}frs</p>
-                <div class="flex justify-between mt-4">
-                    <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}', '${booking.bookingId}')">Accept</button>
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600"
-                        onclick="viewRideDetails('${booking.pickupLocation}', '${booking.dropoffLocation}')">
-                            View
-                    </button>
-                    <button class="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600">Reject</button>
+        if(update){
+            rideRequestsContainer.innerHTML ='';
+        }else{
+            // ---------------------loop through all the list----------
+          if(rideRequest==null && newRequest!=true){
+               rideRequestsContainer.innerHTML =`
+                <div class="text-center bg-blue-100 border border-blue-300 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">No ride requests yet</span>
                 </div>
-            </div>
-        `;
-      })
-    }
+               `;
+          }else{
+              rideRequest.forEach(function(booking){
+                console.log(booking.pickupLocation+"\n");
+                // Ensure `notification` is set to true/false based on your logic before this point.
+                        const bgColorClass = newRequest ? 'bg-gray-300 text-white' : 'bg-gray-100';
+
+                rideRequestsContainer.innerHTML += `
+                    <div class="${bgColorClass} p-4 rounded-lg shadow mb-4">
+                        <p class="hidden" id="bookingId">${booking.bookingId}</p>
+                        <p><strong>Pickup:</strong> ${booking.pickupLocation}</p>
+                        <p><strong>Dropoff:</strong> ${booking.dropoffLocation}</p>
+                        <p><strong>Time:</strong> ${booking.bookingTime}</p>
+                        <p><strong>Fare:</strong> ${booking.fare}frs</p>
+                        <div class="flex justify-between mt-4">
+                            <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}', '${booking.bookingId}')">Accept</button>
+                            <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600"
+                                onclick="viewRideDetails('${booking.pickupLocation}', '${booking.dropoffLocation}')">
+                                    View
+                            </button>
+                            <button class="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600">Reject</button>
+                        </div>
+                    </div>
+                `;
+              })
+
+          }
+        }
+
+        }
+
     // Initialize OpenStreetMap
 
         let markers = [];

@@ -119,7 +119,13 @@ public class BikeRiderController {
         session.setAttribute("bookingId",bookingId);
 //        notify the customers
         sendRiderDetailsToCustomer(bookingId);
+//        update the rideRequest list on the rider's dashboard
+        updateAllRideRequest();
         return ResponseEntity.ok(Map.of("status","success","bookingId",bookingId));
+    }
+
+    private void updateAllRideRequest() {
+        messagingTemplate.convertAndSend("/all/riderAccepted/updateList");
     }
 
     private void sendRiderDetailsToCustomer(Long bookingId) {
