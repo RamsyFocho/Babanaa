@@ -8,17 +8,17 @@ var submitBtn = document.getElementById("submitBtn");
 //--------------disable the submitBtn till everything is inserted
 var submitBtn = document.getElementById("submitBtn");
 buttonDisable(true);
-function buttonDisable(disable){
-    if(disable){
-        submitBtn.disabled=true;
-        submitBtn.classList.add("bg-gray-500", "cursor-not-allowed", "text-black");
-        submitBtn.classList.remove("bg-yellow-500", "cursor-pointer","text-white","hover:bg-yellow-600");
-    }else{
-         submitBtn.disabled=false;
-         submitBtn.classList.remove("bg-gray-500", "cursor-not-allowed", "text-black");
-         submitBtn.classList.add("bg-yellow-500", "cursor-pointer","text-white","hover:bg-yellow-600");
+function buttonDisable(disable) {
+  if (disable) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add("bg-gray-500", "cursor-not-allowed", "text-black");
+    submitBtn.classList.remove("bg-yellow-500", "cursor-pointer", "text-white", "hover:bg-yellow-600");
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove("bg-gray-500", "cursor-not-allowed", "text-black");
+    submitBtn.classList.add("bg-yellow-500", "cursor-pointer", "text-white", "hover:bg-yellow-600");
 
-    }
+  }
 }
 
 // Initialize the map with a higher zoom level (18)
@@ -31,11 +31,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Automatically fetch the user's current location
 const userIcon = L.divIcon({
-     html: '<i class="fas fa-user text-blue-500 text-2xl"></i>',
-     className: 'text-center', // Tailwind CSS class for additional styling if needed
-     iconSize: [30, 30],
-     iconAnchor: [15, 30],
-     popupAnchor: [0, -30]
+  html: '<i class="fas fa-user text-blue-500 text-2xl"></i>',
+  className: 'text-center', // Tailwind CSS class for additional styling if needed
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+  popupAnchor: [0, -30]
 });
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(position => {
@@ -44,13 +44,13 @@ if (navigator.geolocation) {
 
 
     const pickupMarker = L.marker([pickupLat, pickupLng], {
-//      icon:userIcon,
+      //      icon:userIcon,
       draggable: false // Ensure pickup marker is not draggable
     }).addTo(map)
       .bindPopup('Pick-up Location').openPopup();
 
-        // Fetch and display the place name
-      getPlaceName(pickupLat, pickupLng);
+    // Fetch and display the place name
+    getPlaceName(pickupLat, pickupLng);
 
     // Set map view to the user's location
     map.setView([pickupLat, pickupLng], 18);
@@ -64,13 +64,13 @@ if (navigator.geolocation) {
 }
 //-----------rider marker--------------
 let riderMarker; // Keep track of the rider's marker on the map'
- function updateRiderMarker(lat, lng){
-    if(!riderMarker){
-        rideMarker = L.marker([lat, lng]).addTo(map).bindPopup("Rider's position").openPopup();
+function updateRiderMarker(lat, lng) {
+  if (!riderMarker) {
+    rideMarker = L.marker([lat, lng]).addTo(map).bindPopup("Rider's position").openPopup();
 
-    }else{
-        riderMarker.setLatLng([lat,lng]);
-    }
+  } else {
+    riderMarker.setLatLng([lat, lng]);
+  }
 }
 //convert the pickup location into the actual place
 function getPlaceName(lat, lng) {
@@ -97,8 +97,8 @@ function getPlaceName(lat, lng) {
 
 // Handle dropoff input change
 const dropoffInput = document.getElementById('dropoff');
-dropoffInput.addEventListener('change', function() {
-   dropoffLocation = dropoffInput.value;
+dropoffInput.addEventListener('change', function () {
+  dropoffLocation = dropoffInput.value;
   // Use a Geocoding API like Nominatim for getting coordinates from the address
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(dropoffLocation)}`)
     .then(response => response.json())
@@ -110,20 +110,20 @@ dropoffInput.addEventListener('change', function() {
         // If a dropoffMarker already exists, update its position instead of creating a new one
         if (dropoffMarker) {
           dropoffMarker.setLatLng([dropoffLat, dropoffLng]); // Update existing marker position
-          dropoffLocation=[dropoffLat,dropoffLng];//Store the drop off location in an array
+          dropoffLocation = [dropoffLat, dropoffLng];//Store the drop off location in an array
         } else {
           // Create a marker for the dropoff location
           dropoffMarker = L.marker([dropoffLat, dropoffLng], {
             icon: L.divIcon({ className: 'custom-dropoff-marker' }), // Custom icon from your CSS
             draggable: false // Ensure dropoff marker is not draggable
           }).addTo(map).bindPopup('Drop-off Location').openPopup();
-          dropoffLocation=[dropoffLat,dropoffLng];//Store the drop off location in an array
+          dropoffLocation = [dropoffLat, dropoffLng];//Store the drop off location in an array
 
         }
-//---------TAG THE HIDDEN INPUT TO STORE THE DROP OFF VARIABLE----------
+        //---------TAG THE HIDDEN INPUT TO STORE THE DROP OFF VARIABLE----------
 
-//      const dropoffLoc = document.getElementById('dropOffLoc');
-//      dropoffLoc.value = `${dropoffLocation[0]},${dropoffLocation[1]}`; // Using the stored dropoffLng
+        //      const dropoffLoc = document.getElementById('dropOffLoc');
+        //      dropoffLoc.value = `${dropoffLocation[0]},${dropoffLocation[1]}`; // Using the stored dropoffLng
 
         // Routing from pickup to dropoff
         if (pickupLat && pickupLng) {
@@ -141,29 +141,29 @@ dropoffInput.addEventListener('change', function() {
               }),
               routeWhileDragging: false // Disable route dragging
             })
-            .on('routesfound', function(e) {
-              // Get the distance in meters
-              const distanceInMeters = e.routes[0].summary.totalDistance;
+              .on('routesfound', function (e) {
+                // Get the distance in meters
+                const distanceInMeters = e.routes[0].summary.totalDistance;
 
-              // Convert meters to kilometers
-              const distanceInKm = distanceInMeters / 1000;
+                // Convert meters to kilometers
+                const distanceInKm = distanceInMeters / 1000;
 
-              // Calculate fare (FCFA)
-              const baseFare = 500; // Base fare in FCFA
-              const farePerKm = 100; // FCFA per kilometer
-              const estimatedFare = (baseFare + farePerKm * distanceInKm).toFixed(2); // Round to 2 decimal places
+                // Calculate fare (FCFA)
+                const baseFare = 500; // Base fare in FCFA
+                const farePerKm = 100; // FCFA per kilometer
+                const estimatedFare = (baseFare + farePerKm * distanceInKm).toFixed(2); // Round to 2 decimal places
 
-              // Display fare and distance in the UI
-              document.getElementById('fareAmount').innerText = `${estimatedFare} FCFA`;
-              if(estimatedFare!=0 || estimatedFare!=null){
-                buttonDisable(false);
-              }
-              // document.getElementById('distanceAmount').innerText = `${distanceInKm.toFixed(2)} km`;
+                // Display fare and distance in the UI
+                document.getElementById('fareAmount').innerText = `${estimatedFare} FCFA`;
+                if (estimatedFare != 0 || estimatedFare != null) {
+                  buttonDisable(false);
+                }
+                // document.getElementById('distanceAmount').innerText = `${distanceInKm.toFixed(2)} km`;
 
-              // Optional: console log for debugging
-              console.log(`Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`);
-            })
-            .addTo(map);
+                // Optional: console log for debugging
+                console.log(`Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`);
+              })
+              .addTo(map);
           }
         } else {
           alert("Pickup location not available!");

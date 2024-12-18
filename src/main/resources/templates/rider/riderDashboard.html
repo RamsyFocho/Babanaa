@@ -18,7 +18,7 @@
     <!-- Leaflet Routing Machine CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <style>
-        #map { height: 300px; }
+        #map { height: 90vh; }
     </style>
 </head>
 <body class="bg-gray-100" th:if="${rider}">
@@ -31,7 +31,6 @@
             <i onclick="displayMap2()" class=" fas fa-times text-white text-2xl font-bold absolute top-2 right-2 pointer mb-4"></i>
             <div class="map z-50 mt-8 w-full" id="map2"></div>
         </div>
-            <button onclick="displayMap2()">Scale Map</button>
 
         <!-- Rider Profile -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

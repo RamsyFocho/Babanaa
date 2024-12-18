@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Service
 public class BookingService {
-//    TODO: implement this feature
     @Autowired
     BookingRepository bookingRepository;
 
@@ -23,7 +22,7 @@ public class BookingService {
     public List<Booking> getRecentRideRequest(){
         // retrieve all requests for bookings where the Rider
         // is null and the bookinig time is less thn 5 mins
-        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(5);
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(15);
         return bookingRepository.findAllByRiderIsEmpty(timeThreshold);
     }
 
