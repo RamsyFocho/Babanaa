@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +16,11 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Transactional
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "bookingId"
+)
+//@Transactional
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +39,6 @@ public class Booking {
 
 
     private String dropoffLocation;
-//TODO: Implement location
 
     private String status;
 

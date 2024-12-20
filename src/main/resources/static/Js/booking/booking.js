@@ -3,13 +3,13 @@
 //   JavaScript for Form to collect data and send to the backend
 document.getElementById('rideRequestForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    alert("Clicked");
+    alert("Sent!!!");
     const formData = new FormData(this);
     const formObject = {
         pickup: formData.get("pickupLoc"),
         dropOff: formData.get("dropOff"),
         bikeType: formData.get("bikeType"),
-        //            TODO collect the fare from the UI
+        //  TODO collect the fare from the UI
     }
     try {
         const response = await fetch('/ride/request', {

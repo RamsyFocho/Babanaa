@@ -1,5 +1,7 @@
 package com.bitsvalley.babanaa.domains;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -8,6 +10,10 @@ import java.util.List;
 
 @Getter
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "riderId"
+)
 public class BikeRider {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

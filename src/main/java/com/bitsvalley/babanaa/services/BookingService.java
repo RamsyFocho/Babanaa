@@ -35,16 +35,25 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-
     public void updateBooking(Long bookingId, BikeRider rider) {
         System.out.println("In the booking, the Booking Id is "+bookingId);
-        Optional<Booking> bookingByIdAndNullRider = bookingRepository.findBookingByIdAndNullRider(bookingId);
-        if(bookingByIdAndNullRider.isPresent()) {
-            bookingByIdAndNullRider.get().setBikeRider(rider);
+        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
+        if(bookingById.isPresent()) {
+//            get the Booking
+            Booking booking = bookingById.get();
+//             get the rider from the booking to check if at all a rider has been registered
+            BikeRider bRider = booking.getBikeRider();
+            if(bRider == null){
+                booking.setBikeRider(rider);
+                bookingRepository.save(booking);
+            }else{
+                throw new IllegalStateException("booking has already been accepted");
+            }
         }else{
-            throw new IllegalStateException("Booking not found or booking has already been accepted");
+            throw new IllegalStateException("Booking not found");
         }
     }
+
 
     public Booking getBooKingById(Long bookingId) {
         Optional<Booking> bookingById = bookingRepository.findById(bookingId);

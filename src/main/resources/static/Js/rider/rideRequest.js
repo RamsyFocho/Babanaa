@@ -45,8 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // listen to if a rider accepts a requests
         stompClient.subscribe('/all/riderAccepted/updateList', function () {
             console.log("Trying to update the list of ride requests");
-            loadRequests(true)
-        })
+            loadRequests(true);
+        });
     });
 });
 
@@ -59,15 +59,11 @@ function showRideRequests(rideRequest, newRequest, update) {
         rideRequestsContainer.innerHTML = '';
     } else {
         // ---------------------loop through all the list----------
-        if (rideRequest.length <= 0) {
-            console.log("the ride request list is "+rideRequest.length);
-            rideRequestsContainer.innerHTML = `
-                <div id="messageContainer" class="text-center bg-yellow-400 border border-blue-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
-                    <span class="block sm:inline">No ride requests yet</span>
-                </div>
-               `;
+        if (rideRequest.length == 0) {
+            console.log("the ride request list is "+rideRequest.length);            
         }
          else {
+            document.getElementById("messageContainer").classList.add("hidden");
             rideRequest.forEach(function (booking) {
                 console.log(booking.pickupLocation + "\n");
                 // Ensure `notification` is set to true/false based on your logic before this point.
@@ -313,7 +309,7 @@ async function acceptRide(pickup, dropoff, fare, bookingId) {
     //  TODO: Once accepted, send the information to the db, updating the riderId.
     try {
         const response = await fetch('/ride/accept', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

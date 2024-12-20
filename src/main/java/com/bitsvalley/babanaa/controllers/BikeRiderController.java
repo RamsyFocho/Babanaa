@@ -6,7 +6,7 @@ import com.bitsvalley.babanaa.services.BikeRiderService;
 import com.bitsvalley.babanaa.domains.Booking;
 import com.bitsvalley.babanaa.services.BookingService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -104,9 +104,9 @@ public class BikeRiderController {
              return "rider/riderDashboard";
         }
     }
-    @PostMapping("/ride/accept")
+    @PutMapping("/ride/accept")
     @ResponseBody
-    @Transactional
+//    @Transactional
     public ResponseEntity<?> acceptRideRequest(@RequestBody Map<String, Long> jsonBookingId,HttpSession session) {
         System.out.println("Rider wants to accept ride in the Accept ride");
         Long riderId = (Long) session.getAttribute("riderId");
@@ -122,7 +122,7 @@ public class BikeRiderController {
 //        notify the customers
         sendRiderDetailsToCustomer(bookingId);
 //        update the rideRequest list on the rider's dashboard
-        updateAllRideRequest();
+//        updateAllRideRequest();
         return ResponseEntity.ok(Map.of("status","success","bookingId",bookingId));
     }
 
@@ -132,9 +132,11 @@ public class BikeRiderController {
 
     private void sendRiderDetailsToCustomer(Long bookingId) {
         Booking booking = bookingService.getBooKingById(bookingId);
-        BikeRider rider = bikeRiderService.getBikeRiderById(booking.getBikeRider().getRiderId());
+//        BikeRider rider = bikeRiderService.getBikeRiderById(booking.getBikeRider().getRiderId());
+        BikeRider rider = booking.getBikeRider();
         System.out.println("In the sendRiderDetailsToCustomer method,");
         System.out.println("the riderId is "+booking.getBikeRider().getRiderId());
+        System.out.println("the rider email is "+rider.getEmail());
         System.out.println("The booking id is "+bookingId);
         messagingTemplate.convertAndSend("/all/riderAccepted/"+bookingId,rider);
     }
@@ -143,6 +145,7 @@ public class BikeRiderController {
     @ResponseBody
     public ResponseEntity<?> updateLocation(@RequestBody Location location,HttpSession session){
         Long bookingId = (Long) session.getAttribute("bookingId");
+
         messagingTemplate.convertAndSend("/all/location/"+bookingId,location);
         return  ResponseEntity.ok("Location updated");
     }

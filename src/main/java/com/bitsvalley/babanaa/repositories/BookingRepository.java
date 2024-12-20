@@ -16,8 +16,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByRiderIsEmpty(@Param("timeThreshold") LocalDateTime timeThreshold);
 
 //    select booking where bookingId is Id and bikeRider is null
-    @Query("SELECT b FROM Booking b WHERE b.bikeRider IS NULL AND b.bookingId = :Id")
-    Optional<Booking> findBookingByIdAndNullRider(@Param("Id") Long bookingId);
+//    @Query("SELECT b FROM Booking b WHERE b.bikeRider IS NULL AND b.bookingId = :Id")
+//    Optional<Booking> findBookingByIdAndNullRider(@Param("Id") Long bookingId);
 
 }
 
