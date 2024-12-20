@@ -38,7 +38,9 @@ public class BookingController {
         String bikeType = bikeRequest.getBikeType();
 
         Long Id = (Long) session.getAttribute("CusId");
+        if(Id == null ||Id==0){
 
+        }
         System.out.println("Customer Id is: "+ Id);
 
         User user = userService.getUserById(Id);
@@ -51,13 +53,6 @@ public class BookingController {
         return ResponseEntity.ok(Map.of("status","success","bookingId",booking.getBookingId()));
     }
 
-
-//    @GetMapping("/booking/requests")
-//    public List<Booking> getAllBookingRequests() {
-//        // Fetch bookings and return them as a list (array in JavaScript)
-//        System.out.println("List of requests: "+bookingService.getRideRequest());
-//        return bookingService.getRideRequest();
-//    }
 
     public void sendNewRequest(Booking booking) {
 //        retrieve the bookings from the database

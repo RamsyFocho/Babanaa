@@ -38,11 +38,11 @@ public class BookingService {
 
     public void updateBooking(Long bookingId, BikeRider rider) {
         System.out.println("In the booking, the Booking Id is "+bookingId);
-        Optional<Booking> bookingById = bookingRepository.findById(bookingId);
-        if(bookingById.isPresent()) {
-            bookingById.get().setBikeRider(rider);
+        Optional<Booking> bookingByIdAndNullRider = bookingRepository.findBookingByIdAndNullRider(bookingId);
+        if(bookingByIdAndNullRider.isPresent()) {
+            bookingByIdAndNullRider.get().setBikeRider(rider);
         }else{
-            throw new IllegalStateException("Booking not found");
+            throw new IllegalStateException("Booking not found or booking has already been accepted");
         }
     }
 

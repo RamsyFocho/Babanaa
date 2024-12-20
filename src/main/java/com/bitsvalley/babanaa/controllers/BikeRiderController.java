@@ -6,6 +6,7 @@ import com.bitsvalley.babanaa.services.BikeRiderService;
 import com.bitsvalley.babanaa.domains.Booking;
 import com.bitsvalley.babanaa.services.BookingService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -105,6 +106,7 @@ public class BikeRiderController {
     }
     @PostMapping("/ride/accept")
     @ResponseBody
+    @Transactional
     public ResponseEntity<?> acceptRideRequest(@RequestBody Map<String, Long> jsonBookingId,HttpSession session) {
         System.out.println("Rider wants to accept ride in the Accept ride");
         Long riderId = (Long) session.getAttribute("riderId");
@@ -134,7 +136,7 @@ public class BikeRiderController {
         System.out.println("In the sendRiderDetailsToCustomer method,");
         System.out.println("the riderId is "+booking.getBikeRider().getRiderId());
         System.out.println("The booking id is "+bookingId);
-        messagingTemplate.convertAndSend("/all/riderAccepted/"+booking.getBookingId(),rider);
+        messagingTemplate.convertAndSend("/all/riderAccepted/"+bookingId,rider);
     }
 //    --------------------automatically collect location and send to the customer in real time
     @PostMapping("/ride/location")

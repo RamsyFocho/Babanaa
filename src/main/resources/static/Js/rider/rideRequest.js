@@ -14,6 +14,7 @@ function loadRequests(update) {
         .catch(error => console.error('Error fetching initial bookings:', error));
 }
 document.addEventListener("DOMContentLoaded", function () {
+    loadRequests(false);
     setInterval(function () {
         loadRequests(false);
         
@@ -58,13 +59,13 @@ function showRideRequests(rideRequest, newRequest, update) {
         rideRequestsContainer.innerHTML = '';
     } else {
         // ---------------------loop through all the list----------
-        if (rideRequest.length == 0) {
+        if (rideRequest.length <= 0) {
+            console.log("the ride request list is "+rideRequest.length);
             rideRequestsContainer.innerHTML = `
-                <div id="messageContainer" class="text-center bg-blue-100 border border-blue-300 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                <div id="messageContainer" class="text-center bg-yellow-400 border border-blue-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
                     <span class="block sm:inline">No ride requests yet</span>
                 </div>
                `;
-
         }
          else {
             rideRequest.forEach(function (booking) {

@@ -5,11 +5,16 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import jakarta.transaction.Transactional;
 import lombok.Getter;
+import lombok.Setter;
 
 
+@Setter
 @Getter
 @Entity
+@Transactional
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,43 +85,4 @@ public class Booking {
     }
     // Getters and Setters
 
-    public void setBookingId(Long bookingId) {
-        this.bookingId = bookingId;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setBikeRider(BikeRider bikeRider) {
-        this.bikeRider = bikeRider;
-    }
-
-    public void setPickupLocation(String pickupLocation) {
-        this.pickupLocation = pickupLocation;
-    }
-
-    public void setDropoffLocation(String dropoffLocation) {
-        this.dropoffLocation = dropoffLocation;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setBookingTime(LocalDateTime bookingTime) {
-        this.bookingTime = bookingTime;
-    }
-
-    public void setCompletionTime(LocalDateTime completionTime) {
-        this.completionTime = completionTime;
-    }
-
-    public void setFare(float fare) {
-        this.fare = fare;
-    }
-
-    public void setDistance(float distance) {
-        this.distance = distance;
-    }
 }
