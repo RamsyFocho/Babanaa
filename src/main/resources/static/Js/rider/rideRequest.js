@@ -16,8 +16,7 @@ function loadRequests(update) {
 document.addEventListener("DOMContentLoaded", function () {
     loadRequests(false);
     setInterval(function () {
-        loadRequests(false);
-        
+        loadRequests(false);        
     },900000);//run the loadRequests(false) function every 15 minutes,
               //adjust the interval to 900,000 milliseconds (since 15 minutes = 15 * 60 * 1000 milliseconds).
     // -------------------------initialize map---------------------------------
@@ -42,14 +41,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 showRideRequests(rideRequest, true, false);
             }
         });
-        // listen to if a rider accepts a requests
+        
+    });
+    // listen to if a rider accepts a requests
+    listenToAcceptedRide();
+});
+function listenToAcceptedRide(){
+    const socket = new SockJS('/ws'); // Match with WebSocket endpoint in Spring
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log('Connected to WebSocket: ' + frame);
         stompClient.subscribe('/all/riderAccepted/updateList', function () {
             console.log("Trying to update the list of ride requests");
             loadRequests(true);
         });
     });
-});
-
+    
+}
 // Show all ride request in the UI
 function showRideRequests(rideRequest, newRequest, update) {
     const rideRequestsContainer = document.getElementById('rideRequests');
