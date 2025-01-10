@@ -9,6 +9,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Data
 @Controller
+@Transactional
 public class BookingController {
     @Autowired
     private UserService userService;

@@ -35,6 +35,11 @@ document.getElementById('rideRequestForm').addEventListener('submit', async func
     }
 
 });
+function disableForm(disable){
+    if(disable){
+        document.getElementById("formContainer").style.display="none";
+    }
+}
 function listenForRiderAcceptance(bookingId) {
     const socket = new SockJS('/ws');
     const stompClient = Stomp.over(socket);
@@ -44,6 +49,7 @@ function listenForRiderAcceptance(bookingId) {
             const data = JSON.parse(message.body);
             console.log("Rider accepted the booking:", data);
             if (data != null) {
+                disableForm(true);
                 listenForRiderLocation(bookingId);
             }
             // Update UI with rider info

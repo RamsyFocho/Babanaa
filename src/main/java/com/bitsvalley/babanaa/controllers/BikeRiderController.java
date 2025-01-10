@@ -122,12 +122,17 @@ public class BikeRiderController {
 //        notify the customers
         sendRiderDetailsToCustomer(bookingId);
 //        update the rideRequest list on the rider's dashboard
-//        updateAllRideRequest();
+        updateAllRideRequest();
         return ResponseEntity.ok(Map.of("status","success","bookingId",bookingId));
     }
 
     private void updateAllRideRequest() {
-        messagingTemplate.convertAndSend("/all/riderAccepted/updateList");
+        try {
+            messagingTemplate.convertAndSend("/all/riderAccepted/updateList", "update");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Log the error properly
+        }
     }
 
     private void sendRiderDetailsToCustomer(Long bookingId) {
