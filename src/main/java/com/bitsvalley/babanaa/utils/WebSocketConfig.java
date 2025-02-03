@@ -41,9 +41,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry.addEndpoint("/ws");
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:8080").withSockJS(); // Endpoint for WebSocket connection
+        registry.addEndpoint("/ws")
+                .setAllowedOrigins("http://localhost:8080", "https://15eb-154-72-167-237.ngrok-free.app")
+                .withSockJS();
+//                .setUrl("/ws");
     }
+
+//                                                                        
 
 }
 

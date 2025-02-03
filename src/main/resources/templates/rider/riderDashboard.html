@@ -6,7 +6,7 @@
     <title>Rider Dashboard</title>
 
     <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"> -->
     <link rel="stylesheet" th:href="@{/css/output.css}">
 
     <!--font awesome icons-->
@@ -56,9 +56,9 @@
                 <h2 class="text-2xl font-semibold text-gray-800">Incoming Ride Requests</h2>
                 <div id="rideRequests" class="mt-4">
                     <!-- Ride requests will be dynamically rendered here -->
-                    <div id="messageContainer" class="text-center bg-yellow-400 border border-yellow-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
+                    <!-- <div id="messageContainer" class="text-center bg-yellow-400 border border-yellow-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
                         <span class="block sm:inline">No ride requests yet</span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -85,9 +85,10 @@
 <!-- Rider UI - JavaScript for handling WebSocket connections -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script th:src="@{/Js/rider/rideRequest.js}"></script>
-    <script>
 
-    </script>
+<script th:src="@{/Js/rider/rideRequest.js}"></script>
+  
+<!-- test -->
+<!-- <script th:src="@{/Js/rider/rideScriptTest.js}"></script> -->
 </body>
 </html>

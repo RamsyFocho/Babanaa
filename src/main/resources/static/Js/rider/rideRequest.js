@@ -15,6 +15,7 @@ function loadRequests(update) {
 }
 document.addEventListener("DOMContentLoaded", function () {
   loadRequests(false);
+
   setInterval(function () {
     loadRequests(false);
   }, 900000); //run the loadRequests(false) function every 15 minutes,
@@ -47,64 +48,148 @@ document.addEventListener("DOMContentLoaded", function () {
       loadRequests(true);
     });
   });
-  // listenToAcceptedRide();
+  startRealtimeLocationTracking();
+  listenToAcceptedRide();
 });
-// function listenToAcceptedRide(){
-//     const socket = new SockJS('/ws'); // Match with WebSocket endpoint in Spring
-//     const stompClient = Stomp.over(socket);
+let driverMarker;
 
-//     // stompClient.connect({}, function (frame) {
-//     //     console.log('Connected to WebSocket: ' + frame);
-//     //     stompClient.subscribe('/all/riderAccepted/updateList', function () {
-//     //         console.log("Trying to update the list of ride requests");
-//     //         loadRequests(true);
-//     //     });
-//     // });
+function startRealtimeLocationTracking() {
+  console.log("checking the rider's real time location");
 
-// }
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser!");
+    return;
+  }
+
+  // Get initial location
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+
+      // Center map on rider's location
+      mainMapInstance.setView([latitude, longitude], 18);
+
+      // Add rider marker
+      if (driverMarker) {
+        mainMapInstance.removeLayer(driverMarker);
+      }
+
+      driverMarker = L.marker([latitude, longitude], {
+        icon: driverIcon,
+        draggable: false,
+      })
+        .addTo(mainMapInstance)
+        .bindPopup("Your Location")
+        .openPopup();
+    },
+    (error) => {
+      console.error("Error getting location:", error);
+      alert("Unable to retrieve your location.");
+    },
+    {
+      enableHighAccuracy: true,
+    }
+  );
+
+  // // Start continuous location tracking
+  // locationUpdateInterval = navigator.geolocation.watchPosition(
+  //   (position) => {
+  //     const { latitude, longitude } = position.coords;
+
+  //     // Update marker position
+  //     if (driverMarker) {
+  //       driverMarker.setLatLng([latitude, longitude]);
+  //     }
+
+  //     // Send location to server
+  //     updateServerLocation(latitude, longitude);
+  //   },
+  //   (error) => {
+  //     console.error("Location tracking error:", error);
+  //   },
+  //   {
+  //     enableHighAccuracy: true,
+  //     maximumAge: 10000,
+  //     timeout: 5000,
+  //   }
+  // );
+}
+function listenToAcceptedRide() {
+  const socket = new SockJS("/ws"); // Match with WebSocket endpoint in Spring
+  const stompClient = Stomp.over(socket);
+
+  stompClient.connect({}, function (frame) {
+    console.log("Connected to WebSocket: " + frame);
+    stompClient.subscribe("/all/riderAccepted/updateList", function () {
+      console.log("Trying to update the list of ride requests");
+      loadRequests(true);
+    });
+  });
+}
 // Show all ride request in the UI
 function showRideRequests(rideRequest, newRequest, update) {
+  console.log('displaying the results...');
   const rideRequestsContainer = document.getElementById("rideRequests");
-  const messageContainer = document.getElementById("messageContainer");
 
-  // ---------------------loop through all the list----------
-  if (rideRequest.length == 0) {
-    console.log("the ride request list is " + rideRequest.length);
+  if (rideRequest.length === 0) {
     rideRequestsContainer.innerHTML = `
-            <div id="messageContainer" class="text-center bg-yellow-400 border border-yellow-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">No ride requests yet</span>
-            </div>
-        `;
-  } else {
-    // document.getElementById("messageContainer").classList.add("hidden");
-    messageContainer.classList.add("hidden");
-
-    rideRequest.forEach(function (booking) {
-      console.log(booking.pickupLocation + "\n");
-      // Ensure `notification` is set to true/false based on your logic before this point.
-      const bgColorClass = newRequest
-        ? "bg-gray-300 text-white"
-        : "bg-gray-100";
-      // messageContainer.classList.add("hidden");
-      rideRequestsContainer.innerHTML += `
-                    <div class="${bgColorClass} p-4 rounded-lg shadow mb-4">
-                        <p class="hidden" id="bookingId">${booking.bookingId}</p>
-                        <p><strong>Pickup:</strong> ${booking.pickupLocation}</p>
-                        <p><strong>Dropoff:</strong> ${booking.dropoffLocation}</p>
-                        <p><strong>Time:</strong> ${booking.bookingTime}</p>
-                        <p><strong>Fare:</strong> ${booking.fare}frs</p>
-                        <div class="flex flex-wrap justify-between mt-4">
-                            <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}', '${booking.bookingId}')">Accept</button>
-                            <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600"
-                                onclick="viewRideDetails('${booking.pickupLocation}', '${booking.dropoffLocation}')">
-                                    View
-                            </button>
-                            <button class="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600">Reject</button>
-                        </div>
-                    </div>
-                `;
-    });
+      <div id="messageContainer" class="text-center bg-yellow-400 border border-yellow-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline">No ride requests yet</span>
+      </div>
+    `;
+    return;
   }
+
+  // Ensure rideRequest is an array
+  let requests = Array.isArray(rideRequest) ? rideRequest : [rideRequest];
+
+  // Initialize the HTML string for new requests
+  let rideRequestsHtml = "";
+
+  requests.forEach(function (booking) {
+    console.log(booking);
+
+    // Styling for new requests
+    const bgColorClass = newRequest
+      ? "border-2 border-red-500 bg-gray-100 shadow-lg"
+      : "bg-gray-100";
+    const badgeHtml = newRequest
+      ? `<span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">New Request</span>`
+      : "";
+
+    let requestHtml = `
+      <div class="relative ${bgColorClass} p-4 rounded-lg shadow mb-4 transition-all duration-300 transform scale-95">
+        ${badgeHtml}
+        <p class="hidden" id="bookingId">${booking.bookingId}</p>
+        <p><strong>Pickup:</strong> ${booking.pickupLocation}</p>
+        <p><strong>Dropoff:</strong> ${booking.dropoffLocation}</p>
+        <p><strong>Time:</strong> ${booking.bookingTime}</p>
+        <p><strong>Fare:</strong> ${booking.fare} frs</p>
+        <div class="flex flex-wrap justify-between mt-4">
+          <button class="bg-green-500 text-white px-4 py-2 rounded font-bold hover:bg-green-600" onclick="acceptRide('${booking.pickupLocation}', '${booking.dropoffLocation}', '${booking.fare}', '${booking.bookingId}')">Accept</button>
+          <button class="bg-blue-500 text-white px-4 py-2 rounded font-bold hover:bg-blue-600" onclick="viewRideDetails('${booking.pickupLocation}', '${booking.dropoffLocation}')">View</button>
+          <button class="bg-red-500 text-white px-4 py-2 rounded font-bold hover:bg-red-600">Reject</button>
+        </div>
+      </div>
+    `;
+
+    // Add new requests to the **top**
+    rideRequestsHtml = requestHtml + rideRequestsHtml;
+  });
+
+  // Prepend the new requests at the top
+  rideRequestsContainer.innerHTML =
+    rideRequestsHtml + rideRequestsContainer.innerHTML;
+
+  // Apply animation effect
+  setTimeout(() => {
+    console.log("Applying the animation...");
+    
+    document.querySelectorAll(".transition-all").forEach((el) => {
+      el.classList.remove("scale-95");
+      el.classList.add("scale-100");
+    });
+  }, 100);
 }
 
 // Initialize OpenStreetMap

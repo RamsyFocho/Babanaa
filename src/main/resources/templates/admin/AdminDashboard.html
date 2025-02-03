@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/static/css/output.css">
-    <link rel="stylesheet" href="/static/css/admin/filterTable.css">
-    <link rel="stylesheet" href="/static/css/admin/tab.css">
-    <link rel="stylesheet" href="/static/fontAwesome-free-6.6.0-web/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/output.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/filterTable.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/tab.css}">
+    <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}">
 </head>
 <body class="bg-gray-100 flex">
 
@@ -110,7 +110,7 @@
         </div>
     </div>
 
-    <script src="/static/Js/admin/dashboard.js"></script>
-    <script src="/static/Js/admin/filterTable.js"></script>
+    <script th:src="@{/Js/admin/dashboard.js}"></script>
+    <script th:src="@{/Js/admin/filterTable.js}"></script>
 </body>
 </html>
