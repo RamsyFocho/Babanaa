@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    @Query("SELECT b FROM Booking b WHERE b.bikeRider IS NULL AND b.bookingTime >= :timeThreshold ORDER BY b.bookingTime DESC")
+    @Query("SELECT b FROM Booking b WHERE b.bikeRider IS NULL AND b.bookingTime >= :timeThreshold ORDER BY b.bookingTime ")
     List<Booking> findAllByRiderIsEmpty(@Param("timeThreshold") LocalDateTime timeThreshold);
 
 //    select booking where bookingId is Id and bikeRider is null

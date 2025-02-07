@@ -128,10 +128,12 @@ function listenToAcceptedRide() {
 }
 // Show all ride request in the UI
 function showRideRequests(rideRequest, newRequest, update) {
-  console.log('displaying the results...');
+  console.log("displaying the results...");
   const rideRequestsContainer = document.getElementById("rideRequests");
 
   if (rideRequest.length === 0) {
+    console.log("Empty ride request: No ride request available...");
+
     rideRequestsContainer.innerHTML = `
       <div id="messageContainer" class="text-center bg-yellow-400 border border-yellow-600 text-white font-bold px-4 py-3 rounded relative" role="alert">
         <span class="block sm:inline">No ride requests yet</span>
@@ -153,9 +155,10 @@ function showRideRequests(rideRequest, newRequest, update) {
     const bgColorClass = newRequest
       ? "border-2 border-red-500 bg-gray-100 shadow-lg"
       : "bg-gray-100";
-    const badgeHtml = newRequest
-      ? `<span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">New Request</span>`
+      const badgeHtml = newRequest
+      ? `<p class=" bg-red-500 mb-2 w-4 text-white text-sm px-3 py-1 rounded-full shadow-lg">New</p>`
       : "";
+    
 
     let requestHtml = `
       <div class="relative ${bgColorClass} p-4 rounded-lg shadow mb-4 transition-all duration-300 transform scale-95">
@@ -178,13 +181,14 @@ function showRideRequests(rideRequest, newRequest, update) {
   });
 
   // Prepend the new requests at the top
+  document.getElementById("messageContainer").classList.add("hidden");
   rideRequestsContainer.innerHTML =
     rideRequestsHtml + rideRequestsContainer.innerHTML;
 
   // Apply animation effect
   setTimeout(() => {
     console.log("Applying the animation...");
-    
+
     document.querySelectorAll(".transition-all").forEach((el) => {
       el.classList.remove("scale-95");
       el.classList.add("scale-100");
@@ -431,7 +435,30 @@ function displayMap2(pickupAddress, dropoffAddress) {
   }
 }
 // Accept Ride
+// let pickupLat; let pickupLng;
+function setCusLocations(address){
+  fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      address
+    )}`
+  ).then((response) => response.json())
+  .then((data) => {
+    if (data.length > 0) {
+      // const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      pickupLat = parseFloat(data[0].lat);
+      pickupLng = parseFloat(data[0].lon);
+
+      console.log(`${pickupLat} && ${pickupLng}`);
+      
+    } else {
+      alert("No coordinates found for address: " + address);
+    }
+  })
+  .catch((error) => console.error("Error fetching coordinates: ", error));
+  
+}
 async function acceptRide(pickup, dropoff, fare, bookingId) {
+  // setCusLocations(pickup);
   console.log("In ride acceptance, the Booking Id is " + bookingId);
   document.getElementById("currentRide").classList.remove("hidden");
   document.getElementById("pickupLocation").textContent = pickup;
@@ -464,15 +491,19 @@ async function acceptRide(pickup, dropoff, fare, bookingId) {
     console.error("Error accepting ride ", error);
   }
 }
+let pickupLat; let pickupLng;
 function startLocationSharing(bookingId) {
   if (!navigator.geolocation) {
     alert("Geolocation is not supported by your browser!!!");
     return;
   }
   const locationInterval = setInterval(() => {
-    // TODO: Send the current location to the server
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
+       pickupLat = position.coords.latitude;
+       pickupLng = position.coords.longitude;
+      console.log(`in the sharing location, lat ${pickupLat} lng ${pickupLng}`);
+      
       try {
         await fetch("/ride/location", {
           method: "POST",
@@ -486,8 +517,48 @@ function startLocationSharing(bookingId) {
         console.error("Failed to share location: ", error);
       }
     });
+    
+    checkProximity();
   }, 5000); //update location every after 5 sec
 }
+// Function to calculate distance using Haversine formula
+function getDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c * 1000; // Convert to meters
+}
+
+// Proximity detection
+function checkProximity() {
+  console.log("Checking the approximity in the rider section");
+  try {
+    proximityCheckInterval = setInterval(() => {
+      if (driverMarker) {
+        const riderLat = driverMarker.getLatLng().lat;
+        const riderLng = driverMarker.getLatLng().lng;
+        const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
+        console.log(`the distance is ${distance}`);
+        
+        if (distance <= 1.5) {
+          // 1.5 meters radius
+          clearInterval(proximityCheckInterval);
+          window.showRiderPickupConfirmation();
+        }
+      }
+    }, 3000); // Check every 3 seconds
+  } catch (error) {
+    console.error(`Error checking the distance ${error}`);
+  }
+}
+
 // Toggle rider availability
 document
   .getElementById("toggleAvailability")

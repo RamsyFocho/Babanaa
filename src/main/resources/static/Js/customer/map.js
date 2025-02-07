@@ -57,11 +57,11 @@ if (navigator.geolocation) {
       pickupLng = position.coords.longitude; // User's longitude
 
       const pickupMarker = L.marker([pickupLat, pickupLng], {
-        //      icon:userIcon,
+             icon:userIcon,
         draggable: false, // Ensure pickup marker is not draggable
       })
         .addTo(map)
-        .bindPopup("Pick-up Location")
+        .bindPopup("Your position!!!")
         .openPopup();
 
       // Fetch and display the place name
@@ -234,12 +234,13 @@ function checkProximity() {
         const riderLat = riderMarker.getLatLng().lat;
         const riderLng = riderMarker.getLatLng().lng;
         const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
-
+        console.log('====================================');
+        console.log(`distance ${distance}`);
+        console.log('====================================');
         if (distance <= 1.5) {
           // 1.5 meters radius
           clearInterval(proximityCheckInterval);
           showCustomerPickupConfirmation();
-          window.showRiderPickupConfirmation();
         }
       }
     }, 3000); // Check every 3 seconds
