@@ -9,7 +9,8 @@ document
       pickup: formData.get("pickupLoc"),
       dropOff: formData.get("dropOff"),
       bikeType: formData.get("bikeType"),
-      //  TODO collect the fare from the UI
+      // TODO: uncomment it when project is almost done
+      // fare: document.getElementById("fareAmount").innerText,
     };
     try {
       const response = await fetch("/ride/request", {

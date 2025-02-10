@@ -5,9 +5,8 @@ let dropoffMarker; // Declare dropoffMarker globally so it can be updated
 let routingControl; // Declare routingControl globally to update the route
 var dropoffLocation;
 var submitBtn = document.getElementById("submitBtn");
+
 //--------------disable the submitBtn till everything is inserted
-var submitBtn = document.getElementById("submitBtn");
-// buttonDisable(true);
 function buttonDisable(disable) {
   if (disable) {
     submitBtn.disabled = true;
@@ -50,6 +49,7 @@ const userIcon = L.divIcon({
   iconAnchor: [15, 30],
   popupAnchor: [0, -30],
 });
+
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -57,7 +57,7 @@ if (navigator.geolocation) {
       pickupLng = position.coords.longitude; // User's longitude
 
       const pickupMarker = L.marker([pickupLat, pickupLng], {
-             icon:userIcon,
+        icon:userIcon,
         draggable: false, // Ensure pickup marker is not draggable
       })
         .addTo(map)
@@ -80,8 +80,9 @@ if (navigator.geolocation) {
 } else {
   alert("Geolocation is not supported by this browser.");
 }
+
 //-----------rider marker--------------
-let riderMarker; // Keep track of the rider's marker on the map'
+let riderMarker; // Keep track of the rider's marker on the map
 function updateRiderMarker(lat, lng) {
   if (!riderMarker) {
     riderMarker = L.marker([lat, lng])
@@ -91,7 +92,70 @@ function updateRiderMarker(lat, lng) {
   } else {
     riderMarker.setLatLng([lat, lng]);
   }
+
+  // If the rider's marker is updated, reroute from rider to user to dropoff
+  if (pickupLat && pickupLng && dropoffLocation) {
+    updateRoute([lat, lng], [pickupLat, pickupLng], dropoffLocation);
+  }
 }
+
+// Function to update the route with new waypoints
+function updateRoute(riderLocation, userLocation, dropoffLocation) {
+  if (routingControl) {
+    if(riderLocation!=null){
+      routingControl.setWaypoints([
+        L.latLng(riderLocation[0], riderLocation[1]), // Rider's location
+        L.latLng(userLocation[0], userLocation[1]), // User's location
+        L.latLng(dropoffLocation[0], dropoffLocation[1]), // Dropoff location
+      ]);
+    }else{
+      routingControl.setWaypoints([
+        L.latLng(userLocation[0], userLocation[1]), // User's location
+        L.latLng(dropoffLocation[0], dropoffLocation[1]), // Dropoff location
+      ]);
+    }
+  } else {
+    // Create routing control if it doesn't exist yet
+    routingControl = L.Routing.control({
+      waypoints: [
+        L.latLng(riderLocation[0], riderLocation[1])??null, // Rider's location
+        L.latLng(userLocation[0], userLocation[1]), // User's location
+        L.latLng(dropoffLocation[0], dropoffLocation[1]), // Dropoff location
+      ],
+      router: L.Routing.osrmv1({
+        serviceUrl: "https://router.project-osrm.org/route/v1", // Use HTTPS for security
+      }),
+      routeWhileDragging: false, // Disable route dragging
+    })
+      .on("routesfound", function (e) {
+        // Get the distance in meters
+        const distanceInMeters = e.routes[0].summary.totalDistance;
+
+        // Convert meters to kilometers
+        const distanceInKm = distanceInMeters / 1000;
+
+        // Calculate fare (FCFA)
+        const baseFare = 500; // Base fare in FCFA
+        const farePerKm = 100; // FCFA per kilometer
+        const estimatedFare = (baseFare + farePerKm * distanceInKm).toFixed(2); // Round to 2 decimal places
+
+        // Display fare and distance in the UI
+        document.getElementById(
+          "fareAmount"
+        ).innerText = `${estimatedFare} FCFA`;
+        if (estimatedFare != 0 || estimatedFare != null) {
+          buttonDisable(false);
+        }
+
+        // Optional: console log for debugging
+        console.log(
+          `Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`
+        );
+      })
+      .addTo(map);
+  }
+}
+
 //convert the pickup location into the actual place
 function getPlaceName(lat, lng) {
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
@@ -145,63 +209,14 @@ dropoffInput.addEventListener("change", function () {
             .openPopup();
           dropoffLocation = [dropoffLat, dropoffLng]; //Store the drop off location in an array
         }
-        //---------TAG THE HIDDEN INPUT TO STORE THE DROP OFF VARIABLE----------
 
-        //      const dropoffLoc = document.getElementById('dropOffLoc');
-        //      dropoffLoc.value = `${dropoffLocation[0]},${dropoffLocation[1]}`; // Using the stored dropoffLng
-
-        // Routing from pickup to dropoff
-        if (pickupLat && pickupLng) {
-          if (routingControl) {
-            routingControl.setWaypoints([
-              L.latLng(pickupLat, pickupLng),
-              L.latLng(dropoffLat, dropoffLng),
-            ]); // Update route
-          } else {
-            // Create routing control if it doesn't exist yet
-            routingControl = L.Routing.control({
-              waypoints: [
-                L.latLng(pickupLat, pickupLng),
-                L.latLng(dropoffLat, dropoffLng),
-              ],
-              router: L.Routing.osrmv1({
-                serviceUrl: "https://router.project-osrm.org/route/v1", // Use HTTPS for security
-              }),
-              routeWhileDragging: false, // Disable route dragging
-            })
-              .on("routesfound", function (e) {
-                // Get the distance in meters
-                const distanceInMeters = e.routes[0].summary.totalDistance;
-
-                // Convert meters to kilometers
-                const distanceInKm = distanceInMeters / 1000;
-
-                // Calculate fare (FCFA)
-                const baseFare = 500; // Base fare in FCFA
-                const farePerKm = 100; // FCFA per kilometer
-                const estimatedFare = (
-                  baseFare +
-                  farePerKm * distanceInKm
-                ).toFixed(2); // Round to 2 decimal places
-
-                // Display fare and distance in the UI
-                document.getElementById(
-                  "fareAmount"
-                ).innerText = `${estimatedFare} FCFA`;
-                if (estimatedFare != 0 || estimatedFare != null) {
-                  buttonDisable(false);
-                }
-                // document.getElementById('distanceAmount').innerText = `${distanceInKm.toFixed(2)} km`;
-
-                // Optional: console log for debugging
-                console.log(
-                  `Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`
-                );
-              })
-              .addTo(map);
-          }
-        } else {
-          alert("Pickup location not available!");
+        // If rider's marker exists, update the route from rider to user to dropoff
+        if (riderMarker && pickupLat && pickupLng) {
+          updateRoute(
+            [riderMarker.getLatLng().lat, riderMarker.getLatLng().lng],
+            [pickupLat, pickupLng],
+            dropoffLocation
+          );
         }
       } else {
         alert("Drop-off location not found!");
@@ -227,16 +242,14 @@ function getDistance(lat1, lon1, lat2, lon2) {
 
 // Proximity detection
 function checkProximity() {
-  console.log("Checking the approximity");
+  console.log("Checking the proximity");
   try {
     proximityCheckInterval = setInterval(() => {
       if (riderMarker) {
         const riderLat = riderMarker.getLatLng().lat;
         const riderLng = riderMarker.getLatLng().lng;
         const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
-        console.log('====================================');
-        console.log(`distance ${distance}`);
-        console.log('====================================');
+        console.log(`Distance: ${distance}`);
         if (distance <= 1.5) {
           // 1.5 meters radius
           clearInterval(proximityCheckInterval);
@@ -245,7 +258,7 @@ function checkProximity() {
       }
     }, 3000); // Check every 3 seconds
   } catch (error) {
-    console.error(`Error checking the distance ${error}`);
+    console.error(`Error checking the distance: ${error}`);
   }
 }
 

@@ -1,5 +1,9 @@
 // Establish WebSocket connection
 //    const notification=false;
+
+//to check if a customer has been picked or not
+let picked=false;
+
 function loadRequests(update) {
   fetch("/ride/requests")
     .then((response) => response.json())
@@ -517,8 +521,10 @@ function startLocationSharing(bookingId) {
         console.error("Failed to share location: ", error);
       }
     });
+    if(!picked){
+      checkProximity();
+    }
     
-    checkProximity();
   }, 5000); //update location every after 5 sec
 }
 // Function to calculate distance using Haversine formula
@@ -537,6 +543,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
 }
 
 // Proximity detection
+
 function checkProximity() {
   console.log("Checking the approximity in the rider section");
   try {
@@ -557,6 +564,9 @@ function checkProximity() {
   } catch (error) {
     console.error(`Error checking the distance ${error}`);
   }
+}
+function setPickedUp(value){
+    picked = value;
 }
 
 // Toggle rider availability

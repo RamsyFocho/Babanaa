@@ -38,7 +38,7 @@ public class BookingController {
         String dropOff = bikeRequest.getDropOff();
         String pickup = bikeRequest.getPickup();
         String bikeType = bikeRequest.getBikeType();
-
+//        float fare = bikeRequest.getFare();
         Long Id = (Long) session.getAttribute("CusId");
         if(Id == null ||Id==0){
 

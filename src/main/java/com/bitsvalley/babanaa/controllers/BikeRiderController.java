@@ -155,4 +155,15 @@ public class BikeRiderController {
         return  ResponseEntity.ok("Location updated");
     }
 
+    @PutMapping("/ride/status")
+    @ResponseBody
+    public ResponseEntity<?> updateStatus(@RequestBody Map<String, String> status){
+        System.out.println(status);
+        if(status == null){
+            return ResponseEntity.ok(Map.of("status","failed"));
+
+        }
+        return ResponseEntity.ok(Map.of("status","success"));
+    }
+
 }
