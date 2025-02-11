@@ -525,7 +525,7 @@ function startLocationSharing(bookingId) {
       checkProximity();
     }
     
-  }, 5000); //update location every after 5 sec
+  }, 9000); //update location every after 5 sec
 }
 // Function to calculate distance using Haversine formula
 function getDistance(lat1, lon1, lat2, lon2) {
@@ -567,6 +567,7 @@ function checkProximity() {
 }
 function setPickedUp(value){
     picked = value;
+    console.log("The pickup value is "+picked);
 }
 
 // Toggle rider availability

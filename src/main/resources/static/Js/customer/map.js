@@ -6,7 +6,7 @@ let routingControl; // Declare routingControl globally to update the route
 var dropoffLocation;
 var submitBtn = document.getElementById("submitBtn");
 
-//--------------disable the submitBtn till everything is inserted
+// Function to disable/enable the submit button
 function buttonDisable(disable) {
   if (disable) {
     submitBtn.disabled = true;
@@ -57,7 +57,7 @@ if (navigator.geolocation) {
       pickupLng = position.coords.longitude; // User's longitude
 
       const pickupMarker = L.marker([pickupLat, pickupLng], {
-        icon:userIcon,
+        icon: userIcon,
         draggable: false, // Ensure pickup marker is not draggable
       })
         .addTo(map)
@@ -85,74 +85,24 @@ if (navigator.geolocation) {
 let riderMarker; // Keep track of the rider's marker on the map
 function updateRiderMarker(lat, lng) {
   if (!riderMarker) {
-    riderMarker = L.marker([lat, lng])
+    riderMarker = L.marker([lat, lng], {
+      icon: L.divIcon({
+        html: '<i class="fas fa-motorcycle text-red-500 text-2xl"></i>',
+        className: "text-center",
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30],
+      }),
+    })
       .addTo(map)
       .bindPopup("Rider's position")
       .openPopup();
   } else {
     riderMarker.setLatLng([lat, lng]);
   }
-
-  // If the rider's marker is updated, reroute from rider to user to dropoff
+  // Route from rider to pickup to dropoff
   if (pickupLat && pickupLng && dropoffLocation) {
     updateRoute([lat, lng], [pickupLat, pickupLng], dropoffLocation);
-  }
-}
-
-// Function to update the route with new waypoints
-function updateRoute(riderLocation, userLocation, dropoffLocation) {
-  if (routingControl) {
-    if(riderLocation!=null){
-      routingControl.setWaypoints([
-        L.latLng(riderLocation[0], riderLocation[1]), // Rider's location
-        L.latLng(userLocation[0], userLocation[1]), // User's location
-        L.latLng(dropoffLocation[0], dropoffLocation[1]), // Dropoff location
-      ]);
-    }else{
-      routingControl.setWaypoints([
-        L.latLng(userLocation[0], userLocation[1]), // User's location
-        L.latLng(dropoffLocation[0], dropoffLocation[1]), // Dropoff location
-      ]);
-    }
-  } else {
-    // Create routing control if it doesn't exist yet
-    routingControl = L.Routing.control({
-      waypoints: [
-        L.latLng(riderLocation[0], riderLocation[1])??null, // Rider's location
-        L.latLng(userLocation[0], userLocation[1]), // User's location
-        L.latLng(dropoffLocation[0], dropoffLocation[1]), // Dropoff location
-      ],
-      router: L.Routing.osrmv1({
-        serviceUrl: "https://router.project-osrm.org/route/v1", // Use HTTPS for security
-      }),
-      routeWhileDragging: false, // Disable route dragging
-    })
-      .on("routesfound", function (e) {
-        // Get the distance in meters
-        const distanceInMeters = e.routes[0].summary.totalDistance;
-
-        // Convert meters to kilometers
-        const distanceInKm = distanceInMeters / 1000;
-
-        // Calculate fare (FCFA)
-        const baseFare = 500; // Base fare in FCFA
-        const farePerKm = 100; // FCFA per kilometer
-        const estimatedFare = (baseFare + farePerKm * distanceInKm).toFixed(2); // Round to 2 decimal places
-
-        // Display fare and distance in the UI
-        document.getElementById(
-          "fareAmount"
-        ).innerText = `${estimatedFare} FCFA`;
-        if (estimatedFare != 0 || estimatedFare != null) {
-          buttonDisable(false);
-        }
-
-        // Optional: console log for debugging
-        console.log(
-          `Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`
-        );
-      })
-      .addTo(map);
   }
 }
 
@@ -201,7 +151,13 @@ dropoffInput.addEventListener("change", function () {
         } else {
           // Create a marker for the dropoff location
           dropoffMarker = L.marker([dropoffLat, dropoffLng], {
-            icon: L.divIcon({ className: "custom-dropoff-marker" }), // Custom icon from your CSS
+            icon: L.divIcon({
+              html: '<i class="fas fa-flag-checkered text-green-500 text-2xl"></i>',
+              className: "text-center",
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+              popupAnchor: [0, -30],
+            }),
             draggable: false, // Ensure dropoff marker is not draggable
           })
             .addTo(map)
@@ -210,13 +166,11 @@ dropoffInput.addEventListener("change", function () {
           dropoffLocation = [dropoffLat, dropoffLng]; //Store the drop off location in an array
         }
 
-        // If rider's marker exists, update the route from rider to user to dropoff
-        if (riderMarker && pickupLat && pickupLng) {
-          updateRoute(
-            [riderMarker.getLatLng().lat, riderMarker.getLatLng().lng],
-            [pickupLat, pickupLng],
-            dropoffLocation
-          );
+        // Routing from pickup to dropoff
+        if (pickupLat && pickupLng) {
+          updateRoute([pickupLat, pickupLng], dropoffLocation);
+        } else {
+          alert("Pickup location not available!");
         }
       } else {
         alert("Drop-off location not found!");
@@ -224,6 +178,60 @@ dropoffInput.addEventListener("change", function () {
     })
     .catch((error) => console.error("Error fetching dropoff location:", error));
 });
+
+// Function to update the route
+function updateRoute(start, waypoint, end) {
+  if (routingControl) {
+    routingControl.setWaypoints([
+      L.latLng(start[0], start[1]),
+      L.latLng(waypoint[0], waypoint[1]),
+      L.latLng(end[0], end[1]),
+    ]); // Update route
+  } else {
+    // Create routing control if it doesn't exist yet
+    routingControl = L.Routing.control({
+      waypoints: [
+        L.latLng(start[0], start[1]),
+        L.latLng(waypoint[0], waypoint[1]),
+        L.latLng(end[0], end[1]),
+      ],
+      router: L.Routing.osrmv1({
+        serviceUrl: "https://router.project-osrm.org/route/v1", // Use HTTPS for security
+      }),
+      routeWhileDragging: false, // Disable route dragging
+    })
+      .on("routesfound", function (e) {
+        // Get the distance in meters
+        const distanceInMeters = e.routes[0].summary.totalDistance;
+
+        // Convert meters to kilometers
+        const distanceInKm = distanceInMeters / 1000;
+
+        // Calculate fare (FCFA)
+        const baseFare = 500; // Base fare in FCFA
+        const farePerKm = 100; // FCFA per kilometer
+        const estimatedFare = (
+          baseFare +
+          farePerKm * distanceInKm
+        ).toFixed(2); // Round to 2 decimal places
+
+        // Display fare and distance in the UI
+        document.getElementById(
+          "fareAmount"
+        ).innerText = `${estimatedFare} FCFA`;
+        if (estimatedFare != 0 || estimatedFare != null) {
+          buttonDisable(false);
+        }
+        // document.getElementById('distanceAmount').innerText = `${distanceInKm.toFixed(2)} km`;
+
+        // Optional: console log for debugging
+        console.log(
+          `Distance: ${distanceInKm} km, Fare: ${estimatedFare} FCFA`
+        );
+      })
+      .addTo(map);
+  }
+}
 
 // Function to calculate distance using Haversine formula
 function getDistance(lat1, lon1, lat2, lon2) {
@@ -240,25 +248,32 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * c * 1000; // Convert to meters
 }
 
+
 // Proximity detection
 function checkProximity() {
-  console.log("Checking the proximity");
-  try {
-    proximityCheckInterval = setInterval(() => {
-      if (riderMarker) {
-        const riderLat = riderMarker.getLatLng().lat;
-        const riderLng = riderMarker.getLatLng().lng;
-        const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
-        console.log(`Distance: ${distance}`);
-        if (distance <= 1.5) {
-          // 1.5 meters radius
-          clearInterval(proximityCheckInterval);
-          showCustomerPickupConfirmation();
+  console.log("Checking the approximity");
+  if(!picked){
+    try {
+      proximityCheckInterval = setInterval(() => {
+        if (riderMarker) {
+          const riderLat = riderMarker.getLatLng().lat;
+          const riderLng = riderMarker.getLatLng().lng;
+          const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
+          console.log('====================================');
+          console.log(`distance ${distance}`);
+          console.log('====================================');
+          if (distance <= 1.5) {
+            // 1.5 meters radius
+            clearInterval(proximityCheckInterval);
+            showCustomerPickupConfirmation();
+          }
         }
-      }
-    }, 3000); // Check every 3 seconds
-  } catch (error) {
-    console.error(`Error checking the distance: ${error}`);
+      }, 9000); // Check every 9 seconds
+    } catch (error) {
+      console.error(`Error checking the distance ${error}`);
+    }
+  }else{
+      console.log("The user has already been picked");
   }
 }
 

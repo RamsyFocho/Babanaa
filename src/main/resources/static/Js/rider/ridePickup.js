@@ -1,10 +1,10 @@
+let status = "pickedUp";
 async function showRiderPickupConfirmation() {
   console.log("====================================");
   console.log("Displaying the message");
   console.log("====================================");
   if (confirm("Has the customer been picked?")) {
     try {
-      let status = "pickedUp";
       window.setPickedUp(true);
       const response = await fetch("/ride/status", {
         method: "PUT",

@@ -63,4 +63,16 @@ public class BookingService {
             throw new IllegalStateException("Booking not found");
         }
     }
+
+    public boolean updateRideStatus(long bookingId, String status) {
+        Booking newBooking = getBooKingById(bookingId);
+        try{
+            newBooking.setStatus(status);
+            bookingRepository.save(newBooking);
+            return true;            
+        }catch(Exception e){
+            return false;
+        }
+        
+    }
 }

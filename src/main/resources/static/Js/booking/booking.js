@@ -61,6 +61,7 @@ function listenForRiderAcceptance(bookingId) {
     );
   });
 }
+let picked = false;
 function listenForRiderLocation(bookingId) {
     console.log("Listening for the rider's location...");
     
@@ -74,7 +75,15 @@ function listenForRiderLocation(bookingId) {
       //           update Rider Marker on the map in map.js
       window.updateRiderMarker(location.latitude, location.longitude);
       // check in the /Js/customer/map.js
-      window.checkProximity(); // Start checking proximity when location updates
+      if(!picked){
+        window.checkProximity(); // Start checking proximity when location updates
+      }
     });
   });
+}
+function bookingSetPickedUp(value) {
+    picked = value;
+    console.log('====================================');
+    console.log(`The picked up value is ${picked}`);
+    console.log('====================================');
 }

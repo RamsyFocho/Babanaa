@@ -104,6 +104,7 @@ public class BikeRiderController {
              return "rider/riderDashboard";
         }
     }
+    long bookingId;
     @PutMapping("/ride/accept")
     @ResponseBody
 //    @Transactional
@@ -112,7 +113,7 @@ public class BikeRiderController {
         Long riderId = (Long) session.getAttribute("riderId");
         System.out.println("rider id is "+riderId);
         BikeRider rider = bikeRiderService.getBikeRiderById(riderId);
-        long bookingId = jsonBookingId.get("bookingId");
+        bookingId = jsonBookingId.get("bookingId");
         System.out.println("Booking id is "+bookingId);
 
 //       update the booking with the rider's Id
@@ -157,13 +158,18 @@ public class BikeRiderController {
 
     @PutMapping("/ride/status")
     @ResponseBody
-    public ResponseEntity<?> updateStatus(@RequestBody Map<String, String> status){
-        System.out.println(status);
+    public ResponseEntity<?> updateStatus(@RequestBody Map<String, String> jsonStatus){
+        System.out.println("he status is");
+        System.out.println(jsonStatus.get("status"));
+        String status = jsonStatus.get("status");
         if(status == null){
-            return ResponseEntity.ok(Map.of("status","failed"));
-
+            return ResponseEntity.ok(Map.of("status","failed","message","Status is null"));
         }
-        return ResponseEntity.ok(Map.of("status","success"));
+        boolean done = bookingService.updateRideStatus(bookingId,status);
+        if(!done){
+            return ResponseEntity.ok(Map.of("status","failed","message","error while updating the status"));
+        }
+        return ResponseEntity.ok(Map.of("status","success","message","Succeeded in updating the status"));
     }
 
 }
