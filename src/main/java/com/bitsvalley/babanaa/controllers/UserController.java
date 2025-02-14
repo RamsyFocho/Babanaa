@@ -4,15 +4,21 @@ import com.bitsvalley.babanaa.services.UserService;
 import com.bitsvalley.babanaa.domains.User;
 import com.bitsvalley.babanaa.webdomains.BikeRequest;
 import jakarta.servlet.http.HttpSession;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
-@Controller
+@RestController
+@RequestMapping("/babanaa")
 public class UserController {
     @Autowired
     UserService userService;
@@ -24,13 +30,21 @@ public class UserController {
     }
 //    ---------------login--------------------
     @PostMapping("/customer/login")
-    public String LogginUser(@RequestParam("loginEmail") String email,
-                             @RequestParam("loginPassword") String password,
-                             HttpSession session){
-// Store email and password in session
-        session.setAttribute("email", email);
+    public ResponseEntity<?> LogginUser(@RequestBody User userLogin,
+                                     HttpSession session){
+        System.out.println(userLogin);
+        String phoneNumber = userLogin.getPhoneNumber();
+        String password = userLogin.getPassword();
+        if(Objects.equals(phoneNumber,"") || Objects.equals(password,"")){
+            return ResponseEntity.badRequest().body(Map.of("status", "failed", "message", "Credentials are null"));
+        }
+        // Store phoneNumber and password in session to retrieve it in the /customers code
+        session.setAttribute("phoneNumber", phoneNumber);
         session.setAttribute("password", password);
-        return "redirect:/customers";
+        // Redirect to /customers endpoint
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", "/babanaa/customers")
+                .build();
     }
 //--------registration--------------
     @PostMapping("/customer/register")
@@ -70,31 +84,31 @@ public class UserController {
 //        getLoggedUser(email, password); // This should work now
 
         return "redirect:/customers";
-
     }
     Long globalCusId;
 //    -------------GETTING LOGGED USER------------------
     @GetMapping("/customers")
-    public String getLoggedUser(HttpSession session){
-        String email= (String) session.getAttribute("email");
-        String password= (String) session.getAttribute("password");
+    public ResponseEntity<?> getLoggedUser(HttpSession session){
+        System.out.println("in the /customers api code");
+        String phoneNumber = (String) session.getAttribute("phoneNumber");
+        String password = (String) session.getAttribute("password");
 
-        System.out.println("Email: "+email+" Password: "+password);
-        if(email==null || password==null){
-            return "redirect:/customer/create";
-        }
+        System.out.println("phone number: "+phoneNumber+" Password: "+password);
+
         // Now fetch the user
-        User savedUser = userService.getUser(email,password);
+        User savedUser = userService.getUser(phoneNumber,password);
         if (savedUser == null) {
-            return "error";
+            return ResponseEntity.ok(Map.of("status","failed","message","user doesn't exist in the system"));
         }
         Long Id = savedUser.getUserId();
 //        TODO: Display a welcome message to the user
 
 //        save the Id in the global variable
         globalCusId=savedUser.getUserId();
+
         session.setAttribute("CusId", Id);
-        return "redirect:/customer/Dashboard";
+        return ResponseEntity.ok(Map.of("status","success","message","successfully logged in"));
+
     }
     @GetMapping("/customer/Dashboard")
     public String Dashboard(HttpSession session, Model model) {

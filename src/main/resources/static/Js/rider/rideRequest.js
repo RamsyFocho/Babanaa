@@ -2,9 +2,9 @@
 //    const notification=false;
 
 //to check if a customer has been picked or not
-let picked=false;
 
 function loadRequests(update) {
+  localStorage.setItem("riderPickedUpStatus", "false");
   fetch("/ride/requests")
     .then((response) => response.json())
     .then((data) => {
@@ -159,10 +159,9 @@ function showRideRequests(rideRequest, newRequest, update) {
     const bgColorClass = newRequest
       ? "border-2 border-red-500 bg-gray-100 shadow-lg"
       : "bg-gray-100";
-      const badgeHtml = newRequest
+    const badgeHtml = newRequest
       ? `<p class=" bg-red-500 mb-2 w-4 text-white text-sm px-3 py-1 rounded-full shadow-lg">New</p>`
       : "";
-    
 
     let requestHtml = `
       <div class="relative ${bgColorClass} p-4 rounded-lg shadow mb-4 transition-all duration-300 transform scale-95">
@@ -185,7 +184,10 @@ function showRideRequests(rideRequest, newRequest, update) {
   });
 
   // Prepend the new requests at the top
-  document.getElementById("messageContainer").classList.add("hidden");
+  const msgBox = document.getElementById("messageContainer");
+  if (msgBox) {
+    msgBox.classList.add("hidden");
+  }
   rideRequestsContainer.innerHTML =
     rideRequestsHtml + rideRequestsContainer.innerHTML;
 
@@ -440,26 +442,25 @@ function displayMap2(pickupAddress, dropoffAddress) {
 }
 // Accept Ride
 // let pickupLat; let pickupLng;
-function setCusLocations(address){
+function setCusLocations(address) {
   fetch(
     `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
       address
     )}`
-  ).then((response) => response.json())
-  .then((data) => {
-    if (data.length > 0) {
-      // const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-      pickupLat = parseFloat(data[0].lat);
-      pickupLng = parseFloat(data[0].lon);
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.length > 0) {
+        // const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        pickupLat = parseFloat(data[0].lat);
+        pickupLng = parseFloat(data[0].lon);
 
-      console.log(`${pickupLat} && ${pickupLng}`);
-      
-    } else {
-      alert("No coordinates found for address: " + address);
-    }
-  })
-  .catch((error) => console.error("Error fetching coordinates: ", error));
-  
+        console.log(`${pickupLat} && ${pickupLng}`);
+      } else {
+        alert("No coordinates found for address: " + address);
+      }
+    })
+    .catch((error) => console.error("Error fetching coordinates: ", error));
 }
 async function acceptRide(pickup, dropoff, fare, bookingId) {
   // setCusLocations(pickup);
@@ -495,7 +496,11 @@ async function acceptRide(pickup, dropoff, fare, bookingId) {
     console.error("Error accepting ride ", error);
   }
 }
-let pickupLat; let pickupLng;
+let pickupLat;
+let pickupLng;
+let riderPickedUpStatus = localStorage.getItem("riderPickedUpStatus");
+console.log(riderPickedUpStatus);
+
 function startLocationSharing(bookingId) {
   if (!navigator.geolocation) {
     alert("Geolocation is not supported by your browser!!!");
@@ -504,10 +509,10 @@ function startLocationSharing(bookingId) {
   const locationInterval = setInterval(() => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
-       pickupLat = position.coords.latitude;
-       pickupLng = position.coords.longitude;
+      pickupLat = position.coords.latitude;
+      pickupLng = position.coords.longitude;
       console.log(`in the sharing location, lat ${pickupLat} lng ${pickupLng}`);
-      
+
       try {
         await fetch("/ride/location", {
           method: "POST",
@@ -521,11 +526,13 @@ function startLocationSharing(bookingId) {
         console.error("Failed to share location: ", error);
       }
     });
-    if(!picked){
+
+    console.log(riderPickedUpStatus);
+    console.log(typeof riderPickedUpStatus);
+    if (riderPickedUpStatus === "false" || !riderPickedUpStatus) {
       checkProximity();
     }
-    
-  }, 9000); //update location every after 5 sec
+  }, 9000); //update location every after 9 sec
 }
 // Function to calculate distance using Haversine formula
 function getDistance(lat1, lon1, lat2, lon2) {
@@ -546,29 +553,36 @@ function getDistance(lat1, lon1, lat2, lon2) {
 
 function checkProximity() {
   console.log("Checking the approximity in the rider section");
+
+  const riderPickedUpStatus =
+    localStorage.getItem("riderPickedUpStatus") === "true";
+  if (riderPickedUpStatus) {
+    // If rider has already picked up customer, don't check proximity
+    return;
+  }
   try {
-    proximityCheckInterval = setInterval(() => {
-      if (driverMarker) {
-        const riderLat = driverMarker.getLatLng().lat;
-        const riderLng = driverMarker.getLatLng().lng;
-        const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
-        console.log(`the distance is ${distance}`);
-        
-        if (distance <= 1.5) {
-          // 1.5 meters radius
-          clearInterval(proximityCheckInterval);
-          window.showRiderPickupConfirmation();
-        }
+    // proximityCheckInterval = setInterval(() => {
+    if (driverMarker) {
+      const riderLat = driverMarker.getLatLng().lat;
+      const riderLng = driverMarker.getLatLng().lng;
+      const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
+      console.log(`the distance is ${distance}`);
+
+      if (distance <= 1.5) {
+        // 1.5 meters radius
+        // clearInterval(proximityCheckInterval);
+        window.showRiderPickupConfirmation();
       }
-    }, 3000); // Check every 3 seconds
+    }
+    // }, 3000); // Check every 3 seconds
   } catch (error) {
     console.error(`Error checking the distance ${error}`);
   }
 }
-function setPickedUp(value){
-    picked = value;
-    console.log("The pickup value is "+picked);
-}
+// function setPickedUp(value){
+//     picked = value;
+//     console.log("The pickup value is "+picked);
+// }
 
 // Toggle rider availability
 document

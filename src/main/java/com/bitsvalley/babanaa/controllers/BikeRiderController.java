@@ -159,7 +159,7 @@ public class BikeRiderController {
     @PutMapping("/ride/status")
     @ResponseBody
     public ResponseEntity<?> updateStatus(@RequestBody Map<String, String> jsonStatus){
-        System.out.println("he status is");
+        System.out.println("the status is");
         System.out.println(jsonStatus.get("status"));
         String status = jsonStatus.get("status");
         if(status == null){

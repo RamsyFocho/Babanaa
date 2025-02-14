@@ -32,10 +32,10 @@ public class UserService {
         }
     }
 
-    public User getUser(String email,String password) {
-//        Optional<User> userByEmail = userRepository.findByEmail(email);
-        System.out.println("In the service\n Email: "+email+" Password: "+password);
-        Optional<User> userByCredentials = userRepository.findByCredentials(email,password);
+    public User getUser(String phoneNumber,String password) {
+//        Optional<User> userByEmail = userRepository.findByEmail(phoneNumber);
+        System.out.println("In the service\n Phone Number: "+phoneNumber+" Password: "+password);
+        Optional<User> userByCredentials = userRepository.findByCredentials(phoneNumber,password);
         if(userByCredentials.isPresent()) {
             return userByCredentials.get();
         }

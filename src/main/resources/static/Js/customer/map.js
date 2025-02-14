@@ -72,6 +72,7 @@ if (navigator.geolocation) {
     },
     () => {
       alert("Unable to retrieve your location.");
+      window.reload();
     },
     {
       enableHighAccuracy: true, // Request high accuracy for better GPS results
@@ -210,10 +211,7 @@ function updateRoute(start, waypoint, end) {
         // Calculate fare (FCFA)
         const baseFare = 500; // Base fare in FCFA
         const farePerKm = 100; // FCFA per kilometer
-        const estimatedFare = (
-          baseFare +
-          farePerKm * distanceInKm
-        ).toFixed(2); // Round to 2 decimal places
+        const estimatedFare = (baseFare + farePerKm * distanceInKm).toFixed(2); // Round to 2 decimal places
 
         // Display fare and distance in the UI
         document.getElementById(
@@ -248,42 +246,41 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * c * 1000; // Convert to meters
 }
 
-
 // Proximity detection
-function checkProximity() {
+function cusCheckProximity() {
   console.log("Checking the approximity");
-  if(!picked){
-    try {
-      proximityCheckInterval = setInterval(() => {
-        if (riderMarker) {
-          const riderLat = riderMarker.getLatLng().lat;
-          const riderLng = riderMarker.getLatLng().lng;
-          const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
-          console.log('====================================');
-          console.log(`distance ${distance}`);
-          console.log('====================================');
-          if (distance <= 1.5) {
-            // 1.5 meters radius
-            clearInterval(proximityCheckInterval);
-            showCustomerPickupConfirmation();
-          }
+  try {
+    proximityCheckInterval = setInterval(() => {
+      if (riderMarker) {
+        const riderLat = riderMarker.getLatLng().lat;
+        const riderLng = riderMarker.getLatLng().lng;
+        const distance = getDistance(pickupLat, pickupLng, riderLat, riderLng);
+        console.log("====================================");
+        console.log(`distance ${distance}`);
+        console.log("====================================");
+        if (distance <= 1.5) {
+          // 1.5 meters radius
+          clearInterval(proximityCheckInterval);
+          showCustomerPickupConfirmation();
         }
-      }, 9000); // Check every 9 seconds
-    } catch (error) {
-      console.error(`Error checking the distance ${error}`);
-    }
-  }else{
-      console.log("The user has already been picked");
+      }
+    }, 9000); // Check every 9 seconds
+  } catch (error) {
+    console.error(`Error checking the distance ${error}`);
   }
 }
 
 // Show popup to confirm pickup
+ localStorage.getItem("CuspickedStatus");
 function showCustomerPickupConfirmation() {
-  if (confirm("Has the rider picked you up?")) {
-    // Mark the ride as picked up
-    alert("Ride marked as picked up!");
-    // TODO: Send confirmation to the server
-  } else {
-    alert("Please wait for the rider.");
+  if (accepted == "false") {
+    if (confirm("Has the rider picked you up?")) {
+      // Mark the ride as picked up
+      localStorage.setItem("CuspickedStatus","true");
+      alert("Thanks for the feedback. Be safe!");
+      window.rideSetStatus("pickedUp");
+    } else {
+      alert("Please wait for the rider.");
+    }
   }
 }

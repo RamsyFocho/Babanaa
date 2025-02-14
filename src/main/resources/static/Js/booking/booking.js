@@ -4,6 +4,7 @@ document
   .addEventListener("submit", async function (e) {
     e.preventDefault();
     alert("Sent!!!");
+    localStorage.setItem("CuspickedStatus", "false");
     const formData = new FormData(this);
     const formObject = {
       pickup: formData.get("pickupLoc"),
@@ -61,10 +62,12 @@ function listenForRiderAcceptance(bookingId) {
     );
   });
 }
-let picked = false;
+
+console.log(localStorage.getItem("CuspickedStatus"));
+
 function listenForRiderLocation(bookingId) {
-    console.log("Listening for the rider's location...");
-    
+  console.log("Listening for the rider's location...");
+
   const socket = new SockJS("/ws");
   const stompClient = Stomp.over(socket);
   stompClient.connect({}, function (frame) {
@@ -75,15 +78,16 @@ function listenForRiderLocation(bookingId) {
       //           update Rider Marker on the map in map.js
       window.updateRiderMarker(location.latitude, location.longitude);
       // check in the /Js/customer/map.js
-      if(!picked){
-        window.checkProximity(); // Start checking proximity when location updates
+
+      if (localStorage.getItem("CuspickedStatus") === " false") {
+        window.cusCheckProximity(); // Start checking proximity when location updates
       }
     });
   });
 }
-function bookingSetPickedUp(value) {
-    picked = value;
-    console.log('====================================');
-    console.log(`The picked up value is ${picked}`);
-    console.log('====================================');
-}
+// function bookingSetPickedUp(value) {
+//   picked = value;
+//   console.log("====================================");
+//   console.log(`The picked up value is ${picked}`);
+//   console.log("====================================");
+// }

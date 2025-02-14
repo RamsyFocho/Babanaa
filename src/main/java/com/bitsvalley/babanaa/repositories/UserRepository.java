@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //    @Query("SELECT l.levelName FROM Level l WHERE l.levelName =:level")
 //    Optional<Level> findLevelByName(@Param("level") String level);
 
-    @Query("SELECT u FROM User u WHERE u.email=?1 AND u.password=?2")
-    Optional<User> findByCredentials(String email,String password);
+    @Query("SELECT u FROM User u WHERE u.phoneNumber=?1 AND u.password=?2")
+    Optional<User> findByCredentials(String phoneNumber,String password);
 }

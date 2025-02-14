@@ -41,11 +41,13 @@ public class User {
     private LocalDateTime createdAt;
     @Getter
     private LocalDateTime lastUpdated;
+    @Setter
     @Getter
     private String createdBy;
 //    TODO: current user location and home Address(if necessary)
 
 /// One-to-many relationship with Bookings
+    @Setter
     @Getter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference  // Prevent circular reference when serializing this side
@@ -55,6 +57,12 @@ public class User {
 
 
     public User() {
+    }
+    //    for the login only
+
+    public User(String phoneNumber, String password) {
+        this.phoneNumber = phoneNumber;
+        this.password = password;
     }
 
     public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
@@ -93,9 +101,6 @@ public class User {
     }
     // Getters and Setters
 
-    public void setBookings(List<Booking> bookings) {
-        this.bookings = bookings;
-    }
     public LocalDateTime getCreated() {
         return createdAt;
     }
@@ -106,10 +111,6 @@ public class User {
 
     public void setLastUpdated() {
         this.lastUpdated = LocalDateTime.now();
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
     }
 
 }

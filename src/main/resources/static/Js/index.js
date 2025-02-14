@@ -69,10 +69,16 @@ window.onclick = function (event) {
 // Add functionality for buttons (redirect or actions)
 document.getElementById("customerButton").onclick = function () {
     // Redirect to customer registration or booking page
-    window.location.href = '../templates/customer/credentials.html'; // Change to your customer page
+    window.location.href = "/customer/create"; // Change to your customer page
 };
 
 document.getElementById("riderButton").onclick = function () {
     // Redirect to rider registration page
-    window.location.href = '/rider-registration'; // Change to your rider page
+    window.location.href = '/rider/create'; // Change to your rider page
 };
+
+
+sessionStorage.clear();
+sessionStorage.setItem("riderPickedUpStatus","false");
+sessionStorage.setItem("CuspickedStatus", "false");
+console.log(`${sessionStorage.getItem("riderPickedUpStatus")}  ${sessionStorage.getItem("CuspickedStatus")}`);
