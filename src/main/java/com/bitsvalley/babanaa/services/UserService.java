@@ -43,18 +43,19 @@ public class UserService {
             throw new IllegalStateException("User not found");
         }
     }
-    public void addNewUser(User user) {
+    public boolean addNewUser(User user) {
         Optional<User> userByEmail= userRepository.findByEmail(user.getEmail());
         if(userByEmail.isPresent()) {
-            throw new IllegalStateException("User already exists");
+            return false;
         }
 //        TODO: check if the user is inputing a phoneNumber which is already in the system
         else{
             System.out.println(user);
             userRepository.save(user);
+            return true;
         }
     }
-    public  void removeUser(Long userId) {
+    public void removeUser(Long userId) {
         boolean userExists=userRepository.existsById(userId);
         if(!userExists) {
             throw new IllegalStateException("User does not exist");

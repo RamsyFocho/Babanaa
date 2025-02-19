@@ -1,5 +1,7 @@
 package com.bitsvalley.babanaa.domains;
 
+import com.bitsvalley.babanaa.domains.good_delivery.DeliveryRequest;
+import com.bitsvalley.babanaa.domains.good_delivery.Goods;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -52,6 +54,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference  // Prevent circular reference when serializing this side
     private List<Booking> bookings;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//    @JsonManagedReference  // Prevent circular reference when serializing this side
+    private List<DeliveryRequest> deliveryRequests;
 
     // Constructors
 
@@ -59,10 +64,20 @@ public class User {
     public User() {
     }
     //    for the login only
-
+//TODO: include the list of delivery request inside the constructor
     public User(String phoneNumber, String password) {
         this.phoneNumber = phoneNumber;
         this.password = password;
+    }
+
+//    for the register
+
+    public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.profilePhoto = profilePhoto;
     }
 
     public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings) {

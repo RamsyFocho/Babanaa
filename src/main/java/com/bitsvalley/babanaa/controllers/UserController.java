@@ -49,41 +49,41 @@ public class UserController {
 //--------registration--------------
     @PostMapping("/customer/register")
 //    @Transactional
-    public String registerUser(
-            @RequestParam("username") String username,
-            @RequestParam("email") String email,
-            @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("password") String password,
-            @RequestParam("profilePhoto") MultipartFile file,
+    public ResponseEntity<?> registerUser(
+            @RequestBody User userRegistration,
             HttpSession session) {
 
         User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setUsername(username);
-        newUser.setPassword(password);
-        newUser.setPhoneNumber(phoneNumber);
+        newUser.setEmail(userRegistration.getEmail());
+        newUser.setUsername(userRegistration.getUsername());
+        newUser.setPassword(userRegistration.getPassword());
+        newUser.setPhoneNumber(userRegistration.getPhoneNumber());
         newUser.setCreated();
         newUser.setLastUpdated();
-        newUser.setCreatedBy(username);
+        newUser.setCreatedBy(userRegistration.getUsername());
 
+        byte[] file = userRegistration.getProfilePhoto();
         System.out.println("newUser: " + newUser);
         try {
-            if (!file.isEmpty()) {
-                newUser.setProfilePhoto(file.getBytes()); // Convert MultipartFile to byte[]
+            if (file != null) {
+                newUser.setProfilePhoto(file); // Convert MultipartFile to byte[]
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "error";
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("status","failed","message", "error dealing with the image"));
         }
         // Save the user
 
-        userService.addNewUser(newUser);
-         session.setAttribute("email", email);
-        session.setAttribute("password", password);
+        boolean done = userService.addNewUser(newUser);
+        if(done){
+             session.setAttribute("email", userRegistration.getEmail());
+            session.setAttribute("password", userRegistration.getPassword());
 
-//        getLoggedUser(email, password); // This should work now
-
-        return "redirect:/customers";
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header("Location", "/babanaa/customers")
+                    .build();
+        }else{
+            return ResponseEntity.ok(Map.of("status","failed","message","User exists already"));
+        }
     }
     Long globalCusId;
 //    -------------GETTING LOGGED USER------------------
@@ -107,9 +107,10 @@ public class UserController {
         globalCusId=savedUser.getUserId();
 
         session.setAttribute("CusId", Id);
-        return ResponseEntity.ok(Map.of("status","success","message","successfully logged in"));
+        return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
 
     }
+
     @GetMapping("/customer/Dashboard")
     public String Dashboard(HttpSession session, Model model) {
         // Retrieve the user by ID

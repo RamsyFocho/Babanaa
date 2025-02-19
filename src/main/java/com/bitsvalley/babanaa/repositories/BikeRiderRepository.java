@@ -12,7 +12,7 @@ public interface BikeRiderRepository extends JpaRepository<BikeRider, Long > {
 
     Optional<BikeRider> findByPassword(String password);
 
-    @Query("SELECT r FROM BikeRider r WHERE r.email=?1 AND r.password=?2")
-    Optional<BikeRider> findByCredentials(String email,String password);
+    @Query("SELECT r FROM BikeRider r WHERE r.phoneNumber=?1 AND r.password=?2")
+    Optional<BikeRider> findByCredentials(String phoneNumber,String password);
 
 }

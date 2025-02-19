@@ -25,25 +25,27 @@ public class BikeRiderService {
         }
     }
 //    ------------------Login and registration--------------
-    public BikeRider getRider(String email, String password) {
-        System.out.println("In the service\n Email: "+email+" Password: "+password);
-        Optional<BikeRider> riderByCredentials = bikeRiderRepository.findByCredentials(email,password);
+    public BikeRider getRider(String phoneNumber, String password) {
+        System.out.println("In the service\n Email: "+phoneNumber+" Password: "+password);
+        Optional<BikeRider> riderByCredentials = bikeRiderRepository.findByCredentials(phoneNumber,password);
         if(riderByCredentials.isPresent()) {
             return riderByCredentials.get();
         }
         else {
-            throw new IllegalStateException("User not found");
+            System.out.println("User not found");
+            return null;
         }
     }
-    public void addNewRider(BikeRider rider) {
+    public boolean addNewRider(BikeRider rider) {
         Optional<BikeRider> riderByEmail= bikeRiderRepository.findByEmail(rider.getEmail());
         if(riderByEmail.isPresent()) {
-            throw new IllegalStateException("User already exists");
+            return false;
         }
 //        TODO: check if the rider is inputing a phoneNumber which is already in the system
         else{
             System.out.println(rider);
             bikeRiderRepository.save(rider);
+            return true;
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.bitsvalley.babanaa.controllers;
 
 import com.bitsvalley.babanaa.domains.BikeRider;
+import com.bitsvalley.babanaa.domains.User;
 import com.bitsvalley.babanaa.webdomains.Location;
 import com.bitsvalley.babanaa.services.BikeRiderService;
 import com.bitsvalley.babanaa.domains.Booking;
 import com.bitsvalley.babanaa.services.BookingService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 
-@Controller
+@RestController
+@RequestMapping("/babanaa")
 public class BikeRiderController {
     Long globalRiderId;
 
@@ -34,60 +38,68 @@ public class BikeRiderController {
     }
 //    ---------------------LOGIN----------------------
     @PostMapping("/rider/login")
-    public String LogginRider(@RequestParam("loginEmail") String email,
-                             @RequestParam("loginPassword") String password,
+    public ResponseEntity<?> LogginRider(@RequestBody BikeRider riderLogin,
                              HttpSession session){
+        System.out.println("Debugging this api login ...");
+        String phoneNumber = riderLogin.getPhoneNumber();
+        String password = riderLogin.getPassword();
+
+        if(Objects.equals(phoneNumber,"") || Objects.equals(password,"")){
+            return ResponseEntity.badRequest().body(Map.of("status", "failed", "message", "Credentials are null"));
+        }
 // Store email and password in session
-        session.setAttribute("email", email);
-        session.setAttribute("password", password);
-        return "redirect:/riders";
+        session.setAttribute("phoneNumber", phoneNumber);
+        session.setAttribute("password",password);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header("Location", "/babanaa/riders")
+                .build();
     }
 //    -------------------------REGISTER--------------------------------
     @PostMapping("/rider/register")
-    public String registerRider(
-            @RequestParam("name") String name,
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("licenseNumber") String licenseNumber,
-            @RequestParam("bikeType") String bikeType,
-            @RequestParam("bikeName") String bikeName,
+    public ResponseEntity<?> registerRider(
+            @RequestBody BikeRider rider,
             HttpSession session
     ) {
         BikeRider br = new BikeRider();
-        br.setName(name);
-        br.setEmail(email);
-        br.setPassword(password);
-        br.setPhoneNumber(phoneNumber);
-        br.setLicenseNumber(licenseNumber);
-        br.setBikeType(bikeType);
-        br.setBikeName(bikeName);
+        br.setName(rider.getName());
+        br.setEmail(rider.getEmail());
+        br.setPassword(rider.getPassword());
+        br.setPhoneNumber(rider.getPhoneNumber());
+        br.setLicenseNumber(rider.getLicenseNumber());
+        br.setBikeType(rider.getBikeType());
+        br.setBikeName(rider.getBikeName());
 
-        bikeRiderService.addNewRider(br);
-        session.setAttribute("email", email);
-        session.setAttribute("password", password);
-        return "redirect:/riders";
+        boolean done = bikeRiderService.addNewRider(br);
+        if(done){
+            session.setAttribute("phoneNumber", rider.getPhoneNumber());
+            session.setAttribute("password", rider.getPassword());
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header("Location", "/babanaa/riders")
+                    .build();
+        }else{
+            return ResponseEntity.ok(Map.of("status","failed","message","rider exists already"));
+        }
     }
 
     @GetMapping("/riders")
-    public String getLoggedRiders(HttpSession session) {
-        String email= (String) session.getAttribute("email");
+    public ResponseEntity<?> getLoggedRiders(HttpSession session) {
+        String phoneNumber= (String) session.getAttribute("phoneNumber");
         String password= (String) session.getAttribute("password");
 
-        System.out.println("Email: "+email+" Password: "+password);
-        if(email==null || password==null){
-            return "redirect:/rider/create";
-        }
+        System.out.println("PhoneNumber: "+phoneNumber+" Password: "+password);
+
         // Now fetch the user
-        BikeRider savedRider = bikeRiderService.getRider(email,password);
+        BikeRider savedRider = bikeRiderService.getRider(phoneNumber,password);
         if (savedRider == null) {
-            return "error";
+            return ResponseEntity.ok(Map.of("status",402,"message","rider not found"));
+
         }
         Long Id = savedRider.getRiderId();
 //        TODO: Display a welcome message to the user
         globalRiderId=savedRider.getRiderId();
         session.setAttribute("riderId", Id);
-        return "redirect:/rider/Dashboard";
+        return ResponseEntity.ok(Map.of("status",200,"message","rider successfully auth","data",savedRider));
+//        return "redirect:/rider/Dashboard";
     }
     @GetMapping("/rider/Dashboard")
     public String getRiderDashboard(HttpSession session, Model model){
@@ -106,7 +118,7 @@ public class BikeRiderController {
     }
     long bookingId;
     @PutMapping("/ride/accept")
-    @ResponseBody
+//    @ResponseBody
 //    @Transactional
     public ResponseEntity<?> acceptRideRequest(@RequestBody Map<String, Long> jsonBookingId,HttpSession session) {
         System.out.println("Rider wants to accept ride in the Accept ride");
@@ -124,7 +136,7 @@ public class BikeRiderController {
         sendRiderDetailsToCustomer(bookingId);
 //        update the rideRequest list on the rider's dashboard
         updateAllRideRequest();
-        return ResponseEntity.ok(Map.of("status","success","bookingId",bookingId));
+        return ResponseEntity.ok(Map.of("status",200,"bookingId",bookingId));
     }
 
     private void updateAllRideRequest() {
