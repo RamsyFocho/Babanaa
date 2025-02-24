@@ -21,7 +21,7 @@ public class BookingService {
     }
     public List<Booking> getRecentRideRequest(){
         // retrieve all requests for bookings where the Rider
-        // is null and the bookinig time is less thn 5 mins
+        // is null and the booking time is less thn 5 mins
         LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(15);
         return bookingRepository.findAllByRiderIsEmpty(timeThreshold);
     }

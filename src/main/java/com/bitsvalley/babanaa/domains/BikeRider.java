@@ -3,6 +3,7 @@ package com.bitsvalley.babanaa.domains;
 import com.bitsvalley.babanaa.domains.good_delivery.DeliveryRequest;
 import com.bitsvalley.babanaa.domains.good_delivery.Goods;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -15,10 +16,11 @@ import java.util.List;
 @Getter
 @Entity
 @Setter
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "riderId"
-)
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "riderId"
+//)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BikeRider {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,9 +42,10 @@ public class BikeRider {
 
 // One-to-many relationship with Bookings
     @OneToMany(mappedBy = "bikeRider", cascade = CascadeType.ALL)
+//    @JsonManagedReference("bookingId")
     private List<Booking> bookings;
     @OneToMany(mappedBy = "bikeRider", cascade = CascadeType.ALL)
-    @JsonManagedReference  // Prevent circular reference when serializing this side
+//    @JsonManagedReference  // Prevent circular reference when serializing this side
     private List<DeliveryRequest> deliveryRequests;
 
     //constructors

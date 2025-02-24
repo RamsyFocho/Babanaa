@@ -3,6 +3,7 @@ package com.bitsvalley.babanaa.domains;
 import com.bitsvalley.babanaa.domains.good_delivery.DeliveryRequest;
 import com.bitsvalley.babanaa.domains.good_delivery.Goods;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -13,10 +14,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "userId"
-)
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "userId"
+//)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Setter
     @Getter
@@ -52,10 +54,10 @@ public class User {
     @Setter
     @Getter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference  // Prevent circular reference when serializing this side
+//    @JsonManagedReference("bookingId")  // Prevent circular reference when serializing this side
     private List<Booking> bookings;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    @JsonManagedReference  // Prevent circular reference when serializing this side
+//    @JsonManagedReference("deliveryId")  // Unique name for delivery requests
     private List<DeliveryRequest> deliveryRequests;
 
     // Constructors
@@ -80,24 +82,28 @@ public class User {
         this.profilePhoto = profilePhoto;
     }
 
-    public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
+
+    public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings, List<DeliveryRequest> deliveryRequests) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.profilePhoto = profilePhoto;
         this.bookings = bookings;
+        this.deliveryRequests = deliveryRequests;
     }
 //----------------without profile photo----------------------------------------
-    public User(Long userId, String username, String password, String email, String phoneNumber, List<Booking> bookings) {
+    public User(Long userId, String username, String password, String email, String phoneNumber, List<Booking> bookings, List<DeliveryRequest> deliveryRequests) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.bookings = bookings;
-    }
+        this.deliveryRequests = deliveryRequests;
 
+    }
+//    register without profile photo
     public User(String username, String password, String email, String phoneNumber) {
         this.username = username;
         this.password = password;

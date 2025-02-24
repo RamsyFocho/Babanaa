@@ -1,6 +1,7 @@
 package com.bitsvalley.babanaa.domains;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,11 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "bookingId"
-)
+//@JsonIdentityInfo(
+//        generator = ObjectIdGenerators.PropertyGenerator.class,
+//        property = "bookingId"
+//)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 //@Transactional
 public class Booking {
     @Id
@@ -28,11 +30,12 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "userId")
-    @JsonBackReference  // Prevent serialization of the user in this object
+    @JsonBackReference("userId")  // Prevent serialization of the user in this object
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "riderId")
+//    @JsonBackReference("riderId")
     private BikeRider bikeRider;
 
     private String pickupLocation;

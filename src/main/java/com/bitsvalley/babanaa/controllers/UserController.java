@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +18,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
+@CrossOrigin(origins = "http://127.0.0.1:5500", allowCredentials = "true")
 @RestController
-@RequestMapping("/babanaa")
+@RequestMapping(value = "/babanaa", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE )
 public class UserController {
     @Autowired
     UserService userService;
@@ -32,7 +34,12 @@ public class UserController {
     @PostMapping("/customer/login")
     public ResponseEntity<?> LogginUser(@RequestBody User userLogin,
                                      HttpSession session){
-        System.out.println(userLogin);
+        System.out.println("Session ID before setting attributes: " + session.getId());
+        System.out.println(userLogin.getPhoneNumber() + " "+userLogin.getPassword());
+        if(userLogin == null){
+            return ResponseEntity.badRequest().body(Map.of("status", "failed", "message", "Data is null"));
+        }
+
         String phoneNumber = userLogin.getPhoneNumber();
         String password = userLogin.getPassword();
         if(Objects.equals(phoneNumber,"") || Objects.equals(password,"")){
@@ -42,9 +49,15 @@ public class UserController {
         session.setAttribute("phoneNumber", phoneNumber);
         session.setAttribute("password", password);
         // Redirect to /customers endpoint
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header("Location", "/babanaa/customers")
-                .build();
+        getLoggedUser(session);
+        if(savedUser!=null){
+            return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
+        }else{
+            return ResponseEntity.ok(Map.of("status","failed","message","User not found"));
+        }
+//        return ResponseEntity.status(HttpStatus.FOUND)
+//                .header("Location", "/babanaa/customers")
+//                .build();
     }
 //--------registration--------------
     @PostMapping("/customer/register")
@@ -75,30 +88,36 @@ public class UserController {
 
         boolean done = userService.addNewUser(newUser);
         if(done){
-             session.setAttribute("email", userRegistration.getEmail());
+             session.setAttribute("phoneNumber", userRegistration.getPhoneNumber());
             session.setAttribute("password", userRegistration.getPassword());
-
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .header("Location", "/babanaa/customers")
-                    .build();
+//            return ResponseEntity.status(HttpStatus.FOUND)
+//                    .header("Location", "/babanaa/customers")
+//                    .build();
+            getLoggedUser(session);
+            if(savedUser!=null){
+                return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
+            }else{
+                return ResponseEntity.ok(Map.of("status","failed","message","User not found"));
+            }
         }else{
             return ResponseEntity.ok(Map.of("status","failed","message","User exists already"));
         }
     }
     Long globalCusId;
+    User savedUser;
 //    -------------GETTING LOGGED USER------------------
-    @GetMapping("/customers")
-    public ResponseEntity<?> getLoggedUser(HttpSession session){
-        System.out.println("in the /customers api code");
+    @GetMapping( value= "/customers")
+    public User getLoggedUser(HttpSession session){
+        System.out.println("in the /customers api code...");
+        System.out.println("Session ID in /customers: " + session.getId());
         String phoneNumber = (String) session.getAttribute("phoneNumber");
         String password = (String) session.getAttribute("password");
 
         System.out.println("phone number: "+phoneNumber+" Password: "+password);
-
         // Now fetch the user
-        User savedUser = userService.getUser(phoneNumber,password);
+        savedUser = userService.getUser(phoneNumber,password);
         if (savedUser == null) {
-            return ResponseEntity.ok(Map.of("status","failed","message","user doesn't exist in the system"));
+            return null;
         }
         Long Id = savedUser.getUserId();
 //        TODO: Display a welcome message to the user
@@ -107,8 +126,7 @@ public class UserController {
         globalCusId=savedUser.getUserId();
 
         session.setAttribute("CusId", Id);
-        return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
-
+        return savedUser;
     }
 
     @GetMapping("/customer/Dashboard")
@@ -119,7 +137,6 @@ public class UserController {
             return "redirect:/customer/create";
         }
         else{
-
             User user = userService.getUserById(userId);
             globalCusId=userId;
             // Add the user to the model so it can be displayed in the Thymeleaf template

@@ -36,16 +36,11 @@ public class UserService {
 //        Optional<User> userByEmail = userRepository.findByEmail(phoneNumber);
         System.out.println("In the service\n Phone Number: "+phoneNumber+" Password: "+password);
         Optional<User> userByCredentials = userRepository.findByCredentials(phoneNumber,password);
-        if(userByCredentials.isPresent()) {
-            return userByCredentials.get();
-        }
-        else {
-            throw new IllegalStateException("User not found");
-        }
+        return userByCredentials.orElse(null);
     }
     public boolean addNewUser(User user) {
-        Optional<User> userByEmail= userRepository.findByEmail(user.getEmail());
-        if(userByEmail.isPresent()) {
+        List<User> userByEmailOrPhoneNumber= userRepository.findByEmailOrPhoneNumber(user.getEmail(),user.getPhoneNumber());
+        if(userByEmailOrPhoneNumber!=null) {
             return false;
         }
 //        TODO: check if the user is inputing a phoneNumber which is already in the system
