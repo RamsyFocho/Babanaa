@@ -28,7 +28,7 @@ public class Goods {
     private Long goodId;
     private String goodName;
     private String description;
-    private Float weight;
+    private Float weight;// in Kg
 //    TODO: include Image
     private int quantity;
 //    @OneToMany(mappedBy = "goods", cascade = CascadeType.ALL)

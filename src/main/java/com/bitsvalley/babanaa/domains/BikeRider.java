@@ -2,10 +2,7 @@ package com.bitsvalley.babanaa.domains;
 
 import com.bitsvalley.babanaa.domains.good_delivery.DeliveryRequest;
 import com.bitsvalley.babanaa.domains.good_delivery.Goods;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +43,7 @@ public class BikeRider {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "bikeRider", cascade = CascadeType.ALL)
 //    @JsonManagedReference  // Prevent circular reference when serializing this side
+    @JsonIgnore()
     private List<DeliveryRequest> deliveryRequests;
 
     //constructors
@@ -57,8 +55,19 @@ public class BikeRider {
         this.phoneNumber = phoneNumber;
         this.password = password;
     }
-//TODO: include list of deliveryRequests
-    public BikeRider(String name, String email, String password, String phoneNumber, String licenseNumber, String bikeType, String bikeColor, String bikeName, int bikeYear, String availabilityStatus, List<Booking> bookings) {
+
+    public BikeRider(String name, String email, String password, String phoneNumber, String licenseNumber, String bikeType, String bikeColor, String bikeName) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.licenseNumber = licenseNumber;
+        this.bikeType = bikeType;
+        this.bikeColor = bikeColor;
+        this.bikeName = bikeName;
+    }
+
+    public BikeRider(String name, String email, String password, String phoneNumber, String licenseNumber, String bikeType, String bikeColor, String bikeName, int bikeYear, String availabilityStatus, List<Booking> bookings, List<DeliveryRequest> deliveryRequests) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -70,6 +79,7 @@ public class BikeRider {
         this.bikeYear = bikeYear;
         this.availabilityStatus = availabilityStatus;
         this.bookings = bookings;
+        this.deliveryRequests = deliveryRequests;
     }
 
     public BikeRider(Long riderId, String name, String email, String password, String phoneNumber, String licenseNumber, String bikeType, String bikeColor, String bikeName, int bikeYear, String availabilityStatus, List<Booking> bookings) {

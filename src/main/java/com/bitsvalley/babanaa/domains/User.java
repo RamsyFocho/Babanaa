@@ -58,6 +58,8 @@ public class User {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    @JsonManagedReference("deliveryId")  // Unique name for delivery requests
+    @Setter
+    @Getter
     private List<DeliveryRequest> deliveryRequests;
 
     // Constructors

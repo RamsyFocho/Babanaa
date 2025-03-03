@@ -71,6 +71,13 @@ public class DeliveryRequest {
         this.dropoffLocation = dropoffLocation;
         this.fare = fare;
     }
+    public DeliveryRequest( Goods goods, String pickupLocation, String dropoffLocation, float fare) {
+        this.goods = goods;
+        this.pickupLocation = pickupLocation;
+        this.dropoffLocation = dropoffLocation;
+        this.fare = fare;
+    }
+
 
     public DeliveryRequest(Long deliveryRequestId, User user, BikeRider bikeRider, LocalDateTime requestTime, LocalDateTime completionTime, String pickupLocation, String dropoffLocation, float fare, RequestStatus status) {
         this.deliveryId = deliveryRequestId;

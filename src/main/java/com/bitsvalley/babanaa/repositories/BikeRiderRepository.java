@@ -15,4 +15,6 @@ public interface BikeRiderRepository extends JpaRepository<BikeRider, Long > {
     @Query("SELECT r FROM BikeRider r WHERE r.phoneNumber=?1 AND r.password=?2")
     Optional<BikeRider> findByCredentials(String phoneNumber,String password);
 
+
+    Optional<BikeRider> findByPhoneNumber(String phoneNumber);
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
@@ -60,45 +61,43 @@ public class BikeRiderController {
             @RequestBody BikeRider rider,
             HttpSession session
     ) {
-        BikeRider br = new BikeRider();
-        br.setName(rider.getName());
-        br.setEmail(rider.getEmail());
-        br.setPassword(rider.getPassword());
-        br.setPhoneNumber(rider.getPhoneNumber());
-        br.setLicenseNumber(rider.getLicenseNumber());
-        br.setBikeType(rider.getBikeType());
-        br.setBikeName(rider.getBikeName());
+        rider.setCreatedAt(LocalDateTime.now());
+        rider.setCreatedBy(rider.getName());
+        rider.setAvailabilityStatus("Available");
 
-        boolean done = bikeRiderService.addNewRider(br);
+        boolean done = bikeRiderService.addNewRider(rider);
         if(done){
             session.setAttribute("phoneNumber", rider.getPhoneNumber());
             session.setAttribute("password", rider.getPassword());
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .header("Location", "/babanaa/riders")
-                    .build();
+            getLoggedRiders(session);
+            if(savedRider!=null){
+                return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedRider));
+            }else{
+                return ResponseEntity.ok(Map.of("status","failed","message","User not found"));
+            }
         }else{
             return ResponseEntity.ok(Map.of("status","failed","message","rider exists already"));
         }
     }
+    BikeRider savedRider;
 
     @GetMapping("/riders")
-    public ResponseEntity<?> getLoggedRiders(HttpSession session) {
+    public BikeRider getLoggedRiders(HttpSession session) {
         String phoneNumber= (String) session.getAttribute("phoneNumber");
         String password= (String) session.getAttribute("password");
 
         System.out.println("PhoneNumber: "+phoneNumber+" Password: "+password);
 
         // Now fetch the user
-        BikeRider savedRider = bikeRiderService.getRider(phoneNumber,password);
+        savedRider = bikeRiderService.getRider(phoneNumber,password);
         if (savedRider == null) {
-            return ResponseEntity.ok(Map.of("status",402,"message","rider not found"));
-
+            return null;
         }
         Long Id = savedRider.getRiderId();
 //        TODO: Display a welcome message to the user
         globalRiderId=savedRider.getRiderId();
         session.setAttribute("riderId", Id);
-        return ResponseEntity.ok(Map.of("status",200,"message","rider successfully auth","data",savedRider));
+        return savedRider;
 //        return "redirect:/rider/Dashboard";
     }
     @GetMapping("/rider/Dashboard")

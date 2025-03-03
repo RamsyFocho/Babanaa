@@ -38,10 +38,10 @@ public class BikeRiderService {
     }
     public boolean addNewRider(BikeRider rider) {
         Optional<BikeRider> riderByEmail= bikeRiderRepository.findByEmail(rider.getEmail());
-        if(riderByEmail.isPresent()) {
+        Optional<BikeRider> riderByPhoneNumber = bikeRiderRepository.findByPhoneNumber(rider.getPhoneNumber());
+        if(riderByEmail.isPresent() || riderByPhoneNumber.isPresent()) {
             return false;
         }
-//        TODO: check if the rider is inputing a phoneNumber which is already in the system
         else{
             System.out.println(rider);
             bikeRiderRepository.save(rider);
