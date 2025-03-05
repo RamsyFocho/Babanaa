@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -55,15 +56,18 @@ public class GoodDeliveryServices {
 
             if(dr!=null || bikeRider !=null){
                 assert dr != null;
-                if(dr.getStatus() == null || dr.getStatus() != requestStatus){
+                if(dr.getStatus() == RequestStatus.Pending || dr.getStatus() != requestStatus){
                     dr.setBikeRider(bikeRider);
                     dr.setBikeRider(bikeRider);
                     dr.setStatus(requestStatus);
+                    if(requestStatus == RequestStatus.Completed){
+                        dr.setCompletionTime(LocalDateTime.now());
+                    }
                     goodDeliveryRepository.save(dr);
-                    return "accepted";
+                    return "updated";
                 }else{
                     System.out.println("the request has already been accepted");
-                    return "already accepted";
+                    return "already updated";
 
                 }
             }else{

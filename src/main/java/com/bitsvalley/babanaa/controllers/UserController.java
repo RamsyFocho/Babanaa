@@ -42,29 +42,24 @@ public class UserController {
 
         String phoneNumber = userLogin.getPhoneNumber();
         String password = userLogin.getPassword();
+        session.setAttribute("phoneNumber",phoneNumber);
+        session.setAttribute("password",password);
+
         if(Objects.equals(phoneNumber,"") || Objects.equals(password,"")){
             return ResponseEntity.badRequest().body(Map.of("status", "failed", "message", "Credentials are null"));
         }
-        // Store phoneNumber and password in session to retrieve it in the /customers code
-        session.setAttribute("phoneNumber", phoneNumber);
-        session.setAttribute("password", password);
-        // Redirect to /customers endpoint
-        getLoggedUser(session);
+        User savedUser = userService.getUser(userLogin.getPhoneNumber(),userLogin.getPassword());
         if(savedUser!=null){
-            return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
+            return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","userId", savedUser.getUserId()));
         }else{
             return ResponseEntity.ok(Map.of("status","failed","message","User not found"));
         }
-//        return ResponseEntity.status(HttpStatus.FOUND)
-//                .header("Location", "/babanaa/customers")
-//                .build();
     }
 //--------registration--------------
     @PostMapping("/customer/register")
 //    @Transactional
     public ResponseEntity<?> registerUser(
-            @RequestBody User userRegistration,
-            HttpSession session) {
+            @RequestBody User userRegistration) {
 
         User newUser = new User();
         newUser.setEmail(userRegistration.getEmail());
@@ -88,14 +83,9 @@ public class UserController {
 
         boolean done = userService.addNewUser(newUser);
         if(done){
-             session.setAttribute("phoneNumber", userRegistration.getPhoneNumber());
-            session.setAttribute("password", userRegistration.getPassword());
-//            return ResponseEntity.status(HttpStatus.FOUND)
-//                    .header("Location", "/babanaa/customers")
-//                    .build();
-            getLoggedUser(session);
+            User savedUser = userService.getUser(userRegistration.getPhoneNumber(),userRegistration.getPassword());
             if(savedUser!=null){
-                return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
+                return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser.getUserId()));
             }else{
                 return ResponseEntity.ok(Map.of("status","failed","message","User not found"));
             }
@@ -104,20 +94,25 @@ public class UserController {
         }
     }
     Long globalCusId;
-    User savedUser;
 //    -------------GETTING LOGGED USER------------------
-    @GetMapping( value= "/customers")
-    public User getLoggedUser(HttpSession session){
+    @GetMapping( value= "/loggedCustomers")
+    public ResponseEntity<?> getLoggedUser(HttpSession session){
+
         System.out.println("in the /customers api code...");
+
+        if(session==null){
+            return ResponseEntity.ok(Map.of("status","error","message","Session is null"));
+        }
         System.out.println("Session ID in /customers: " + session.getId());
         String phoneNumber = (String) session.getAttribute("phoneNumber");
         String password = (String) session.getAttribute("password");
 
         System.out.println("phone number: "+phoneNumber+" Password: "+password);
         // Now fetch the user
+        User savedUser;
         savedUser = userService.getUser(phoneNumber,password);
         if (savedUser == null) {
-            return null;
+            return ResponseEntity.ok(Map.of("status","failed","message","User is null or not found"));
         }
         Long Id = savedUser.getUserId();
 //        TODO: Display a welcome message to the user
@@ -126,7 +121,8 @@ public class UserController {
         globalCusId=savedUser.getUserId();
 
         session.setAttribute("CusId", Id);
-        return savedUser;
+        return ResponseEntity.ok(Map.of("status","success","message","successfully Auth","data",savedUser));
+
     }
 
     @GetMapping("/customer/Dashboard")
