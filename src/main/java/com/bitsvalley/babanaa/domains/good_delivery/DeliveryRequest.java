@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,7 +39,7 @@ public class DeliveryRequest {
     @ManyToOne
     @JoinColumn(name = "goodId")
 //    @JsonBackReference
-    private Goods goods;
+    private List<Goods> goods;
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime requestTime;
 
@@ -64,14 +65,14 @@ public class DeliveryRequest {
         this.status = status;
     }
         //----delivery request----
-    public DeliveryRequest(User user, Goods goods, String pickupLocation, String dropoffLocation, float fare) {
+    public DeliveryRequest(User user, List<Goods> goods, String pickupLocation, String dropoffLocation, float fare) {
         this.user = user;
         this.goods = goods;
         this.pickupLocation = pickupLocation;
         this.dropoffLocation = dropoffLocation;
         this.fare = fare;
     }
-    public DeliveryRequest( Goods goods, String pickupLocation, String dropoffLocation, float fare) {
+    public DeliveryRequest( List<Goods> goods, String pickupLocation, String dropoffLocation, float fare) {
         this.goods = goods;
         this.pickupLocation = pickupLocation;
         this.dropoffLocation = dropoffLocation;

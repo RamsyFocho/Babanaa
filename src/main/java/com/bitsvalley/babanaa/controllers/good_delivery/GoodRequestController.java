@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,44 +45,66 @@ public class GoodRequestController {
     // ...
     @PostMapping("/delivery/request")
     public ResponseEntity<?> createGoodDeliveryRequest(@RequestBody DeliveryRequestWD request) {
-        // Implement request creation logic here
         System.out.println(request);
+
+        // Fetch the user
         User user = userService.getUserById(request.getUserId());
-//        get the goods, save it be4 saving the request as a whole
-        Goods goods = request.getGoods();
+
+        // Get the list of goods
+        List<Goods> goods = request.getGoods();
+        if (goods == null || goods.isEmpty()) {
+            return ResponseEntity.ok(Map.of("status", "failed", "message", "No goods provided in the request"));
+        }
+
+        // Save goods before saving the delivery request
         boolean added = goodServices.addGood(goods);
+        if (!added) {
+            return ResponseEntity.ok(Map.of("status", "failed", "message", "Failed to save goods"));
+        }
 
-        DeliveryRequest dr =  new DeliveryRequest();
-        if(added){
-//            retrieve the stored good
-            Goods storedGood = goodServices.getGood(goods.getGoodName(),goods.getDescription());
-            if(storedGood != null){
-                request.setGoods(storedGood);
-                dr.setUser(user);
-                dr.setGoods(request.getGoods());
-                dr.setPickupLocation(request.getPickupLocation());
-                dr.setDropoffLocation(request.getDropoffLocation());
-                dr.setFare(request.getFare());
-                dr.setStatus(RequestStatus.Pending);
-                dr.setRequestTime(LocalDateTime.now());
-            }else {
-                return ResponseEntity.ok(Map.of("status","failed","message","The good is null"));
+        // Retrieve stored goods (assuming method retrieves by some identifying fields)
+        List<Goods> storedGoods = new ArrayList<>();
+        for (Goods g : goods) {
+            Goods retrievedGoods = goodServices.getGood(g.getGoodName(), g.getDescription());
+            if (retrievedGoods != null) {
+                storedGoods.add(retrievedGoods);
             }
         }
-//        save the good delivery request
+
+        if (storedGoods.isEmpty()) {
+            return ResponseEntity.ok(Map.of("status", "failed", "message", "Failed to retrieve stored goods"));
+        }
+
+        // Create and populate the delivery request
+        DeliveryRequest dr = new DeliveryRequest();
+        dr.setUser(user);
+        dr.setGoods(storedGoods);
+        dr.setPickupLocation(request.getPickupLocation());
+        dr.setDropoffLocation(request.getDropoffLocation());
+        dr.setFare(request.getFare());
+        dr.setStatus(RequestStatus.Pending);
+        dr.setRequestTime(LocalDateTime.now());
+
+        // Save the delivery request
         boolean done = goodDeliveryServices.newDeliveryRequest(dr);
-        if(done){
-        //    get the saved request by Id
-            DeliveryRequest savedRequest = goodDeliveryServices.getDeliveryRequest(dr.getUser(),request.getGoods());
-            if(savedRequest != null){
-                sendNewRequest(savedRequest);
-                return ResponseEntity.ok(Map.of("status","success","message","successfuly added a new request","data",savedRequest));
-            }else{
-                return ResponseEntity.ok(Map.of("status","failed","message","Null request"));
-
-            }
+        if (!done) {
+            return ResponseEntity.ok(Map.of("status", "failed", "message", "An error occurred while saving the delivery request"));
         }
-        return ResponseEntity.ok(Map.of("status","failed","message","An error occurred"));
+
+        // Retrieve the saved request (you might need a better way to fetch it)
+        DeliveryRequest savedRequest = goodDeliveryServices.getDeliveryRequest(dr.getUser(), storedGoods);
+        if (savedRequest == null) {
+            return ResponseEntity.ok(Map.of("status", "failed", "message", "Failed to retrieve saved request"));
+        }
+
+        // Send the new request
+        sendNewRequest(savedRequest);
+
+        return ResponseEntity.ok(Map.of(
+                "status", "success",
+                "message", "Successfully added a new request",
+                "data", savedRequest
+        ));
     }
     public void sendNewRequest(DeliveryRequest request) {
 //        retrieve the requests from the database

@@ -6,19 +6,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class GoodServices {
     @Autowired
     private GoodRepository goodRepository;
 
-    public Boolean addGood(Goods good){
+    public Boolean addGood(List<Goods> goods){
         try{
-            if(good != null){
-                goodRepository.save(good);
-                return true;
-            }else{
-                return false;
+            for (Goods good:goods){
+                if(good != null){
+                    goodRepository.save(good);
+                    return true;
+                }else{
+                    return false;
+                }
             }
         } catch (Exception e) {
             log.error("e: ", e);

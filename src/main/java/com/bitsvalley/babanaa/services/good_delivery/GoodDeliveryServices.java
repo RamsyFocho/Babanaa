@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -32,11 +33,13 @@ public class GoodDeliveryServices {
 
     }
 
-    public DeliveryRequest getDeliveryRequest(User user, Goods good) {
+    public DeliveryRequest getDeliveryRequest(User user, List<Goods> goods) {
         try{
-            DeliveryRequest request = goodDeliveryRepository.findByUserAndGood(user, good);
-            if(request!=null){
-                return request;
+            for(Goods good: goods){
+                DeliveryRequest request = goodDeliveryRepository.findByUserAndGood(user, good);
+                if(request!=null){
+                    return request;
+                }
             }
         } catch (Exception e) {
             log.error("e: ", e);
