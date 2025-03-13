@@ -2,10 +2,7 @@ package com.bitsvalley.babanaa.domains.good_delivery;
 
 import com.bitsvalley.babanaa.domains.BikeRider;
 import com.bitsvalley.babanaa.domains.User;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -28,6 +25,7 @@ public class DeliveryRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long deliveryId;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     @JsonBackReference  // Matches `user-deliveryRequests` in `User`
@@ -36,10 +34,11 @@ public class DeliveryRequest {
     @ManyToOne
     @JoinColumn(name = "riderId")
     private BikeRider bikeRider;
-    @ManyToOne
-    @JoinColumn(name = "goodId")
-//    @JsonBackReference
+
+    @OneToMany(mappedBy = "deliveryRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Ensures correct serialization
     private List<Goods> goods;
+
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime requestTime;
 

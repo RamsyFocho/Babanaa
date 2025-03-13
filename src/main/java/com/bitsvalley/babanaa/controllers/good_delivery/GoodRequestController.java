@@ -14,6 +14,7 @@ import com.bitsvalley.babanaa.webdomains.DeliveryRequestWD;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,66 +46,15 @@ public class GoodRequestController {
     // ...
     @PostMapping("/delivery/request")
     public ResponseEntity<?> createGoodDeliveryRequest(@RequestBody DeliveryRequestWD request) {
+        // Log the incoming request
         System.out.println(request);
 
-        // Fetch the user
-        User user = userService.getUserById(request.getUserId());
-
-        // Get the list of goods
-        List<Goods> goods = request.getGoods();
-        if (goods == null || goods.isEmpty()) {
-            return ResponseEntity.ok(Map.of("status", "failed", "message", "No goods provided in the request"));
+        try {
+            DeliveryRequest createdRequest = goodDeliveryServices.createDeliveryRequest(request);
+            return ResponseEntity.ok(createdRequest);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        // Save goods before saving the delivery request
-        boolean added = goodServices.addGood(goods);
-        if (!added) {
-            return ResponseEntity.ok(Map.of("status", "failed", "message", "Failed to save goods"));
-        }
-
-        // Retrieve stored goods (assuming method retrieves by some identifying fields)
-        List<Goods> storedGoods = new ArrayList<>();
-        for (Goods g : goods) {
-            Goods retrievedGoods = goodServices.getGood(g.getGoodName(), g.getDescription());
-            if (retrievedGoods != null) {
-                storedGoods.add(retrievedGoods);
-            }
-        }
-
-        if (storedGoods.isEmpty()) {
-            return ResponseEntity.ok(Map.of("status", "failed", "message", "Failed to retrieve stored goods"));
-        }
-
-        // Create and populate the delivery request
-        DeliveryRequest dr = new DeliveryRequest();
-        dr.setUser(user);
-        dr.setGoods(storedGoods);
-        dr.setPickupLocation(request.getPickupLocation());
-        dr.setDropoffLocation(request.getDropoffLocation());
-        dr.setFare(request.getFare());
-        dr.setStatus(RequestStatus.Pending);
-        dr.setRequestTime(LocalDateTime.now());
-
-        // Save the delivery request
-        boolean done = goodDeliveryServices.newDeliveryRequest(dr);
-        if (!done) {
-            return ResponseEntity.ok(Map.of("status", "failed", "message", "An error occurred while saving the delivery request"));
-        }
-
-        // Retrieve the saved request (you might need a better way to fetch it)
-        DeliveryRequest savedRequest = goodDeliveryServices.getDeliveryRequest(dr.getUser(), storedGoods);
-        if (savedRequest == null) {
-            return ResponseEntity.ok(Map.of("status", "failed", "message", "Failed to retrieve saved request"));
-        }
-
-        // Send the new request
-        sendNewRequest(savedRequest);
-
-        return ResponseEntity.ok(Map.of(
-                "status", "success",
-                "message", "Successfully added a new request",
-                "data", savedRequest
-        ));
     }
     public void sendNewRequest(DeliveryRequest request) {
 //        retrieve the requests from the database

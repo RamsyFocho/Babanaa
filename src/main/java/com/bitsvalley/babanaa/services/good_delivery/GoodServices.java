@@ -19,15 +19,17 @@ public class GoodServices {
             for (Goods good:goods){
                 if(good != null){
                     goodRepository.save(good);
-                    return true;
-                }else{
-                    return false;
                 }
             }
+            return true;
         } catch (Exception e) {
             log.error("e: ", e);
             return false;
         }
+    }
+
+    public Goods getGoodByNameAndDescription(String goodName, String description) {
+        return goodRepository.findByGoodNameAndDescription(goodName, description);
     }
     public Goods getGood(String goodName, String description) {
         Goods good = goodRepository.findByGoodNameAndDescription(goodName,description);

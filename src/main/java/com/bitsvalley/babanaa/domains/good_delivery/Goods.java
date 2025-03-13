@@ -1,9 +1,7 @@
 package com.bitsvalley.babanaa.domains.good_delivery;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.bitsvalley.babanaa.domains.User;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 
 import lombok.Data;
@@ -31,6 +29,10 @@ public class Goods {
     private Float weight;// in Kg
 //    TODO: include Image
     private int quantity;
+    @ManyToOne
+    @JoinColumn(name = "delivery_id")
+    @JsonBackReference // Prevent serialization of the user in this object
+    private DeliveryRequest deliveryRequest;
 //    @OneToMany(mappedBy = "goods", cascade = CascadeType.ALL)
 //    @JsonManagedReference
 //    private List<DeliveryRequest> deliveryRequests;
