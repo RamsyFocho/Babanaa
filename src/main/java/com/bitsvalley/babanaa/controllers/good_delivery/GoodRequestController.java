@@ -51,6 +51,7 @@ public class GoodRequestController {
 
         try {
             DeliveryRequest createdRequest = goodDeliveryServices.createDeliveryRequest(request);
+            sendNewRequest(createdRequest);
             return ResponseEntity.ok(createdRequest);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -75,13 +76,12 @@ public class GoodRequestController {
         System.out.println("rider wants to accept good request in the acceptDeliveryRequest...");
         // Implement request acceptance logic here
         String result = goodDeliveryServices.updateStatus(riderId,deliveryId,acceptDelivery.getStatus());
-        if(Objects.equals(result, "updated")){
+        if(Objects.equals(result, "Updated successfully")){
         BikeRider bikeRider = bikeRiderService.getBikeRiderById(riderId);
             return ResponseEntity.ok(Map.of("status","success", "message","Delivery request status updated", "data",bikeRider));
-        } else if (Objects.equals(result, "already updated")) {
-            return ResponseEntity.ok(Map.of("status","failed", "message","Delivery request already updated to the updated status"));
-        }else{
-            return ResponseEntity.ok(Map.of("status","error", "message","An error occurred. Either the request or the rider doesn't exist in the db"));
+        }
+        else{
+            return ResponseEntity.ok(Map.of("status","error", "message",result));
 //            return ResponseEntity.noContent().build();
         }
     }

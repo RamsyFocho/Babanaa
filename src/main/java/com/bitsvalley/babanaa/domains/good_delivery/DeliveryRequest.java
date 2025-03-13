@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
 @Setter
 @Getter
 //@JsonIdentityInfo(
