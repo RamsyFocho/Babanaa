@@ -1,0 +1,60 @@
+/*------------------------------For the index.html-------------------------------*/
+ /* Custom animation for floating elements */
+   /* Hero Section Background */
+           .hero-bg {
+               background-image: url('../static/images/babanaa/img3.jpg');
+               background-size: cover;
+               background-position: center;
+           }
+
+           /* Floating animation for bike */
+           @keyframes moveBike {
+               0% {
+                   transform: translateX(0);
+               }
+
+               100% {
+                   transform: translateX(-50px);
+               }
+           }
+
+           .floating-bike {
+               position: absolute;
+               bottom: 10%;
+               left: 10%;
+               width: 100px;
+               animation: moveBike 2s infinite alternate ease-in-out;
+           }
+         /*---------------slide show----------------------------*/
+
+ /* Animation for Floating Elements */
+    .animate-float {
+        position: absolute;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px); /* Float up and down */
+        }
+    }
+    /*----------------------modal option----------------------*/
+
+    .btn{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+    .btn a{
+        width:20vw;
+
+    }
+    .btn button{
+        margin-top: 20px;
+        width:20vw
+    }

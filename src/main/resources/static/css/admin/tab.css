@@ -1,0 +1,42 @@
+.highlight{
+    background-color: rgb(234 179 8);
+    color: rgb(17 24 39 );
+}
+.highlight::after{
+    content: '';
+    position: absolute;
+    border-left: 10px solid ; /* Same color as the tab */
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    margin-top:2vh;
+    /*top: 50%;*/
+    right: -10px; /* Adjust this to move the triangle */
+    width: 0;
+    height: 0;
+    transform: translateY(-50%); /* Center the triangle vertically */
+}
+
+/*--------------------------------- responsive tab-------------------------------*/
+@media screen and (max-width: 768px){
+    .side-bar{
+        width:9.5vw;
+    }
+    .side-bar:hover{
+        width:16rem;
+    }
+    .side-bar:hover h1{
+        display:block;
+    }
+    .side-bar:hover nav a span{
+        display:block;
+    }
+    h1{
+        display:none;
+    }
+
+    a span{
+        display:none;
+    }
+
+
+}

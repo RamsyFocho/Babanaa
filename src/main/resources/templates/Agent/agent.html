@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<!-- 
+    Note: The following resources need to be properly configured:
+    1. /Js/tailwind.jit.js - Ensure this file exists in the correct path
+    2. /fontAwesome-free-6.6.0-web/css/all.min.css - Ensure this file exists in the correct path
+    3. Geolocation API requires HTTPS or localhost for security
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Tracking System</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <!-- <link rel="stylesheet" th:href="@{/css/output.css}"> -->
+    <script src="../../static/Js/tailwind.jit.js" ></script>    
+    <link rel="stylesheet" href="/static/fontAwesome-free-6.6.0-web/css/all.min.css">
+    
+    <!-- <script th:src="@{/Js/tailwind.jit.js}" ></script>    
+    <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}"> -->
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        /* Icon styles */
+        .icon {
+            margin-right: 0.5rem;
+            color: #4B5563;
+        }
+        .icon-lg {
+            font-size: 1.5rem;
+        }
+        .icon-spin {
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6 fade-in">
+            <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Agent Activity Tracker</h1>
+            
+            <form id="agentEventForm" class="space-y-4 slide-in">
+                <div class="form-group">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="eventType">
+                        Event Type
+                    </label>
+                    <select id="eventType" name="eventType" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="ARRIVAL">Arrival at Agency</option>
+                        <option value="COLLECTION">Money Collection</option>
+                        <option value="DEPARTURE">Departure</option>
+                    </select>
+                </div>
+
+                <div id="amountField" class="form-group hidden">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="amount">
+                        Amount Collected
+                    </label>
+                    <input type="number" id="amount" name="amount" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Location</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="latitude" name="latitude" placeholder="Latitude" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required readonly>
+                        <input type="number" id="longitude" name="longitude" placeholder="Longitude" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required readonly>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
+                    Submit Event
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('agentEventForm');
+            const eventTypeSelect = document.getElementById('eventType');
+            const amountField = document.getElementById('amountField');
+            const latitudeInput = document.getElementById('latitude');
+            const longitudeInput = document.getElementById('longitude');
+
+            // Show/hide amount field based on event type
+            eventTypeSelect.addEventListener('change', function() {
+                amountField.classList.toggle('hidden', this.value !== 'COLLECTION');
+                if (this.value !== 'COLLECTION') {
+                    document.getElementById('amount').value = '';
+                }
+            });
+
+            // Get current location
+            function updateLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            latitudeInput.value = position.coords.latitude;
+                            longitudeInput.value = position.coords.longitude;
+                        },
+                        (error) => {
+                            console.error("Error getting location:", error);
+                            alert("Unable to get location. Please enable location services.");
+                        }
+                    );
+                }
+            }
+
+            // Update location every 30 seconds
+            updateLocation();
+            setInterval(updateLocation, 30000);
+
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const eventData = {
+                    eventType: eventTypeSelect.value,
+                    amount: eventTypeSelect.value === 'COLLECTION' ? parseFloat(document.getElementById('amount').value) : null,
+                    location: {
+                        latitude: parseFloat(latitudeInput.value),
+                        longitude: parseFloat(longitudeInput.value)
+                    },
+                    eventTime: new Date().toISOString()
+                };
+
+                try {
+                    const response = await fetch('/api/agent/events', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(eventData)
+                    });
+
+                    if (response.ok) {
+                        alert('Event recorded successfully!');
+                        if (eventTypeSelect.value !== 'COLLECTION') {
+                            form.reset();
+                        }
+                    } else {
+                        throw new Error('Failed to record event');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to record event. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

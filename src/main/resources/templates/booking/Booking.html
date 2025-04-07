@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ride Booking</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+  <!-- Leaflet CSS (for OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" th:href="@{/css/customer/booking.css}">
+<!--    <link rel="stylesheet" href="/static/css/customer/booking.css">-->
+  <link rel="stylesheet" th:href="@{/css/output.css}">
+  <link rel="stylesheet" th:href="@{/fontawesome-free-6.6.0-web/css/all.min.css}">
+  <link rel="icon" href="data:,">
+</head>
+
+<body class="bg-gray-100">
+
+  <div class="relative max-w-full z-55 h-screen flex border-2 ">
+      <div id="pendingMessage" class="hidden absolute z-30 w-full h-screen bg-gray-100 opacity-75 backdrop-blur-lg -top-10 mt-8 text-yellow-500 text-3xl font-bold text-center">
+          <p class="mt-4">Your ride request has been sent! Waiting for a rider to accept...</p>
+          <div class="loading-spinner "></div>
+      </div>
+      <div id="map" class="w-full z-10  h-screen rounded-lg mb-4 shadow-lg border-2"></div>
+
+      <div id="formContainer" class="absolute top-5 opacity-80 left-5 z-10 w-1/3 bg-white p-6 rounded-lg shadow-lg"> <!-- Update the positioning and z-index here -->
+          <h1 class="text-2xl font-bold text-center mb-6">Book a Ride</h1>
+          <form id="rideRequestForm" method="POST" class="space-y-4">
+              <div class="mb-4">
+                  <label for="pickup" class="block text-sm font-medium">Pick-up Location</label>
+                  <input type="text" id="pickup"  name="pickupLoc" class="w-full mt-1 p-2 border rounded-md" placeholder="Fetching your current location..." required >
+              </div>
+
+              <div class="mb-4">
+                  <label for="dropoff" class="block text-sm font-medium">Drop-off Location</label>
+                  <input type="text" id="dropoff" name="dropOff"  class="w-full mt-1 p-2 border rounded-md" placeholder="e.g douala rond point deido" required>
+              </div>
+              <div class="mb-4">
+                  <label for="bike" class="block text-sm font-medium">Bike Type</label>
+                  <select id="bike" name="bikeType"  class="w-full px-3 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-yellow-500 focus:border-yellow-500" required>
+                      <option value="" disabled selected>Choose bike type</option>
+                      <option value="scooter">Scooter</option>
+                      <option value="motorcycle">Motorcycle</option>
+                      <option value="3-foot">3-foot</option>
+                      <option value="sport bike">Sport Bike</option>
+                  </select>
+              </div>
+
+              <div class="mb-4">
+                  <label class="block text-sm font-medium">Estimated Fare: <span id="fareAmount">0.00</span>FCFA</label>
+              </div>
+
+              <div class="text-center mt-2">
+                  <button id="submitBtn" type="submit" class="bg-yellow-500 text-white px-6 py-2 cursor-pointer rounded hover:bg-yellow-600 transition">
+                      <i class="fas fa-biking"></i> Request Ride
+                  </button>
+              </div>
+          </form>
+
+      </div>
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <!-- Rider UI - JavaScript for handling WebSocket connections -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <!-------------------------BELOW IS WHERE THE MAP IS FOUND---------------------------------->
+  <script th:src="@{/Js/booking/booking.js}"></script>
+  <script th:src="@{/Js/customer/map.js}"></script>
+
+  <script th:src="@{/Js/rideStatus.js}"></script>
+
+
+</body>
+</html>
