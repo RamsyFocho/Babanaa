@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldAgent - Settings</title>
+<script th:src="@{/Js/tailwind.jit.js}" ></script>    
+    <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}">
+    <!-- <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"> -->
+</head>
+<body class="bg-gray-100 min-h-screen pb-16">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Settings</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="saveBtn" class="text-indigo-600 font-medium">
+                    Save
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Profile Section -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">Profile</h3>
+        </div>
+        <div class="p-4">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="relative">
+                    <div class="w-20 h-20 rounded-full overflow-hidden bg-gray-300">
+                        <img src="https://i.pravatar.cc/150?img=13" alt="Profile" class="w-full h-full object-cover">
+                    </div>
+                    <button class="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md border border-gray-200">
+                        <i class="fas fa-camera text-gray-600"></i>
+                    </button>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg">Michael Rodriguez</h4>
+                    <p class="text-gray-600">Field Agent #1042</p>
+                    <p class="text-sm text-green-600">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        Online
+                    </p>
+                </div>
+            </div>
+            
+            <form id="profileForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="name">
+                        Name
+                    </label>
+                    <input type="text" id="name" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="Michael Rodriguez">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="email">
+                        Email
+                    </label>
+                    <input type="email" id="email" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="michael.r@fieldagent.com">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="phone">
+                        Phone
+                    </label>
+                    <input type="tel" id="phone" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" value="(555) 123-4567">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="region">
+                        Region
+                    </label>
+                    <select id="region" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        <option selected>Northeast</option>
+                        <option>Southeast</option>
+                        <option>Midwest</option>
+                        <option>Southwest</option>
+                        <option>West</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- App Settings -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">App Settings</h3>
+        </div>
+        <div class="p-4">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-medium text-gray-800">Dark Mode</h4>
+                        <p class="text-sm text-gray-600">Switch to dark theme</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" id="darkMode">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-medium text-gray-800">Push Notifications</h4>
+                        <p class="text-sm text-gray-600">Receive alert notifications</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" id="pushNotifications" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-medium text-gray-800">Location Tracking</h4>
+                        <p class="text-sm text-gray-600">Enable GPS tracking</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" id="locationTracking" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-medium text-gray-800">Offline Mode</h4>
+                        <p class="text-sm text-gray-600">Save data for offline use</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" id="offlineMode" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="dataSync">
+                    Data Sync Frequency
+                </label>
+                <select id="dataSync" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="5">Every 5 minutes</option>
+                    <option value="15" selected>Every 15 minutes</option>
+                    <option value="30">Every 30 minutes</option>
+                    <option value="60">Every hour</option>
+                    <option value="manual">Manual only</option>
+                </select>
+            </div>
+            
+            <div class="mt-6">
+                <label class="block text-gray-700 text-sm font-medium mb-2" for="mapProvider">
+                    Map Provider
+                </label>
+                <select id="mapProvider" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="google" selected>Google Maps</option>
+                    <option value="apple">Apple Maps</option>
+                    <option value="waze">Waze</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Settings -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden mb-20">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">System</h3>
+        </div>
+        <div class="p-4">
+            <div class="space-y-4">
+                <div class="py-2">
+                    <p class="text-sm font-medium text-gray-700">App Version</p>
+                    <p class="text-sm text-gray-600">v2.4.1 (Latest)</p>
+                </div>
+                
+                <div class="py-2">
+                    <p class="text-sm font-medium text-gray-700">Last Sync</p>
+                    <p class="text-sm text-gray-600">Today, 12:42 PM</p>
+                </div>
+                
+                <div class="py-2">
+                    <p class="text-sm font-medium text-gray-700">Storage Used</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1 mb-1">
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 45%"></div>
+                    </div>
+                    <p class="text-xs text-gray-600">234 MB of 500 MB</p>
+                </div>
+                
+                <div class="py-2 flex justify-between">
+                    <button class="text-indigo-600 text-sm">
+                        <i class="fas fa-sync mr-1"></i>
+                        Force Sync
+                    </button>
+                    <button class="text-indigo-600 text-sm">
+                        <i class="fas fa-trash-alt mr-1"></i>
+                        Clear Cache
+                    </button>
+                </div>
+                
+                <div class="pt-4 mt-4 border-t">
+                    <button class="w-full bg-red-50 text-red-600 py-3 rounded-lg font-medium hover:bg-red-100">
+                        <i class="fas fa-sign-out-alt mr-1"></i>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4">
+        <div class="flex justify-around">
+            <a th:href="@{/agent/dashboard}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-route text-lg"></i>
+                <span class="text-xs mt-1">Route</span>
+            </a>
+            <a th:href="@{/agent/customers}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-users text-lg"></i>
+                <span class="text-xs mt-1">Customers</span>
+            </a>
+            <a th:href="@{/agent/routeSummary}" class="flex flex-col items-center text-indigo-600">
+                <i class="fas fa-chart-bar text-lg"></i>
+                <span class="text-xs mt-1">Summary</span>
+            </a>
+            <a th:href="@{/agent/settings}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-cog text-lg"></i>
+                <span class="text-xs mt-1">Settings</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Event listeners for toggle switches and form submission
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            alert('Settings saved successfully!');
+        });
+        
+        // Toggle switches functionality
+        const toggles = ['darkMode', 'pushNotifications', 'locationTracking', 'offlineMode'];
+        toggles.forEach(id => {
+            document.getElementById(id).addEventListener('change', function() {
+                console.log(`${id} changed to ${this.checked}`);
+                // Here you would implement the actual functionality for each toggle
+            });
+        });
+    </script>
+</body>
+</html>

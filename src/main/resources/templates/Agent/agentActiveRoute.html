@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldAgent - Active Route</title>
+
+    <script th:src="@{/Js/tailwind.jit.js}"></script>
+    <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}">
+</head>
+
+<body class="bg-gray-100 min-h-screen pb-16">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <a th:href="@{/agent/dashboard}" class="mr-4 text-gray-600">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800">Active Route</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="refreshBtn" class="text-gray-600 focus:outline-none">
+                    <i class="fas fa-sync-alt text-lg"></i>
+                </button>
+                <div class="relative">
+                    <button id="moreOptionsBtn" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-ellipsis-v text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Route Status -->
+    <div class="bg-white shadow-md p-4 mx-4 mt-4 rounded-lg">
+        <div class="flex items-center text-green-600 mb-2">
+            <i class="fas fa-circle text-xs animate-pulse mr-2"></i>
+            <p class="font-medium">Route active for <span id="routeActiveTime">0h 0m</span></p>
+        </div>
+        <div class="flex justify-between text-gray-600 text-sm">
+            <div>
+                <p class="font-medium">Started at:</p>
+                <p id="routeStartTime">08:00 AM</p>
+            </div>
+            <div>
+                <p class="font-medium">Customers visited:</p>
+                <p id="customersVisited">0/12</p>
+            </div>
+            <div>
+                <p class="font-medium">Collections:</p>
+                <p id="totalCollected">$0.00</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map View -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 class="font-medium">Route Map</h3>
+            <div class="flex">
+                <button id="centerMapBtn" class="text-indigo-600 text-sm font-medium mr-3 focus:outline-none">
+                    <i class="fas fa-crosshairs mr-1"></i> Center
+                </button>
+                <button id="toggleViewBtn" class="text-indigo-600 text-sm font-medium focus:outline-none">
+                    <i class="fas fa-list mr-1"></i> List View
+                </button>
+            </div>
+        </div>
+        <div id="mapContainer" class="h-64 bg-gray-200 relative">
+            <!-- Map placeholder -->
+            <div class="absolute inset-0 flex items-center justify-center flex-col">
+                <i class="fas fa-map-marked-alt text-gray-400 text-5xl mb-2"></i>
+                <p class="text-gray-500">Map view would load here</p>
+            </div>
+            <!-- Current location indicator -->
+            <div class="absolute bottom-4 left-4 bg-white rounded-full shadow-md p-2">
+                <div class="h-6 w-6 rounded-full bg-blue-500 animate-ping absolute inset-0 m-2"></div>
+                <div class="h-6 w-6 rounded-full bg-blue-500 relative z-10"></div>
+            </div>
+            <!-- Map controls -->
+            <div class="absolute bottom-4 right-4 flex flex-col">
+                <button class="h-10 w-10 bg-white rounded-full shadow-md flex items-center justify-center mb-2">
+                    <i class="fas fa-plus text-gray-600"></i>
+                </button>
+                <button class="h-10 w-10 bg-white rounded-full shadow-md flex items-center justify-center">
+                    <i class="fas fa-minus text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Stops -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">Today's Schedule</h3>
+        </div>
+        <div id="scheduleList" class="divide-y">
+            <!-- Current stop with expanded details -->
+            <div class="p-4 bg-blue-50 border-l-4 border-blue-500">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center">
+                            <span class="inline-block h-2 w-2 rounded-full bg-blue-500 mr-2"></span>
+                            <h5 class="font-medium">ABC Company</h5>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">123 Main St, Suite 101</p>
+                    </div>
+                    <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">Current</span>
+                </div>
+                <div class="mt-4 text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <p class="text-gray-500">Contact:</p>
+                            <p>John Doe (Manager)</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Phone:</p>
+                            <p>(555) 123-4567</p>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-gray-500">Collection Due:</p>
+                        <p class="font-medium">$1,250.00</p>
+                    </div>
+                    <div class="mt-2">
+                        <p class="text-gray-500">Notes:</p>
+                        <p>Ask about new inventory requirements</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex space-x-2">
+                    <button
+                        class="flex-1 py-2 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clipboard-check mr-2"></i>
+                        <span>Record Visit</span>
+                    </button>
+                    <button class="flex-1 py-2 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-hand-holding-usd mr-2"></i>
+                        <span>Collect Payment</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Other stops -->
+            <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center">
+                            <span class="inline-block h-2 w-2 rounded-full bg-gray-300 mr-2"></span>
+                            <h5 class="font-medium">XYZ Corporation</h5>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">456 Oak Ave, Building B</p>
+                    </div>
+                    <span class="text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded">11:00 AM</span>
+                </div>
+                <div class="mt-2 flex justify-between">
+                    <span class="text-sm text-gray-500">Collection Due: $875.50</span>
+                    <div class="flex space-x-2">
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                            <i class="fas fa-directions"></i>
+                        </button>
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                            <i class="fas fa-angle-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center">
+                            <span class="inline-block h-2 w-2 rounded-full bg-gray-300 mr-2"></span>
+                            <h5 class="font-medium">123 Industries</h5>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">789 Pine St</p>
+                    </div>
+                    <span class="text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded">2:15 PM</span>
+                </div>
+                <div class="mt-2 flex justify-between">
+                    <span class="text-sm text-gray-500">Collection Due: $2,340.00</span>
+                    <div class="flex space-x-2">
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                            <i class="fas fa-directions"></i>
+                        </button>
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                            <i class="fas fa-angle-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="bg-white shadow-md mx-4 my-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">Today's Activity</h3>
+        </div>
+        <div class="divide-y">
+            <div class="p-4 flex">
+                <div class="flex-shrink-0 mr-3">
+                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                        <i class="fas fa-route"></i>
+                    </div>
+                </div>
+                <div>
+                    <p class="font-medium">Route Started</p>
+                    <p class="text-sm text-gray-600">8:00 AM - 123 Main St</p>
+                </div>
+            </div>
+            <div class="p-4 flex">
+                <div class="flex-shrink-0 mr-3">
+                    <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                </div>
+                <div>
+                    <p class="font-medium">Location Updated</p>
+                    <p class="text-sm text-gray-600">8:15 AM - En route to ABC Company</p>
+                </div>
+            </div>
+            <div class="p-4 flex">
+                <div class="flex-shrink-0 mr-3">
+                    <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-building"></i>
+                    </div>
+                </div>
+                <div>
+                    <p class="font-medium">Arrived at ABC Company</p>
+                    <p class="text-sm text-gray-600">9:30 AM - 123 Main St, Suite 101</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action Button -->
+    <div class="fixed bottom-20 right-6">
+        <button id="quickActionBtn"
+            class="h-14 w-14 bg-indigo-600 rounded-full shadow-lg flex items-center justify-center text-white">
+            <i class="fas fa-plus text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white border-t shadow-lg z-10">
+        <div class="flex justify-around">
+            <a th:href="@{/agent/dashboard}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}"
+                class="flex flex-col items-center py-2 flex-1 text-indigo-600 border-t-2 border-indigo-600">
+                <i class="fas fa-route text-lg"></i>
+                <span class="text-xs mt-1">Route</span>
+            </a>
+            <a th:href="@{/agent/visit}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-clipboard-check text-lg"></i>
+                <span class="text-xs mt-1">Visit</span>
+            </a>
+            <a th:href="@{/agent/collection}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-hand-holding-usd text-lg"></i>
+                <span class="text-xs mt-1">Collect</span>
+            </a>
+            <a th:href="@{/agent/more}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-ellipsis-h text-lg"></i>
+                <span class="text-xs mt-1">More</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Route timer
+            let routeTimerInterval = null;
+
+            // Check if route is active
+            const routeStartTime = localStorage.getItem('routeStartTime');
+            if (routeStartTime) {
+                const startTime = new Date(routeStartTime);
+                document.getElementById('routeStartTime').textContent = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                // Start timer
+                startRouteTimer();
+            } else {
+                // Redirect to dashboard if no active route
+                alert('No active route found. Please start a route from the dashboard.');
+                window.location.href = '/agent/dashboard';
+            }
+
+            function startRouteTimer() {
+                if (routeTimerInterval) {
+                    clearInterval(routeTimerInterval);
+                }
+
+                const startTime = new Date(localStorage.getItem('routeStartTime'));
+                const routeActiveTimeElement = document.getElementById('routeActiveTime');
+
+                routeTimerInterval = setInterval(() => {
+                    const now = new Date();
+                    const diffMs = now - startTime;
+                    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                    routeActiveTimeElement.textContent = `${diffHrs}h ${diffMins}m`;
+                }, 60000); // Update every minute
+
+                // Initial update
+                const now = new Date();
+                const diffMs = now - startTime;
+                const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                routeActiveTimeElement.textContent = `${diffHrs}h ${diffMins}m`;
+            }
+
+            // Toggle Map/List view
+            const toggleViewBtn = document.getElementById('toggleViewBtn');
+            let isMapView = true;
+
+            toggleViewBtn.addEventListener('click', function () {
+                if (isMapView) {
+                    toggleViewBtn.innerHTML = '<i class="fas fa-map mr-1"></i> Map View';
+                    // Add logic to switch to list view
+                } else {
+                    toggleViewBtn.innerHTML = '<i class="fas fa-list mr-1"></i> List View';
+                    // Add logic to switch to map view
+                }
+                isMapView = !isMapView;
+            });
+
+            // Center map on current location
+            const centerMapBtn = document.getElementById('centerMapBtn');
+
+            centerMapBtn.addEventListener('click', function () {
+                // In a real app, this would center the map on the current GPS location
+                alert('Centering map on current location...');
+            });
+
+            // Quick action button
+            const quickActionBtn = document.getElementById('quickActionBtn');
+
+            quickActionBtn.addEventListener('click', function () {
+                // Show quick action menu or navigate to quick action page
+                const actions = ['Record Visit', 'Collect Payment', 'Add Note', 'Log Location'];
+                const selectedAction = prompt('Select an action:\n1. Record Visit\n2. Collect Payment\n3. Add Note\n4. Log Location');
+
+                if (selectedAction) {
+                    alert(`You selected: ${actions[parseInt(selectedAction) - 1] || 'Unknown action'}`);
+                }
+            });
+
+            // Refresh button
+            const refreshBtn = document.getElementById('refreshBtn');
+
+            refreshBtn.addEventListener('click', function () {
+                refreshBtn.classList.add('animate-spin');
+
+                // Simulate data refresh
+                setTimeout(() => {
+                    refreshBtn.classList.remove('animate-spin');
+                    alert('Route data refreshed');
+                }, 1000);
+            });
+
+            // More options button
+            const moreOptionsBtn = document.getElementById('moreOptionsBtn');
+
+            moreOptionsBtn.addEventListener('click', function () {
+                const options = ['Edit Route', 'Share Location', 'Report Issue', 'End Route'];
+                const selectedOption = prompt('Select an option:\n1. Edit Route\n2. Share Location\n3. Report Issue\n4. End Route');
+
+                if (selectedOption === '4') {
+                    if (confirm('Are you sure you want to end your route for today?')) {
+                        // Clear route start time
+                        localStorage.removeItem('routeStartTime');
+
+                        // Stop timer
+                        if (routeTimerInterval) {
+                            clearInterval(routeTimerInterval);
+                            routeTimerInterval = null;
+                        }
+
+                        // Record route end event
+                        recordRouteEvent('ROUTE_END', {
+                            timestamp: new Date().toISOString(),
+                            location: { lat: 0, lng: 0 } // This would be actual GPS coordinates in a real app
+                        });
+
+                        // Redirect to summary page
+                        window.location.href = '/agent/routeSummary';
+                    }
+                } else if (selectedOption) {
+                    alert(`You selected: ${options[parseInt(selectedOption) - 1] || 'Unknown option'}`);
+                }
+            });
+
+            // Function to record route events
+            function recordRouteEvent(eventType, data) {
+                // Get existing events or initialize empty array
+                const events = JSON.parse(localStorage.getItem('routeEvents') || '[]');
+
+                // Add new event
+                events.push({
+                    type: eventType,
+                    ...data
+                });
+
+                // Save updated events
+                localStorage.setItem('routeEvents', JSON.stringify(events));
+                console.log(`Recorded ${eventType} event:`, data);
+            }
+        });
+    </script>
+</body>
+
+</html>

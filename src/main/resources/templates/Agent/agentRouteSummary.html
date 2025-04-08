@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldAgent - Route Summary</title>
+    <script th:src="@{/Js/tailwind.jit.js}" ></script>    
+    <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}">
+</head>
+<body class="bg-gray-100 min-h-screen pb-16">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Route Summary</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="exportBtn" class="text-indigo-600 font-medium">
+                    <i class="fas fa-share-alt mr-1"></i>
+                    Export
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Daily Stats -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 class="font-medium">Today's Stats</h3>
+            <p class="text-sm text-gray-500">April 5, 2025</p>
+        </div>
+        <div class="p-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <p class="text-sm text-blue-800">Total Visits</p>
+                    <div class="flex items-end justify-between mt-1">
+                        <h2 class="text-2xl font-bold text-blue-900">12</h2>
+                        <p class="text-xs text-blue-700">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            100% complete
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 p-3 rounded-lg border border-green-100">
+                    <p class="text-sm text-green-800">Total Collected</p>
+                    <div class="flex items-end justify-between mt-1">
+                        <h2 class="text-2xl font-bold text-green-900">$4,285</h2>
+                        <p class="text-xs text-green-700">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            85% of target
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 p-3 rounded-lg border border-purple-100">
+                    <p class="text-sm text-purple-800">Distance Traveled</p>
+                    <div class="flex items-end justify-between mt-1">
+                        <h2 class="text-2xl font-bold text-purple-900">24.8 mi</h2>
+                        <p class="text-xs text-purple-700">
+                            <i class="fas fa-route mr-1"></i>
+                            1.8 hrs driving
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                    <p class="text-sm text-amber-800">Success Rate</p>
+                    <div class="flex items-end justify-between mt-1">
+                        <h2 class="text-2xl font-bold text-amber-900">83%</h2>
+                        <p class="text-xs text-amber-700">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            +5% vs. avg
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Collections Summary -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">Collections Summary</h3>
+        </div>
+        <div class="p-4">
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <div>
+                        <p class="text-sm text-gray-600">Total Collected</p>
+                        <p class="text-lg font-bold text-gray-900">$4,285.00</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Target Amount</p>
+                        <p class="text-lg font-bold text-gray-900">$5,000.00</p>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div class="bg-green-600 h-4 rounded-full" style="width: 85%"></div>
+                </div>
+                
+                <!-- Collection Breakdown -->
+                <div class="mt-4">
+                    <h4 class="text-sm font-medium text-gray-700 mb-2">Payment Method Breakdown</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between p-2 bg-gray-50 rounded">
+                            <p>Cash</p>
+                            <p class="font-medium">$1,865.00</p>
+                        </div>
+                        <div class="flex justify-between p-2 bg-gray-50 rounded">
+                            <p>Credit Card</p>
+                            <p class="font-medium">$1,220.00</p>
+                        </div>
+                        <div class="flex justify-between p-2 bg-gray-50 rounded">
+                            <p>Check</p>
+                            <p class="font-medium">$1,200.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visit Timeline -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h3 class="font-medium">Visit Timeline</h3>
+        </div>
+        <div class="p-4">
+            <ol class="relative border-l border-gray-300">
+                <li class="mb-6 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3 ring-8 ring-white">
+                        <i class="fas fa-check text-green-600 text-xs"></i>
+                    </span>
+                    <div class="flex justify-between mb-1">
+                        <h3 class="text-base font-semibold text-gray-900">ABC Company</h3>
+                        <time class="text-sm text-gray-500">9:30 AM</time>
+                    </div>
+                    <div class="flex justify-between">
+                        <p class="text-sm text-gray-600">Payment Collection</p>
+                        <p class="text-sm font-medium text-green-600">$1,250.00</p>
+                    </div>
+                </li>
+                
+                <li class="mb-6 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3 ring-8 ring-white">
+                        <i class="fas fa-check text-green-600 text-xs"></i>
+                    </span>
+                    <div class="flex justify-between mb-1">
+                        <h3 class="text-base font-semibold text-gray-900">XYZ Corporation</h3>
+                        <time class="text-sm text-gray-500">11:15 AM</time>
+                    </div>
+                    <div class="flex justify-between">
+                        <p class="text-sm text-gray-600">Delivery & Payment</p>
+                        <p class="text-sm font-medium text-green-600">$835.00</p>
+                    </div>
+                </li>
+                
+                <li class="mb-6 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-yellow-100 rounded-full -left-3 ring-8 ring-white">
+                        <i class="fas fa-exclamation text-yellow-600 text-xs"></i>
+                    </span>
+                    <div class="flex justify-between mb-1">
+                        <h3 class="text-base font-semibold text-gray-900">123 Industries</h3>
+                        <time class="text-sm text-gray-500">2:20 PM</time>
+                    </div>
+                    <div class="flex justify-between">
+                        <p class="text-sm text-gray-600">Payment Collection</p>
+                        <p class="text-sm font-medium text-yellow-600">Partial: $700.00</p>
+                    </div>
+                </li>
+                
+                <li class="mb-6 ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-red-100 rounded-full -left-3 ring-8 ring-white">
+                        <i class="fas fa-times text-red-600 text-xs"></i>
+                    </span>
+                    <div class="flex justify-between mb-1">
+                        <h3 class="text-base font-semibold text-gray-900">Acme Supplies</h3>
+                        <time class="text-sm text-gray-500">3:45 PM</time>
+                    </div>
+                    <div class="flex justify-between">
+                        <p class="text-sm text-gray-600">Payment Collection</p>
+                        <p class="text-sm font-medium text-red-600">Contact Unavailable</p>
+                    </div>
+                </li>
+                
+                <li class="ml-6">
+                    <span class="absolute flex items-center justify-center w-6 h-6 bg-green-100 rounded-full -left-3 ring-8 ring-white">
+                        <i class="fas fa-check text-green-600 text-xs"></i>
+                    </span>
+                    <div class="flex justify-between mb-1">
+                        <h3 class="text-base font-semibold text-gray-900">Metro Distribution</h3>
+                        <time class="text-sm text-gray-500">4:50 PM</time>
+                    </div>
+                    <div class="flex justify-between">
+                        <p class="text-sm text-gray-600">Meeting</p>
+                        <p class="text-sm font-medium text-green-600">Completed</p>
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </div>
+    
+    <!-- Route Map -->
+    <div class="bg-white shadow-md mx-4 mt-4 rounded-lg overflow-hidden mb-20">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h3 class="font-medium">Route Map</h3>
+            <button class="text-sm text-gray-600">
+                <i class="fas fa-expand-alt mr-1"></i>
+                Expand
+            </button>
+        </div>
+        <div class="bg-gray-200 h-48 flex items-center justify-center">
+            <span class="text-gray-600">
+                <i class="fas fa-map-marked-alt mr-1 text-lg"></i>
+                Map View Placeholder
+            </span>
+        </div>
+        <div class="p-3 bg-gray-50 text-sm">
+            <div class="flex justify-between text-gray-600">
+                <p>Total Distance: 24.8 miles</p>
+                <p>Total Time: 1h 45m</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- End Route Button -->
+    <div class="fixed bottom-16 left-0 right-0 px-4 py-3 bg-white shadow-lg border-t border-gray-200">
+        <button class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700">
+            <i class="fas fa-flag-checkered mr-2"></i>
+            Complete Route & Submit Report
+        </button>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 px-4">
+        <div class="flex justify-around">
+            <a th:href="@{/agent/dashboard}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-route text-lg"></i>
+                <span class="text-xs mt-1">Route</span>
+            </a>
+            <a th:href="@{/agent/customers}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-users text-lg"></i>
+                <span class="text-xs mt-1">Customers</span>
+            </a>
+            <a th:href="@{/agent/routeSummary}" class="flex flex-col items-center text-indigo-600">
+                <i class="fas fa-chart-bar text-lg"></i>
+                <span class="text-xs mt-1">Summary</span>
+            </a>
+            <a th:href="@{/agent/settings}" class="flex flex-col items-center text-gray-500">
+                <i class="fas fa-cog text-lg"></i>
+                <span class="text-xs mt-1">Settings</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Event listeners for expandable sections and export functionality would go here
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            alert('Export functionality would be implemented here.');
+        });
+    </script>
+</body>
+</html>

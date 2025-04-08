@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldAgent - Dashboard</title>
+
+    <script th:src="@{/Js/tailwind.jit.js}"></script>
+    <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <button id="menuToggle" class="mr-4 text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                <h1 class="text-xl font-bold text-indigo-600">FieldAgent</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationBtn" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span
+                            class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                    </button>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold cursor-pointer"
+                    id="profileDropdown">
+                    JS
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu (Hidden by default on mobile) -->
+    <div id="sidebar"
+        class="fixed inset-y-0 left-0 bg-white w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-20">
+        <div class="p-4 border-b">
+            <div class="flex items-center">
+                <div
+                    class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold mr-3">
+                    JS
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold" id="agentName">John Smith</h2>
+                    <p class="text-sm text-gray-600" id="agentId">Agent #A12345</p>
+                </div>
+            </div>
+        </div>
+        <nav class="mt-4">
+            <a th:href="@{/agent/dashboard}"
+                class="flex items-center px-4 py-3 text-indigo-600 bg-indigo-50 border-l-4 border-indigo-600">
+                <i class="fas fa-th-large w-6"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-route w-6"></i>
+                <span>Active Route</span>
+            </a>
+            <a th:href="@{/agent/customers}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-users w-6"></i>
+                <span>Customers</span>
+            </a>
+            <a th:href="@{/agent/collection}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-money-bill-wave w-6"></i>
+                <span>Collections</span>
+            </a>
+            <a th:href="@{/agent/history}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-history w-6"></i>
+                <span>History</span>
+            </a>
+            <a th:href="@{/agent/settings}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-cog w-6"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="absolute bottom-0 w-full border-t p-4">
+            <button id="logoutBtn"
+                class="w-full flex items-center justify-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay for sidebar -->
+    <div id="overlay"
+        class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-10">
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-6">
+        <!-- Welcome Section -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Welcome back, <span id="welcomeName">John</span>!</h2>
+            <p class="text-gray-600">Today is <span id="currentDate">Monday, April 5, 2025</span></p>
+        </div>
+
+        <!-- Current Status Card -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-800">Current Status</h3>
+                <span id="statusBadge" class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-800">Inactive</span>
+            </div>
+            <div class="mt-4">
+                <div id="startRouteCard" class="block">
+                    <p class="text-gray-600 mb-4">You haven't started your route for today. Ready to begin?</p>
+                    <button id="startRouteBtn"
+                        class="w-full flex items-center justify-center py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors duration-300">
+                        <i class="fas fa-play-circle mr-2"></i>
+                        <span>Start Route</span>
+                    </button>
+                </div>
+                <div id="activeRouteCard" class="hidden">
+                    <div class="flex items-center text-green-600 mb-2">
+                        <i class="fas fa-circle text-xs animate-pulse mr-2"></i>
+                        <p class="font-medium">Route active for <span id="routeActiveTime">0h 0m</span></p>
+                    </div>
+                    <div class="flex justify-between text-gray-600 text-sm mb-4">
+                        <div>
+                            <p class="font-medium">Started at:</p>
+                            <p id="routeStartTime">08:00 AM</p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Customers visited:</p>
+                            <p id="customersVisited">0/12</p>
+                        </div>
+                        <div>
+                            <p class="font-medium">Collections:</p>
+                            <p id="totalCollected">$0.00</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="viewRouteBtn"
+                            class="flex-1 flex items-center justify-center py-2 px-4 bg-indigo-100 hover:bg-indigo-200 text-indigo-600 rounded-lg transition-colors duration-300">
+                            <i class="fas fa-map-marked-alt mr-2"></i>
+                            <span>View Route</span>
+                        </button>
+                        <button id="endRouteBtn"
+                            class="flex-1 flex items-center justify-center py-2 px-4 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors duration-300">
+                            <i class="fas fa-stop-circle mr-2"></i>
+                            <span>End Route</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Actions</h3>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <a th:href="@{/agent/visit}"
+                class="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center justify-center hover:shadow-md transition-shadow duration-300">
+                <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mb-2">
+                    <i class="fas fa-clipboard-check text-xl"></i>
+                </div>
+                <span class="text-gray-800 font-medium text-center">Record Visit</span>
+            </a>
+            <a th:href="@{/agent/collection}"
+                class="bg-white rounded-xl shadow-sm p-4 flex flex-col items-center justify-center hover:shadow-md transition-shadow duration-300">
+                <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2">
+                    <i class="fas fa-hand-holding-usd text-xl"></i>
+                </div>
+                <span class="text-gray-800 font-medium text-center">Record Collection</span>
+            </a>
+        </div>
+
+        <!-- Today's Schedule -->
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Today's Schedule</h3>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h4 class="font-medium">Upcoming Visits</h4>
+                <a th:href="@{/agent/schedule}" class="text-sm text-indigo-600">View All</a>
+            </div>
+            <div id="scheduleList" class="divide-y">
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h5 class="font-medium">ABC Company</h5>
+                            <p class="text-sm text-gray-600">123 Main St, Suite 101</p>
+                        </div>
+                        <span class="text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded">9:30 AM</span>
+                    </div>
+                    <div class="mt-2 flex justify-between">
+                        <span class="text-sm text-gray-500">Collection Due: $1,250.00</span>
+                        <div class="flex space-x-2">
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-directions"></i>
+                            </button>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h5 class="font-medium">XYZ Corporation</h5>
+                            <p class="text-sm text-gray-600">456 Oak Ave, Building B</p>
+                        </div>
+                        <span class="text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded">11:00 AM</span>
+                    </div>
+                    <div class="mt-2 flex justify-between">
+                        <span class="text-sm text-gray-500">Collection Due: $875.50</span>
+                        <div class="flex space-x-2">
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-directions"></i>
+                            </button>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h5 class="font-medium">123 Industries</h5>
+                            <p class="text-sm text-gray-600">789 Pine St</p>
+                        </div>
+                        <span class="text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded">2:15 PM</span>
+                    </div>
+                    <div class="mt-2 flex justify-between">
+                        <span class="text-sm text-gray-500">Collection Due: $2,340.00</span>
+                        <div class="flex space-x-2">
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-directions"></i>
+                            </button>
+                            <button class="text-sm text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white border-t shadow-lg z-10">
+        <div class="flex justify-around">
+            <a th:href="@{/agent/dashboard}"
+                class="flex flex-col items-center py-2 flex-1 text-indigo-600 border-t-2 border-indigo-600">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-route text-lg"></i>
+                <span class="text-xs mt-1">Route</span>
+            </a>
+            <a th:href="@{/agent/visit}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-clipboard-check text-lg"></i>
+                <span class="text-xs mt-1">Visit</span>
+            </a>
+            <a th:href="@{/agent/collection}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-hand-holding-usd text-lg"></i>
+                <span class="text-xs mt-1">Collect</span>
+            </a>
+            <a th:href="@{/agent/more}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-ellipsis-h text-lg"></i>
+                <span class="text-xs mt-1">More</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set current date
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+
+            // Load user data
+            const username = localStorage.getItem('username') || 'Agent';
+            const firstName = username.split(' ')[0];
+            document.getElementById('welcomeName').textContent = firstName;
+            document.getElementById('agentName').textContent = username;
+
+            // Sidebar toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+
+            menuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('opacity-0');
+                overlay.classList.toggle('pointer-events-none');
+            });
+
+            overlay.addEventListener('click', function () {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                overlay.classList.add('pointer-events-none');
+            });
+
+            // Start route button
+            const startRouteBtn = document.getElementById('startRouteBtn');
+            const startRouteCard = document.getElementById('startRouteCard');
+            const activeRouteCard = document.getElementById('activeRouteCard');
+            const statusBadge = document.getElementById('statusBadge');
+
+            startRouteBtn.addEventListener('click', function () {
+                startRouteCard.classList.add('hidden');
+                activeRouteCard.classList.remove('hidden');
+                statusBadge.textContent = 'Active';
+                statusBadge.classList.remove('bg-gray-100', 'text-gray-800');
+                statusBadge.classList.add('bg-green-100', 'text-green-800');
+
+                // Store route start time
+                const startTime = new Date();
+                localStorage.setItem('routeStartTime', startTime.toString());
+                document.getElementById('routeStartTime').textContent = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                // Start timer
+                startRouteTimer();
+
+                // Record route start event
+                recordRouteEvent('ROUTE_START', {
+                    timestamp: startTime.toISOString(),
+                    location: { lat: 0, lng: 0 } // This would be actual GPS coordinates in a real app
+                });
+            });
+
+            // End route button
+            const endRouteBtn = document.getElementById('endRouteBtn');
+
+            endRouteBtn.addEventListener('click', function () {
+                if (confirm('Are you sure you want to end your route for today?')) {
+                    activeRouteCard.classList.add('hidden');
+                    startRouteCard.classList.remove('hidden');
+                    statusBadge.textContent = 'Inactive';
+                    statusBadge.classList.remove('bg-green-100', 'text-green-800');
+                    statusBadge.classList.add('bg-gray-100', 'text-gray-800');
+
+                    // Clear route start time
+                    localStorage.removeItem('routeStartTime');
+
+                    // Stop timer
+                    if (routeTimerInterval) {
+                        clearInterval(routeTimerInterval);
+                        routeTimerInterval = null;
+                    }
+
+                    // Record route end event
+                    recordRouteEvent('ROUTE_END', {
+                        timestamp: new Date().toISOString(),
+                        location: { lat: 0, lng: 0 } // This would be actual GPS coordinates in a real app
+                    });
+
+                    // Redirect to summary page
+                    window.location.href = '/agent/routeSummary';
+                }
+            });
+
+            // View route button
+            const viewRouteBtn = document.getElementById('viewRouteBtn');
+
+            viewRouteBtn.addEventListener('click', function () {
+                window.location.href = '/agent/activeRoute';
+            });
+
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            logoutBtn.addEventListener('click', function () {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('username');
+                    window.location.href = '/agent';
+                }
+            });
+
+            // Check if route is active
+            const routeStartTime = localStorage.getItem('routeStartTime');
+            if (routeStartTime) {
+                startRouteCard.classList.add('hidden');
+                activeRouteCard.classList.remove('hidden');
+                statusBadge.textContent = 'Active';
+                statusBadge.classList.remove('bg-gray-100', 'text-gray-800');
+                statusBadge.classList.add('bg-green-100', 'text-green-800');
+
+                const startTime = new Date(routeStartTime);
+                document.getElementById('routeStartTime').textContent = startTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                // Start timer
+                startRouteTimer();
+            }
+
+            // Route timer
+            let routeTimerInterval = null;
+
+            function startRouteTimer() {
+                if (routeTimerInterval) {
+                    clearInterval(routeTimerInterval);
+                }
+
+                const startTime = new Date(localStorage.getItem('routeStartTime'));
+                const routeActiveTimeElement = document.getElementById('routeActiveTime');
+
+                routeTimerInterval = setInterval(() => {
+                    const now = new Date();
+                    const diffMs = now - startTime;
+                    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                    routeActiveTimeElement.textContent = `${diffHrs}h ${diffMins}m`;
+                }, 60000); // Update every minute
+
+                // Initial update
+                const now = new Date();
+                const diffMs = now - startTime;
+                const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                routeActiveTimeElement.textContent = `${diffHrs}h ${diffMins}m`;
+            }
+
+            // Function to record route events
+            function recordRouteEvent(eventType, data) {
+                // Get existing events or initialize empty array
+                const events = JSON.parse(localStorage.getItem('routeEvents') || '[]');
+
+                // Add new event
+                events.push({
+                    type: eventType,
+                    ...data
+                });
+
+                // Save updated events
+                localStorage.setItem('routeEvents', JSON.stringify(events));
+                console.log(`Recorded ${eventType} event:`, data);
+            }
+        });
+    </script>
+</body>
+
+</html>

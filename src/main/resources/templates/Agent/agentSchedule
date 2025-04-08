@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldAgent - Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen pb-16">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <button id="menuToggle" class="mr-4 text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                <h1 class="text-xl font-bold text-indigo-600">FieldAgent</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationBtn" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                    </button>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold cursor-pointer" id="profileDropdown">
+                    JS
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar Menu (Hidden by default on mobile) -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 bg-white w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-20">
+        <div class="p-4 border-b">
+            <div class="flex items-center">
+                <div class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold mr-3">
+                    JS
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold" id="agentName">John Smith</h2>
+                    <p class="text-sm text-gray-600" id="agentId">Agent #A12345</p>
+                </div>
+            </div>
+        </div>
+        <nav class="mt-4">
+            <a th:href="@{/agent/dashboard}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-th-large w-6"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-route w-6"></i>
+                <span>Active Route</span>
+            </a>
+            <a th:href="@{/agent/customers}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-users w-6"></i>
+                <span>Customers</span>
+            </a>
+            <a th:href="@{/agent/schedule}" class="flex items-center px-4 py-3 text-indigo-600 bg-indigo-50 border-l-4 border-indigo-600">
+                <i class="fas fa-calendar-alt w-6"></i>
+                <span>Schedule</span>
+            </a>
+            <a th:href="@{agent/collection}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-money-bill-wave w-6"></i>
+                <span>Collections</span>
+            </a>
+            <a th:href="@{/agent/history}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-history w-6"></i>
+                <span>History</span>
+            </a>
+            <a th:href ="@{/agent/settings}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-cog w-6"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="absolute bottom-0 w-full border-t p-4">
+            <button id="logoutBtn" class="w-full flex items-center justify-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Overlay for sidebar -->
+    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-10"></div>
+    
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Schedule</h2>
+            <div class="flex space-x-2">
+                <button id="prevWeekBtn" class="px-3 py-2 border rounded-lg bg-white hover:bg-gray-50">
+                    <i class="fas fa-chevron-left text-gray-600"></i>
+                </button>
+                <button id="todayBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    Today
+                </button>
+                <button id="nextWeekBtn" class="px-3 py-2 border rounded-lg bg-white hover:bg-gray-50">
+                    <i class="fas fa-chevron-right text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Week Navigation -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+            <div class="text-center mb-4">
+                <h3 class="text-lg font-medium text-gray-800" id="weekRange">April 7 - April 13, 2025</h3>
+            </div>
+            
+            <!-- Week Day Pills -->
+            <div class="flex justify-around overflow-x-auto py-2" id="dayPills">
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg" data-date="2025-04-07">
+                    <span class="text-xs text-gray-500">Mon</span>
+                    <span class="text-sm font-medium">7</span>
+                </button>
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700" data-date="2025-04-08">
+                    <span class="text-xs">Tue</span>
+                    <span class="text-sm font-medium">8</span>
+                </button>
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg" data-date="2025-04-09">
+                    <span class="text-xs text-gray-500">Wed</span>
+                    <span class="text-sm font-medium">9</span>
+                </button>
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg" data-date="2025-04-10">
+                    <span class="text-xs text-gray-500">Thu</span>
+                    <span class="text-sm font-medium">10</span>
+                </button>
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg" data-date="2025-04-11">
+                    <span class="text-xs text-gray-500">Fri</span>
+                    <span class="text-sm font-medium">11</span>
+                </button>
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg" data-date="2025-04-12">
+                    <span class="text-xs text-gray-500">Sat</span>
+                    <span class="text-sm font-medium">12</span>
+                </button>
+                <button class="flex flex-col items-center px-4 py-2 rounded-lg" data-date="2025-04-13">
+                    <span class="text-xs text-gray-500">Sun</span>
+                    <span class="text-sm font-medium">13</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Schedule List -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div class="border-b border-gray-200 p-4 bg-indigo-50">
+                <h3 class="font-medium" id="selectedDate">Tuesday, April 8, 2025</h3>
+                <div class="flex mt-2">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded mr-2">12 Visits</span>
+                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">4 Collections Due</span>
+                </div>
+            </div>
+            
+            <!-- Schedule Items -->
+            <div class="divide-y" id="scheduleItems">
+                <!-- Morning -->
+                <div class="p-3 bg-gray-50 text-xs font-medium text-gray-500">Morning</div>
+                
+                <!-- Visit Item -->
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between">
+                        <div class="flex items-center">
+                            <div class="text-center mr-4 w-12">
+                                <span class="text-sm font-medium">9:00</span>
+                                <div class="text-xs text-gray-500">AM</div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">ABC Company</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                                    <span>123 Business Ave</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded mr-2">Visit</span>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Collection Item -->
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between">
+                        <div class="flex items-center">
+                            <div class="text-center mr-4 w-12">
+                                <span class="text-sm font-medium">10:30</span>
+                                <div class="text-xs text-gray-500">AM</div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">XYZ Corporation</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                                    <span>456 Corporate Blvd</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">$1,250.00 Due</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded mr-2">Visit</span>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Afternoon -->
+                <div class="p-3 bg-gray-50 text-xs font-medium text-gray-500">Afternoon</div>
+                
+                <!-- Visit Item -->
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between">
+                        <div class="flex items-center">
+                            <div class="text-center mr-4 w-12">
+                                <span class="text-sm font-medium">1:15</span>
+                                <div class="text-xs text-gray-500">PM</div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">123 Industries</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                                    <span>789 Industry Park</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">$875.50 Due</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded mr-2">Visit</span>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visit Item -->
+                <div class="p-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex justify-between">
+                        <div class="flex items-center">
+                            <div class="text-center mr-4 w-12">
+                                <span class="text-sm font-medium">3:00</span>
+                                <div class="text-xs text-gray-500">PM</div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium">Global Solutions Inc.</h4>
+                                <div class="flex items-center text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                                    <span>101 Solution Street</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded mr-2">Visit</span>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- More items can be added here -->
+                <div class="p-4 text-center text-sm text-gray-500" id="loadingIndicator" style="display: none;">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading schedule...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex justify-center mb-6">
+            <button id="startRouteBtn" class="bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:bg-indigo-700 flex items-center mr-4">
+                <i class="fas fa-route mr-2"></i>
+                Start Today's Route
+            </button>
+            <button id="optimizeRouteBtn" class="bg-white text-indigo-600 border border-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 flex items-center">
+                <i class="fas fa-magic mr-2"></i>
+                Optimize Route
+            </button>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 inset-x-0 bg-white border-t shadow-lg z-10">
+        <div class="flex justify-around">
+            <a th:href="@{/agent/dashboard}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-route text-lg"></i>
+                <span class="text-xs mt-1">Route</span>
+            </a>
+            <a th:href="@{/agent/visit}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-clipboard-check text-lg"></i>
+                <span class="text-xs mt-1">Visit</span>
+            </a>
+            <a th:href="@{/agent/collection}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-hand-holding-usd text-lg"></i>
+                <span class="text-xs mt-1">Collect</span>
+            </a>
+            <a th:href="@{/agent/more}" class="flex flex-col items-center py-2 flex-1 text-gray-500">
+                <i class="fas fa-ellipsis-h text-lg"></i>
+                <span class="text-xs mt-1">More</span>
+            </a>
+        </div>
+    </nav>
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('opacity-0');
+        overlay.classList.toggle('pointer-events-none');
+    });
+    
+    overlay.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('opacity-0');
+        overlay.classList.add('pointer-events-none');
+    });
+    
+    // Date navigation
+    const prevWeekBtn = document.getElementById('prevWeekBtn');
+    const nextWeekBtn = document.getElementById('nextWeekBtn');
+    const todayBtn = document.getElementById('todayBtn');
+    const weekRangeEl = document.getElementById('weekRange');
+    const selectedDateEl = document.getElementById('selectedDate');
+    const dayPills = document.getElementById('dayPills');
+    
+    // Initialize current date
+    let currentDate = new Date();
+    let selectedDate = new Date();
+    
+    // Update the UI with current selected date
+    updateDateUI();
+    
+    // Load schedule data for the current date
+    loadSchedule(formatDateForAPI(selectedDate));
+    
+    // Previous week button
+    prevWeekBtn.addEventListener('click', function() {
+        const newDate = new Date(currentDate);
+        newDate.setDate(currentDate.getDate() - 7);
+        currentDate = newDate;
+        updateDateUI();
+    });
+    
+    // Next week button
+    nextWeekBtn.addEventListener('click', function() {
+        const newDate = new Date(currentDate);
+        newDate.setDate(currentDate.getDate() + 7);
+        currentDate = newDate;
+        updateDateUI();
+    });
+    
+    // Today button
+    todayBtn.addEventListener('click', function() {
+        currentDate = new Date();
+        selectedDate = new Date();
+        updateDateUI();
+        loadSchedule(formatDateForAPI(selectedDate));
+    });
+    
+    // Day pills click handler
+    dayPills.addEventListener('click', function(e) {
+        const pillBtn = e.target.closest('button');
+        if (pillBtn && pillBtn.dataset.date) {
+            // Update selected date
+            selectedDate = new Date(pillBtn.dataset.date);
+            
+            // Update UI
+            updateSelectedDayUI();
+            
+            // Load schedule for selected date
+            loadSchedule(formatDateForAPI(selectedDate));
+        }
+    });
+    
+    // Start route button
+    document.getElementById('startRouteBtn').addEventListener('click', function() {
+        // Check if today is selected
+        const today = new Date();
+        if (
+            selectedDate.getDate() === today.getDate() &&
+            selectedDate.getMonth() === today.getMonth() &&
+            selectedDate.getFullYear() === today.getFullYear()
+        ) {
+            startRoute();
+        } else {
+            alert('You can only start a route for today. Please select today\'s date.');
+        }
+    });
+    
+    // Optimize route button
+    document.getElementById('optimizeRouteBtn').addEventListener('click', function() {
+        optimizeRoute();
+    });
+    
+    // Update date UI based on current and selected dates
+    function updateDateUI() {
+        // Get first day of week (Monday)
+        const firstDay = new Date(currentDate);
+        const day = currentDate.getDay();
+        const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+        firstDay.setDate(diff);
+        
+        // Get last day of week (Sunday)
+        const lastDay = new Date(firstDay);
+        lastDay.setDate(lastDay.getDate() + 6);
+        
+        // Update week range display
+        weekRangeEl.textContent = `${formatMonthDay(firstDay)} - ${formatMonthDay(lastDay)}, ${lastDay.getFullYear()}`;
+        
+        // Generate day pills for current week
+        generateDayPills(firstDay);
+        
+        // Update selected day UI
+        updateSelectedDayUI();
+    }
+    
+    // Generate day pills for a week starting from firstDay
+    function generateDayPills(firstDay) {
+        dayPills.innerHTML = '';
+        
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(firstDay);
+            date.setDate(date.getDate() + i);
+            
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const button = document.createElement('button');
+            button.className = 'flex flex-col items-center px-4 py-2 rounded-lg';
+            button.dataset.date = formatDateForAPI(date);
+            
+            // Check if this date is selected
+            const isSelected = 
+                date.getDate() === selectedDate.getDate() &&
+                date.getMonth() === selectedDate.getMonth() &&
+                date.getFullYear() === selectedDate.getFullYear();
+            
+            if (isSelected) {
+                button.className += ' bg-indigo-100 text-indigo-700';
+            } else {
+                button.className += ' hover:bg-gray-100';
+            }
+            
+            const daySpan = document.createElement('span');
+            daySpan.className = 'text-xs ' + (isSelected ? '' : 'text-gray-500');
+            daySpan.textContent = dayNames[date.getDay()];
+            
+            const dateSpan = document.createElement('span');
+            dateSpan.className = 'text-sm font-medium';
+            dateSpan.textContent = date.getDate();
+            
+            button.appendChild(daySpan);
+            button.appendChild(dateSpan);
+            dayPills.appendChild(button);
+        }
+    }
+    
+    // Update selected day UI
+    function updateSelectedDayUI() {
+        // Update selected date display
+        selectedDateEl.textContent = formatFullDate(selectedDate);
+        
+        // Update day pills to highlight selected date
+        const dayButtons = dayPills.querySelectorAll('button');
+        dayButtons.forEach(button => {
+            const date = new Date(button.dataset.date);
+            const isSelected = 
+                date.getDate() === selectedDate.getDate() &&
+                date.getMonth() === selectedDate.getMonth() &&
+                date.getFullYear() === selectedDate.getFullYear();
+            
+            if (isSelected) {
+                button.className = 'flex flex-col items-center px-4 py-2 rounded-lg bg-indigo-100 text-indigo-700';
+                button.querySelector('.text-xs').className = 'text-xs';
+            } else {
+                button.className = 'flex flex-col items-center px-4 py-2 rounded-lg hover:bg-gray-100';
+                button.querySelector('.text-xs').className = 'text-xs text-gray-500';
+            }
+        });
+    }
+    
+    // Load schedule data for selected date
+    async function loadSchedule(date) {
+        const scheduleItems = document.getElementById('scheduleItems');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        
+        try {
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Clear existing schedule items except loading indicator
+            Array.from(scheduleItems.children).forEach(child => {
+                if (child !== loadingIndicator) {
+                    child.remove();
+                }
+            });
+            
+            // Fetch schedule data from API
+            const scheduleData = await fetchScheduleData(date);
+            
+            // If no data, show empty message
+            if (!scheduleData || scheduleData.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'p-8 text-center text-gray-500';
+                emptyMessage.textContent = 'No schedule items for this date.';
+                scheduleItems.insertBefore(emptyMessage, loadingIndicator);
+                return;
+            }
+            
+            // Group schedule items by time period
+            const periods = groupScheduleByPeriod(scheduleData);
+            
+            // Create schedule UI
+            for (const period in periods) {
+                // Add period header
+                const periodHeader = document.createElement('div');
+                periodHeader.className = 'p-3 bg-gray-50 text-xs font-medium text-gray-500';
+                periodHeader.textContent = period;
+                scheduleItems.insertBefore(periodHeader, loadingIndicator);
+                
+                // Add items for this period
+                periods[period].forEach(item => {
+                    const scheduleItem = createScheduleItem(item);
+                    scheduleItems.insertBefore(scheduleItem, loadingIndicator);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading schedule:', error);
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'p-4 text-center text-red-500';
+            errorMessage.textContent = 'Failed to load schedule. Please try again.';
+            scheduleItems.insertBefore(errorMessage, loadingIndicator);
+        } finally {
+            // Hide loading indicator
+            loadingIndicator.style.display = 'none';
+        }
+    }
+    
+    // Fetch schedule data from API
+    async function fetchScheduleData(date) {
+        try {
+            const response = await fetch(`/api/schedule?date=${date}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching schedule data:', error);
+            throw error;
+        }
+    }
+    
+    // Group schedule items by time period (Morning, Afternoon, Evening)
+    function groupScheduleByPeriod(scheduleItems) {
+        const periods = {
+            'Morning': [],
+            'Afternoon': [],
+            'Evening': []
+        };
+        
+        scheduleItems.forEach(item => {
+            const hour = parseInt(item.time.split(':')[0]);
+            
+            if (hour < 12) {
+                periods['Morning'].push(item);
+            } else if (hour < 17) {
+                periods['Afternoon'].push(item);
+            } else {
+                periods['Evening'].push(item);
+            }
+        });
+        
+        // Sort items within each period by time
+        for (const period in periods) {
+            periods[period].sort((a, b) => {
+                const timeA = a.time.split(':');
+                const timeB = b.time.split(':');
+                
+                const hourA = parseInt(timeA[0]);
+                const hourB = parseInt(timeB[0]);
+                
+                if (hourA !== hourB) {
+                    return hourA - hourB;
+                }
+                
+                const minuteA = parseInt(timeA[1]);
+                const minuteB = parseInt(timeB[1]);
+                
+                return minuteA - minuteB;
+            });
+        }
+        
+        // Remove empty periods
+        for (const period in periods) {
+            if (periods[period].length === 0) {
+                delete periods[period];
+            }
+        }
+        
+        return periods;
+    }
+    
+    // Create a schedule item UI element
+    function createScheduleItem(item) {
+        const div = document.createElement('div');
+        div.className = 'p-4 hover:bg-gray-50 transition-colors duration-200';
+        div.dataset.id = item.id;
+        
+        const time12h = convertTo12HourFormat(item.time);
+        
+        div.innerHTML = `
+            <div class="flex justify-between">
+                <div class="flex items-center">
+                    <div class="text-center mr-4 w-12">
+                        <span class="text-sm font-medium">${time12h.time}</span>
+                        <div class="text-xs text-gray-500">${time12h.period}</div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium">${item.customerName}</h4>
+                        <div class="flex items-center text-sm text-gray-600 mt-1">
+                            <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                            <span>${item.address}</span>
+                        </div>
+                        ${item.collectionAmount ? `
+                        <div class="mt-1">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">$${item.collectionAmount.toFixed(2)} Due</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded mr-2">${item.type}</span>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add event listener to view details
+        div.addEventListener('click', function() {
+            viewScheduleDetails(item.id);
+        });
+        
+        return div;
+    }
+    
+    // View schedule item details
+    async function viewScheduleDetails(itemId) {
+        try {
+            const response = await fetch(`/api/schedule/item/${itemId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const itemDetails = await response.json();
+            
+            // Here you would navigate to the visit details page
+            console.log('View schedule item:', itemDetails);
+            
+            // Example of navigating to customer details page
+            window.location.href = `/agent/visit?id=${itemDetails.customerId}&scheduleId=${itemId}`;
+        } catch (error) {
+            console.error('Error fetching schedule item details:', error);
+            alert('Failed to load schedule item details. Please try again.');
+        }
+    }
+    
+    // Start route functionality
+    async function startRoute() {
+        try {
+            const response = await fetch('/api/route/start', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    date: formatDateForAPI(selectedDate)
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const routeData = await response.json();
+            
+            // Navigate to active route page
+            window.location.href = `/agent/activeRoute?routeId=${routeData.routeId}`;
+        } catch (error) {
+            console.error('Error starting route:', error);
+            alert('Failed to start route. Please try again.');
+        }
+    }
+    
+    // Optimize route functionality
+    async function optimizeRoute() {
+        try {
+            const response = await fetch('/api/route/optimize', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    date: formatDateForAPI(selectedDate)
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const optimizedRoute = await response.json();
+            
+            // Reload schedule to show optimized order
+            loadSchedule(formatDateForAPI(selectedDate));
+            
+            // Show success message
+            alert('Route optimized successfully! Your schedule has been updated to minimize travel time.');
+        } catch (error) {
+            console.error('Error optimizing route:', error);
+            alert('Failed to optimize route. Please try again.');
+        }
+    }
+    
+    // Helper function to format date for API
+    function formatDateForAPI(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+    // Helper function to format date as Month Day
+    function formatMonthDay(date) {
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return `${months[date.getMonth()]} ${date.getDate()}`;
+    }
+    
+    // Helper function to format full date
+    function formatFullDate(date) {
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    }
+    
+    // Helper function to convert 24h time to 12h format
+    function convertTo12HourFormat(time24h) {
+        const [hour, minute] = time24h.split(':').map(Number);
+        let period = 'AM';
+        let hour12 = hour;
+        
+        if (hour >= 12) {
+            period = 'PM';
+            hour12 = hour === 12 ? 12 : hour - 12;
+        }
+        
+        if (hour12 === 0) {
+            hour12 = 12;
+        }
+        
+        return {
+            time: `${hour12}:${String(minute).padStart(2, '0')}`,
+            period
+        };
+    }
+});

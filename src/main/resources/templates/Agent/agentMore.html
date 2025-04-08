@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldAgent - More</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen pb-16">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <button id="menuToggle" class="mr-4 text-gray-600 focus:outline-none">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                <h1 class="text-xl font-bold text-indigo-600">FieldAgent</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationBtn" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                    </button>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold cursor-pointer" id="profileDropdown">
+                    JS
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar Menu (Hidden by default on mobile) -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 bg-white w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-20">
+        <div class="p-4 border-b">
+            <div class="flex items-center">
+                <div class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold mr-3">
+                    JS
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold" id="agentName">John Smith</h2>
+                    <p class="text-sm text-gray-600" id="agentId">Agent #A12345</p>
+                </div>
+            </div>
+        </div>
+        <nav class="mt-4">
+            <a th:href="@{/agent/dashboard}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-th-large w-6"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/agent/activeRoute}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-route w-6"></i>
+                <span>Active Route</span>
+            </a>
+            <a th:href="@{/agent/customers}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-users w-6"></i>
+                <span>Customers</span>
+            </a>
+            <a th:href="@{/agent/schedule}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-calendar-alt w-6"></i>
+                <span>Schedule</span>
+            </a>
+            <a th:href="@{agent/collection}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-money-bill-wave w-6"></i>
+                <span>Collections</span>
+            </a>
+            <a th:href="@{/agent/history}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-history w-6"></i>
+                <span>History</span>
+            </a>
+            <a th:href ="@{/agent/settings}" class="flex items-center px-4 py-3 text-gray-600 hover:bg-gray-100">
+                <i class="fas fa-cog w-6"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="absolute bottom-0 w-full border-t p-4">
+            <button id="logoutBtn" class="w-full flex items-center justify-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Overlay for sidebar -->
+    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-10"></div>
+    
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">More Options</h2>
+        
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+            <h3 class="text-lg font-medium text-gray-800 mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="new-customer.html" class="flex flex-col items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <div class="bg-indigo-100 rounded-full p-3 mb-2">
+                        <i class="fas fa-user-plus text-indigo-600 text-xl"></i>
+                    </div>
+                    <span class="text-center font-medium">New Customer</span>
+                </a>
+                <a href="expense-report.html" class="flex flex-col items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <div class="bg-indigo-100 rounded-full p-3 mb-2">
+                        <i class="fas fa-receipt text-indigo-600 text-xl"></i>
+                    </div>
+                    <span class="text-center font-medium">Expense Report</span>
+                </a>
+                <a href="incident-report.html" class="flex flex-col items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <div class="bg-indigo-100 rounded-full p-3 mb-2">
+                        <i class="fas fa-exclamation-triangle text-indigo-600 text-xl"></i>
+                    </div>
+                    <span class="text-center font-medium">Incident Report</span>
+                </a>
+                <button id="syncDataBtn" class="flex flex-col items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <div class="bg-indigo-100 rounded-full p-3 mb-2">
+                        <i class="fas fa-sync-alt text-indigo-600 text-xl"></i>
+                    </div>
+                    <span class="text-center font-medium">Sync Data</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Common Pages -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div class="divide-y">
+                <a th:href="@{/agent/history}" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-gray-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-history text-gray-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">History</h4>
+                        <p class="text-sm text-gray-600">View your past activities</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+                <a href="reports.html" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-gray-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-chart-bar text-gray-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">Reports</h4>
+                        <p class="text-sm text-gray-600">View performance reports</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+                <a href="territory.html" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-gray-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-map-marked-alt text-gray-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">Territory</h4>
+                        <p class="text-sm text-gray-600">View your assigned territory</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+                <a th:href ="@{/agent/settings}" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-gray-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-cog text-gray-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">Settings</h4>
+                        <p class="text-sm text-gray-600">Manage app settings</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Support & Help -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+            <div class="divide-y">
+                <a href="help.html" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-question-circle text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">Help & FAQ</h4>
+                        <p class="text-sm text-gray-600">Get answers to common questions</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+                <a href="contact-support.html" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-headset text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">Contact Support</h4>
+                        <p class="text-sm text-gray-600">Get help from our support team</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+                <a href="feedback.html" class="flex items-center p-4 hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                        <i class="fas fa-comment-alt text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-medium">Feedback</h4>
+                        <p class="text-sm text-gray-600">Share your thoughts and suggestions</p>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- App Info -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-800">App Information</h3>
+                <span class="text-sm text-gray-500" id="appVersion">Version 1.2.4</span>
+            </div>
+            <div class="flex items-center justify-between py-2 border-b">
+                <span class="text-gray-700">Last synced</span>
+                <span class="text-gray-600" id="lastSyncTime">Today, 10:45 AM</span>
+            </div>
+            <div class="flex items-center justify-between py-2 border-b">
+                <span class="text-gray-700">Data storage</span>
+                <span class="text-gray-600" id="dataStorage">132 MB</span>
+            </div>
+            <div class="flex items-center justify-between py-2">
+                <span class="text-gray-700">Cache</span>
+                <button id="clearCacheBtn" class="text-indigo-600 font-medium">Clear</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-md px-2 py-2 flex justify-between items-center z-10">
+        <a th:href="@{/agent/dashboard}" class="flex flex-col items-center p-2 text-gray-600">
+            <i class="fas fa-th-large text-lg"></i>
+            <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a th:href="@{/agent/activeRoute}" class="flex flex-col items-center p-2 text-gray-600">
+            <i class="fas fa-route text-lg"></i>
+            <span class="text-xs mt-1">Route</span>
+        </a>
+        <a th:href="@{/agent/customers}" class="flex flex-col items-center p-2 text-gray-600">
+            <i class="fas fa-users text-lg"></i>
+            <span class="text-xs mt-1">Customers</span>
+        </a>
+        <a th:href="@{agent/collection}" class="flex flex-col items-center p-2 text-gray-600">
+            <i class="fas fa-money-bill-wave text-lg"></i>
+            <span class="text-xs mt-1">Collections</span>
+        </a>
+        <a th:href="@{/agent/more}" class="flex flex-col items-center p-2 text-indigo-600">
+            <i class="fas fa-ellipsis-h text-lg"></i>
+            <span class="text-xs mt-1">More</span>
+        </a>
+    </nav>
+
+    <!-- Notification dropdown (hidden by default) -->
+    <div id="notificationDropdown" class="fixed right-4 top-16 bg-white rounded-xl shadow-lg w-80 max-h-96 overflow-y-auto z-30 transform scale-0 origin-top-right transition-transform duration-200 ease-in-out">
+        <div class="p-3 border-b">
+            <h3 class="font-semibold">Notifications</h3>
+        </div>
+        <div id="notificationsList" class="divide-y">
+            <!-- Notifications will be loaded here -->
+        </div>
+        <div class="p-3 text-center border-t">
+            <a href="notifications.html" class="text-indigo-600 font-medium">View All</a>
+        </div>
+    </div>
+
+    <!-- Toast Notification (hidden by default) -->
+    <div id="toast" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg opacity-0 transition-opacity duration-300 flex items-center">
+        <i id="toastIcon" class="mr-2"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Loading Spinner (hidden by default) -->
+    <div id="loadingSpinner" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white p-5 rounded-lg flex flex-col items-center">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-3"></div>
+            <p id="loadingMessage" class="text-gray-700">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const notificationBtn = document.getElementById('notificationBtn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const syncDataBtn = document.getElementById('syncDataBtn');
+            const clearCacheBtn = document.getElementById('clearCacheBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            const notificationsList = document.getElementById('notificationsList');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const profileDropdown = document.getElementById('profileDropdown');
+            
+            // Load agent data on page load
+            loadAgentData();
+            
+            // Load notifications on page load
+            loadNotifications();
+            
+            // Update app info
+            updateAppInfo();
+            
+            // Toggle sidebar menu
+            menuToggle.addEventListener('click', function() {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            });
+            
+            overlay.addEventListener('click', closeSidebar);
+            
+            // Toggle notification dropdown
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleNotifications();
+            });
+            
+            // Close notifications when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+                    notificationDropdown.classList.remove('scale-100');
+                    notificationDropdown.classList.add('scale-0');
+                }
+            });
+            
+            // Sync data button
+            syncDataBtn.addEventListener('click', async function() {
+                await syncData();
+            });
+            
+            // Clear cache button
+            clearCacheBtn.addEventListener('click', async function() {
+                await clearCache();
+            });
+            
+            // Logout button
+            logoutBtn.addEventListener('click', function() {
+                logout();
+            });
+            
+            // Functions
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-50', 'pointer-events-auto');
+            }
+            
+            function closeSidebar() {
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-50', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+            
+            function toggleNotifications() {
+                if (notificationDropdown.classList.contains('scale-0')) {
+                    notificationDropdown.classList.remove('scale-0');
+                    notificationDropdown.classList.add('scale-100');
+                } else {
+                    notificationDropdown.classList.remove('scale-100');
+                    notificationDropdown.classList.add('scale-0');
+                }
+            }
+            
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                
+                if (type === 'success') {
+                    toastIcon.className = 'fas fa-check-circle text-green-500 mr-2';
+                } else if (type === 'error') {
+                    toastIcon.className = 'fas fa-exclamation-circle text-red-500 mr-2';
+                } else if (type === 'info') {
+                    toastIcon.className = 'fas fa-info-circle text-blue-500 mr-2';
+                }
+                
+                toast.classList.remove('opacity-0');
+                toast.classList.add('opacity-100');
+                
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100');
+                    toast.classList.add('opacity-0');
+                }, 3000);
+            }
+            
+            function showLoading(message = 'Loading...') {
+                loadingMessage.textContent = message;
+                loadingSpinner.classList.remove('hidden');
+            }
+            
+            function hideLoading() {
+                loadingSpinner.classList.add('hidden');
+            }
+            
+            async function loadAgentData() {
+                try {
+                    const response = await fetch('/api/agent/profile', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load agent data');
+                    }
+                    
+                    const data = await response.json();
+                    document.getElementById('agentName').textContent = data.name;
+                    document.getElementById('agentId').textContent = `Agent #${data.id}`;
+                    
+                    // Set initials for profile icons
+                    const initials = data.name.split(' ').map(n => n[0]).join('');
+                    document.getElementById('profileDropdown').textContent = initials;
+                    document.querySelector('#sidebar .rounded-full').textContent = initials;
+                    
+                } catch (error) {
+                    console.error('Error loading agent data:', error);
+                    // Use cached data if available
+                    const cachedData = localStorage.getItem('agentProfile');
+                    if (cachedData) {
+                        const data = JSON.parse(cachedData);
+                        document.getElementById('agentName').textContent = data.name;
+                        document.getElementById('agentId').textContent = `Agent #${data.id}`;
+                        
+                        const initials = data.name.split(' ').map(n => n[0]).join('');
+                        document.getElementById('profileDropdown').textContent = initials;
+                        document.querySelector('#sidebar .rounded-full').textContent = initials;
+                    }
+                }
+            }
+            
+            async function loadNotifications() {
+                try {
+                    const response = await fetch('/api/notifications', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to load notifications');
+                    }
+                    
+                    const data = await response.json();
+                    renderNotifications(data);
+                    
+                    // Update notification badge
+                    const unreadCount = data.filter(n => !n.read).length;
+                    const badge = notificationBtn.querySelector('span');
+                    if (unreadCount > 0) {
+                        badge.textContent = unreadCount;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                    // Use cached notifications if available
+                    const cachedNotifications = localStorage.getItem('notifications');
+                    if (cachedNotifications) {
+                        renderNotifications(JSON.parse(cachedNotifications));
+                    }
+                }
+            }
+            
+            function renderNotifications(notifications) {
+                notificationsList.innerHTML = '';
+                
+                if (notifications.length === 0) {
+                    notificationsList.innerHTML = `
+                        <div class="p-4 text-center text-gray-500">
+                            No notifications
+                        </div>
+                    `;
+                    return;
+                }
+                
+                notifications.slice(0, 5).forEach(notification => {
+                    const notificationEl = document.createElement('div');
+                    notificationEl.className = `p-4 hover:bg-gray-50 ${!notification.read ? 'bg-blue-50' : ''}`;
+                    
+                    let iconClass = 'fa-bell';
+                    if (notification.type === 'collection') iconClass = 'fa-money-bill-wave';
+                    if (notification.type === 'route') iconClass = 'fa-route';
+                    if (notification.type === 'customer') iconClass = 'fa-user';
+                    if (notification.type === 'system') iconClass = 'fa-cog';
+                    
+                    notificationEl.innerHTML = `
+                        <div class="flex">
+                            <div class="mr-3 mt-1">
+                                <i class="fas ${iconClass} text-indigo-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${notification.title}</p>
+                                <p class="text-xs text-gray-600">${notification.message}</p>
+                                <p class="text-xs text-gray-500 mt-1">${formatTimeAgo(notification.timestamp)}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    notificationEl.addEventListener('click', () => {
+                        markNotificationAsRead(notification.id);
+                    });
+                    
+                    notificationsList.appendChild(notificationEl);
+                });
+                
+                // Cache notifications
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+            }
+            
+            async function markNotificationAsRead(id) {
+                try {
+                    const response = await fetch(`/api/notifications/${id}/read`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to mark notification as read');
+                    }
+                    
+                    // Reload notifications
+                    loadNotifications();
+                    
+                } catch (error) {
+                    console.error('Error marking notification as read:', error);
+                }
+            }
+            
+            function updateAppInfo() {
+                document.getElementById('lastSyncTime').textContent = localStorage.getItem('lastSyncTime') || 'Never';
+                
+                // Calculate data storage
+                let storageSize = 0;
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        storageSize += (localStorage[key].length * 2) / 1024; // in KB
+                    }
+                }
+                
+                document.getElementById('dataStorage').textContent = storageSize > 1024 ? 
+                    `${(storageSize / 1024).toFixed(2)} MB` : 
+                    `${storageSize.toFixed(2)} KB`;
+            }
+            
+            async function syncData() {
+                showLoading('Syncing data...');
+                
+                try {
+                    // Get all unsent data
+                    const unsentData = getUnsentData();
+                    
+                    if (unsentData.length > 0) {
+                        // Send all unsent data to server
+                        const response = await fetch('/api/sync', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${getToken()}`
+                            },
+                            body: JSON.stringify({ data: unsentData })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Failed to sync data');
+                        }
+                        
+                        // Mark data as sent
+                        markDataAsSent(unsentData);
+                    }
+                    
+                    // Get latest data from server
+                    const latestDataResponse = await fetch('/api/data', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    });
+                    
+                    if (!latestDataResponse.ok) {
+                        throw new Error('Failed to get latest data');
+                    }
+                    
+                    const latestData = await latestDataResponse.json();
+                    
+                    // Update local storage with latest data
+                    updateLocalData(latestData);
+                    
+                    // Update last sync time
+                    const now = new Date();
+                    localStorage.setItem('lastSyncTime', `Today, ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`);
+                    
+                    // Update app info
+                    updateAppInfo();
+                    
+                    hideLoading();
+                    showToast('Data synced successfully', 'success');
+                    
+                } catch (error) {
+                    console.error('Error syncing data:', error);
+                    hideLoading();
+                    showToast('Failed to sync data. Please try again later.', 'error');
+                }
+            }
+            
+            function getUnsentData() {
+                const unsentData = [];
+                
+                // Get route events
+                const routeEvents = JSON.parse(localStorage.getItem('routeEvents') || '[]');
+                const unsentRouteEvents = routeEvents.filter(event => !event.synced);
+                unsentData.push(...unsentRouteEvents.map(event => ({
+                    type: 'route_event',
+                    data: event
+                })));
+                
+                // Get collections
+                const collections = JSON.parse(localStorage.getItem('collections') || '[]');
+                const unsentCollections = collections.filter(collection => !collection.synced);
+                unsentData.push(...unsentCollections.map(collection => ({
+                    type: 'collection',
+                    data: collection
+                })));
+                
+                return unsentData;
+            }
+            
+            function markDataAsSent(data) {
+    // Mark route events as sent
+    const routeEvents = JSON.parse(localStorage.getItem('routeEvents') || '[]');
+    const routeEventIds = data
+        .filter(item => item.type === 'route_event')
+        .map(item => item.data.id);
+    
+    const updatedRouteEvents = routeEvents.map(event => {
+        if (routeEventIds.includes(event.id)) {
+            return { ...event, synced: true };
+        }
+        return event;
+    });
+    
+    localStorage.setItem('routeEvents', JSON.stringify(updatedRouteEvents));
+    
+    // Mark collections as sent
+    const collections = JSON.parse(localStorage.getItem('collections') || '[]');
+    const collectionIds = data
+        .filter(item => item.type === 'collection')
+        .map(item => item.data.id);
+    
+    const updatedCollections = collections.map(collection => {
+        if (collectionIds.includes(collection.id)) {
+            return { ...collection, synced: true };
+        }
+        return collection;
+    });
+    
+    localStorage.setItem('collections', JSON.stringify(updatedCollections));
+}
+
+function updateLocalData(latestData) {
+    // Update customers
+    if (latestData.customers) {
+        localStorage.setItem('customers', JSON.stringify(latestData.customers));
+    }
+    
+    // Update routes
+    if (latestData.routes) {
+        localStorage.setItem('routes', JSON.stringify(latestData.routes));
+    }
+    
+    // Update schedule
+    if (latestData.schedule) {
+        localStorage.setItem('schedule', JSON.stringify(latestData.schedule));
+    }
+    
+    // Update agent profile
+    if (latestData.agentProfile) {
+        localStorage.setItem('agentProfile', JSON.stringify(latestData.agentProfile));
+    }
+    
+    // Update territory
+    if (latestData.territory) {
+        localStorage.setItem('territory', JSON.stringify(latestData.territory));
+    }
+    
+    // Update notifications
+    if (latestData.notifications) {
+        localStorage.setItem('notifications', JSON.stringify(latestData.notifications));
+    }
+}
+
+async function clearCache() {
+    showLoading('Clearing cache...');
+    
+    try {
+        // Preserve important data
+        const token = localStorage.getItem('token');
+        const agentId = localStorage.getItem('agentId');
+        const unsentData = getUnsentData();
+        
+        // Clear local storage
+        localStorage.clear();
+        
+        // Restore important data
+        localStorage.setItem('token', token);
+        localStorage.setItem('agentId', agentId);
+        
+        // Store unsent data back to local storage
+        if (unsentData.length > 0) {
+            const routeEvents = unsentData
+                .filter(item => item.type === 'route_event')
+                .map(item => item.data);
+            localStorage.setItem('routeEvents', JSON.stringify(routeEvents));
+            
+            const collections = unsentData
+                .filter(item => item.type === 'collection')
+                .map(item => item.data);
+            localStorage.setItem('collections', JSON.stringify(collections));
+        }
+        
+        // Update app info
+        updateAppInfo();
+        
+        hideLoading();
+        showToast('Cache cleared successfully', 'success');
+        
+    } catch (error) {
+        console.error('Error clearing cache:', error);
+        hideLoading();
+        showToast('Failed to clear cache', 'error');
+    }
+}
+
+async function logout() {
+    showLoading('Logging out...');
+    
+    try {
+        // Check if there's unsent data
+        const unsentData = getUnsentData();
+        
+        if (unsentData.length > 0) {
+            // Confirm with user
+            const confirmed = confirm('You have unsynchronized data. Do you want to sync before logging out?');
+            
+            if (confirmed) {
+                await syncData();
+            }
+        }
+        
+        // Log out on server
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`
+            }
+        });
+        
+        // Clear local storage
+        localStorage.clear();
+        
+        // Redirect to login page
+        window.location.href = '/agent/login';
+        
+    } catch (error) {
+        console.error('Error logging out:', error);
+        hideLoading();
+        showToast('Failed to logout. Please try again.', 'error');
+    }
+}
+
+function getToken() {
+    return localStorage.getItem('token') || '';
+}
+
+function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+        return 'Just now';
+    }
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    }
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+        return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) {
+        return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    }
+    
+    // Format as date
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${months[date.getMonth()]} ${date.getDate()}`;
+}
+
+// Function to track location and update backend
+function trackLocation() {
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
+        console.error('Geolocation is not supported by this browser.');
+        return;
+    }
+    
+    // Get current position
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const locationData = {
+            id: generateUUID(),
+            timestamp: new Date().toISOString(),
+            eventType: 'LOCATION_UPDATE',
+            location: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+                accuracy: position.coords.accuracy
+            },
+            synced: false
+        };
+        
+        // Save to local storage
+        const routeEvents = JSON.parse(localStorage.getItem('routeEvents') || '[]');
+        routeEvents.push(locationData);
+        localStorage.setItem('routeEvents', JSON.stringify(routeEvents));
+        
+        // Try to sync immediately if online
+        if (navigator.onLine) {
+            try {
+                const response = await fetch('/api/events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({
+                        type: 'route_event',
+                        data: locationData
+                    })
+                });
+                
+                if (response.ok) {
+                    // Mark as synced
+                    markDataAsSent([{ type: 'route_event', data: locationData }]);
+                }
+            } catch (error) {
+                console.error('Error syncing location data:', error);
+                // Will be synced later
+            }
+        }
+    }, (error) => {
+        console.error('Error getting location:', error);
+    });
+}
+
+function generateUUID() {
+    // Generate a basic UUID
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+// Check for network status changes
+window.addEventListener('online', () => {
+    showToast('You are back online', 'success');
+    // Try to sync data when back online
+    syncData();
+});
+
+window.addEventListener('offline', () => {
+    showToast('You are offline. Changes will be saved locally.', 'info');
+});
+
+// Check for storage changes from other tabs
+window.addEventListener('storage', (event) => {
+    if (event.key === 'notifications' || event.key === 'agentProfile') {
+        location.reload();
+    }
+});
+
+// Track location periodically if route is active
+const activeRouteId = localStorage.getItem('activeRouteId');
+if (activeRouteId) {
+    // Track location every 5 minutes
+    trackLocation(); // Initial tracking
+    setInterval(trackLocation, 5 * 60 * 1000);
+}
+</script>
+</body>
+</html>

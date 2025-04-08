@@ -33,4 +33,28 @@ public class routes {
     public String agentSettingsPage(){
         return "/Agent/agentSetting.html";
     }
+
+//    miscillaneous path
+    @GetMapping("/agent/customers")
+    public String agentCustomers(){
+        return "/Agent/agentCustomer.html";
+    }
+ @GetMapping("/agent/collection")
+    public String agentCollection(){
+        return "/Agent/agentCollection.html";
+    }
+ @GetMapping("/agent/history")
+    public String agentHistory(){
+        return "/Agent/agentHistory.html";
+    }
+ @GetMapping("/agent/schedule")
+    public String agentSchedule(){
+        return "/Agent/agentSchedule.html";
+    }
+ @GetMapping("/agent/more")
+    public String agentMore(){
+        return "/Agent/agentMore.html";
+    }
+
+
 }
