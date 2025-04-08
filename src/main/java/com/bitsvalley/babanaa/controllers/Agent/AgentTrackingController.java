@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/babanaa/agents")
@@ -22,10 +23,12 @@ public class AgentTrackingController {
     @PostMapping("/addTracking")
     public ResponseEntity<?> addTrackingEvent(@RequestBody TrackingEvent trackingEvent) {
         try {
-            TrackingEvent event = agentTrackingService.addTrackingEvent(trackingEvent);
-
-
-            return ResponseEntity.ok(event);
+            String message = agentTrackingService.addTrackingEvent(trackingEvent);
+            if(Objects.equals(message, "event saved")){
+                 return ResponseEntity.ok(message);
+            }else{
+                return ResponseEntity.internalServerError().body(message);
+            }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
