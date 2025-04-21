@@ -106,42 +106,42 @@ public class AgentService {
         }
     }
 
-    public Map<String, Object> getCurrentStatus(String phoneNumber) {
-        // Fetch the agent by phone number
-        Agent agent = getAgentByPhoneNumber(phoneNumber);
-        if (agent == null) {
-            throw new UsernameNotFoundException("Agent not found");
-        }
-
-        // Query the latest tracking event for the agent
-        List<TrackingEvent> events = trackingEventRepository.findByAgentOrderByEventTimeDesc(agent);
-
-        boolean isActive = false;
-        LocalDateTime startTime = null;
-        int customersVisited = 0;
-        double totalCollected = 0.0;
-
-        for (TrackingEvent event : events) {
-            if (event.getEventType() == EventType.START) {
-                isActive = true;
-                startTime = event.getEventTime();
-                break;
-            }
-            if (event.getEventType() == EventType.VISIT) {
-                customersVisited++;
-                totalCollected += event.getAmount();
-            }
-        }
-
-        Map<String, Object> status = new HashMap<>();
-        status.put("isActive", isActive);
-        status.put("startTime", startTime);
-        status.put("customersVisited", customersVisited);
-        status.put("totalCustomers", events.size()); // Assuming each event is a customer visit
-        status.put("totalCollected", totalCollected);
-
-        return status;
-    }
+//    public Map<String, Object> getCurrentStatus(String phoneNumber) {
+//        // Fetch the agent by phone number
+//        Agent agent = getAgentByPhoneNumber(phoneNumber);
+//        if (agent == null) {
+//            throw new UsernameNotFoundException("Agent not found");
+//        }
+//
+//        // Query the latest tracking event for the agent
+//        List<TrackingEvent> events = trackingEventRepository.findByAgentOrderByEventTimeDesc(agent);
+//
+//        boolean isActive = false;
+//        LocalDateTime startTime = null;
+//        int customersVisited = 0;
+//        double totalCollected = 0.0;
+//
+//        for (TrackingEvent event : events) {
+//            if (event.getEventType() == EventType.START) {
+//                isActive = true;
+//                startTime = event.getEventTime();
+//                break;
+//            }
+//            if (event.getEventType() == EventType.VISIT) {
+//                customersVisited++;
+//                totalCollected += event.getAmount();
+//            }
+//        }
+//
+//        Map<String, Object> status = new HashMap<>();
+//        status.put("isActive", isActive);
+//        status.put("startTime", startTime);
+//        status.put("customersVisited", customersVisited);
+//        status.put("totalCustomers", events.size()); // Assuming each event is a customer visit
+//        status.put("totalCollected", totalCollected);
+//
+//        return status;
+//    }
 
     public Map<String, String> startRoute(String phoneNumber) {
         // Implement logic to start a route
@@ -156,4 +156,12 @@ public class AgentService {
     }
 
 
+    public Agent getAgentById(Long agentId) {
+        Optional<Agent> agent = agentRepository.findById(agentId);
+        if (agent.isPresent()) {
+            return agent.get();
+        } else {
+            throw new UsernameNotFoundException("Agent not found");
+        }
+    }
 }
