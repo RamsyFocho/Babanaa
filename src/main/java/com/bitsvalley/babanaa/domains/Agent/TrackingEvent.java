@@ -23,12 +23,9 @@ public class TrackingEvent {
     @JsonIgnore
     private Agent agent;
 
-    @Embedded
-    private Location location;
-
-    private Double amount;
-
     private LocalDateTime eventTime;
+
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;

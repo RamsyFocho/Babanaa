@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
+<!-- This page shows the agent all of their collections.
+            It will show any overdue collections first, then show all collections
+            that are due today, and finally show all collections in the future.
+            The agent will be able to click on each collection to see more details
+            about the collection.
+            The agent will also be able to filter the collections by date using
+            the date picker at the top of the page.
+            The agent can also view all of their pending collections by clicking
+            on the "Pending Collections" button at the top of the page.
+
+            -->
 <body class="bg-gray-100 min-h-screen pb-16">
     <!-- Top Navigation -->
     <nav class="bg-white shadow-md px-4 py-3 sticky top-0 z-10">
@@ -34,6 +45,7 @@
     <!-- Sidebar Menu (Hidden by default on mobile) -->
     <div id="sidebar" class="fixed inset-y-0 left-0 bg-white w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out z-20">
         <div class="p-4 border-b">
+
             <div class="flex items-center">
                 <div class="h-10 w-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-semibold mr-3">
                     JS

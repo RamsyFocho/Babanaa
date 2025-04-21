@@ -1,15 +1,214 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FieldAgent - Login</title>
-    
-    <script th:src="@{/Js/tailwind.jit.js}" ></script>    
+
+    <script th:src="@{/Js/tailwind.jit.js}"></script>
     <link rel="stylesheet" th:href="@{/fontAwesome-free-6.6.0-web/css/all.min.css}">
-    <!-- <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"> -->
+    <style>
+        .alert {
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease-in-out;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 90%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .alert.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .alert-content {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background-color: #FEE2E2;
+            border: 1px solid #FCA5A5;
+            color: #DC2626;
+        }
+
+        .alert-success {
+            background-color: #D1FAE5;
+            border: 1px solid #6EE7B7;
+            color: #059669;
+        }
+
+        .alert-info {
+            background-color: #E0F2FE;
+            border: 1px solid #BAE6FD;
+            color: #0284C7;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .country-selector {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-top: 0.25rem;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .country-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .country-option:last-child {
+            border-bottom: none;
+        }
+
+        .country-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .country-flag {
+            width: 24px;
+            height: 18px;
+            margin-right: 8px;
+            border-radius: 2px;
+            object-fit: cover;
+        }
+
+        .country-code {
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .search-input {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+
+        .search-input input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .country-code-display {
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: #4b5563;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            min-width: 90px;
+        }
+
+        .country-code-display:hover {
+            background-color: #e5e7eb;
+        }
+
+        .loader {
+            border: 3px solid #f3f4f6;
+            border-radius: 50%;
+            border-top: 3px solid #3f51b5;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .flag-icon {
+            width: 24px;
+            height: 18px;
+            border-radius: 2px;
+            object-fit: cover;
+        }
+
+        .phone-hint {
+            display: none;
+            position: absolute;
+            bottom: -1.5rem;
+            left: 0;
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+    </style>
 </head>
+
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <!-- Logo and App Name -->
@@ -20,24 +219,53 @@
             <h1 class="text-3xl font-bold text-gray-800">FieldAgent</h1>
             <p class="text-gray-600">Track, Visit, Collect</p>
         </div>
-        
+
+        <!-- Alert Messages -->
+        <div id="alertContainer" class="mb-4"></div>
+
         <!-- Login Form -->
         <div class="bg-white rounded-xl shadow-xl p-8 transition-all duration-300 hover:shadow-2xl">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Login</h2>
-            
+
             <form id="loginForm">
                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="username">
-                        Username
+                    <label class="block text-gray-700 text-sm font-semibold mb-2" for="phoneNumber">
+                        Phone Number
                     </label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="fas fa-user text-gray-400"></i>
-                        </span>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 pl-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300" id="username" type="text" placeholder="Enter your username">
+                        <div class="phone-input-container">
+                            <div class="country-code-display" id="countryCodeDisplay">
+                                <div id="flagContainer">
+                                    <div class="loader"></div>
+                                </div>
+                                <span id="selectedCountryCode">+1</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                            <div class="relative flex-grow">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <i class="fas fa-phone text-gray-400"></i>
+                                </span>
+                                <input
+                                    class="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 pl-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                                    id="phoneNumber" type="tel" placeholder="Enter phone number" required>
+                                <div class="phone-hint" id="phoneHint"></div>
+                            </div>
+                        </div>
+                        <div id="countrySelector" class="country-selector hidden">
+                            <div class="search-input">
+                                <input type="text" placeholder="Search country..." id="countrySearch">
+                            </div>
+                            <div id="countryList">
+                                <div class="p-4 text-center text-gray-500">
+                                    <div class="loader"></div>
+                                    <p class="mt-2">Loading countries...</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <p class="text-xs text-gray-500 mt-1">We'll automatically detect your country</p>
                 </div>
-                
+
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-semibold mb-2" for="password">
                         Password
@@ -46,77 +274,530 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="fas fa-lock text-gray-400"></i>
                         </span>
-                        <input class="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 pl-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300" id="password" type="password" placeholder="Enter your password">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" id="togglePassword">
+                        <input
+                            class="appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 pl-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                            id="password" type="password" placeholder="Enter your password" required>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                            id="togglePassword">
                             <i class="fas fa-eye text-gray-400"></i>
                         </span>
                     </div>
                 </div>
-                
+
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center">
-                        <input id="remember" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <input id="remember" type="checkbox"
+                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <label for="remember" class="ml-2 block text-sm text-gray-700">
                             Remember me
                         </label>
                     </div>
                     <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">Forgot password?</a>
                 </div>
-                
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300">
+
+                <button type="submit" id="loginButton"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300">
                     <span class="mr-2">Login</span>
                     <i class="fas fa-sign-in-alt mt-1"></i>
                 </button>
             </form>
         </div>
-        
+
         <!-- Footer -->
         <p class="text-center text-gray-500 text-xs mt-8">
             &copy; 2025 Babanaa FieldAgent. All rights reserved.
         </p>
     </div>
-
+    <!-- <script th:src=@{/Js/auth-utils.js}"></script> -->
+    <!-- <script th:src=@{/Js/validationCheck.js}"></script> -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Toggle password visibility
+        document.addEventListener('DOMContentLoaded', function () {
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const countryCodeDisplay = document.getElementById('countryCodeDisplay');
+            const selectedCountryCode = document.getElementById('selectedCountryCode');
+            const countrySelector = document.getElementById('countrySelector');
+            const countrySearch = document.getElementById('countrySearch');
+            const countryList = document.getElementById('countryList');
             const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
-            
-            togglePassword.addEventListener('click', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const alertContainer = document.getElementById('alertContainer');
+            const flagContainer = document.getElementById('flagContainer');
+            const phoneHint = document.getElementById('phoneHint');
+
+            // Store countries data globally
+            let countriesData = [];
+            let selectedCountry = null;
+
+            // Function to show alert messages
+            function showAlert(message, type = 'error') {
+                // Remove any existing alerts
+                const existingAlerts = document.querySelectorAll('.alert');
+                existingAlerts.forEach(alert => alert.remove());
+
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert ${type === 'error' ? 'alert-error' : type === 'info' ? 'alert-info' : 'alert-success'}`;
+
+                alertDiv.innerHTML = `
+                    <div class="alert-content">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : type === 'info' ? 'fa-info-circle' : 'fa-check-circle'} mr-2"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+
+                document.body.appendChild(alertDiv);
+
+                // Force a reflow to trigger the animation
+                alertDiv.offsetHeight;
+
+                // Show the alert
+                alertDiv.classList.add('show');
+
+                // Remove alert after delay
+                const timeout = type === 'success' ? 3000 : 5000;
+                setTimeout(() => {
+                    alertDiv.classList.remove('show');
+                    setTimeout(() => alertDiv.remove(), 300);
+                }, timeout);
+            }
+
+            // Function to fetch countries from API
+            async function fetchCountries() {
+                try {
+                    const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,flags,idd');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch countries');
+                    }
+
+                    const data = await response.json();
+                    countriesData = data
+                        .filter(country => country.idd && country.idd.root) // Filter out countries without phone codes
+                        .map(country => {
+                            const suffixes = country.idd.suffixes || [''];
+                            const code = country.idd.root + (suffixes[0] || '');
+                            return {
+                                name: country.name.common,
+                                code: code.replace(/\s/g, ''),
+                                flag: country.flags.png,
+                                cca2: country.cca2.toLowerCase(),
+                                // Phone validation rules
+                                // This is a simplified example - in a real-world app, you would need more accurate rules
+                                minLength: code === '+1' ? 10 :
+                                    code === '+44' ? 10 :
+                                        code === '+91' ? 10 :
+                                            code === '+86' ? 11 :
+                                                code === '+234' ? 10 :
+                                                    code === '+27' ? 9 : 7,
+                                maxLength: code === '+1' ? 10 :
+                                    code === '+44' ? 10 :
+                                        code === '+91' ? 10 :
+                                            code === '+86' ? 11 :
+                                                code === '+234' ? 10 :
+                                                    code === '+27' ? 9 : 15
+                            };
+                        })
+                        .sort((a, b) => a.name.localeCompare(b.name));
+
+                    return countriesData;
+                } catch (error) {
+                    console.error('Error fetching countries:', error);
+                    showAlert('Failed to load country data. Using default values.', 'info');
+                    // Fallback to some common countries
+                    return [
+                        { name: 'United States', code: '+1', flag: 'https://flagcdn.com/w320/us.png', cca2: 'us', minLength: 10, maxLength: 10 },
+                        { name: 'United Kingdom', code: '+44', flag: 'https://flagcdn.com/w320/gb.png', cca2: 'gb', minLength: 10, maxLength: 10 },
+                        { name: 'Nigeria', code: '+234', flag: 'https://flagcdn.com/w320/ng.png', cca2: 'ng', minLength: 10, maxLength: 10 },
+                        { name: 'Ghana', code: '+233', flag: 'https://flagcdn.com/w320/gh.png', cca2: 'gh', minLength: 9, maxLength: 9 },
+                        { name: 'Kenya', code: '+254', flag: 'https://flagcdn.com/w320/ke.png', cca2: 'ke', minLength: 9, maxLength: 9 },
+                        { name: 'India', code: '+91', flag: 'https://flagcdn.com/w320/in.png', cca2: 'in', minLength: 10, maxLength: 10 }
+                    ];
+                }
+            }
+
+            // Function to get user's country by IP
+            async function getUserCountry() {
+                try {
+                    showAlert('Detecting your location...', 'info');
+                    const response = await fetch('https://ipapi.co/json/');
+                    if (!response.ok) {
+                        throw new Error('Failed to detect location');
+                    }
+
+                    const data = await response.json();
+                    return data.country_code.toLowerCase();
+                } catch (error) {
+                    console.error('Error getting user country:', error);
+                    showAlert('Failed to detect your location. Using default country.', 'info');
+                    return 'us'; // Default to US if detection fails
+                }
+            }
+
+            // Function to populate country list
+            function populateCountryList(countries) {
+                countryList.innerHTML = countries
+                    .map(country => `
+                        <div class="country-option" data-code="${country.code}" data-country-code="${country.cca2}" data-min="${country.minLength}" data-max="${country.maxLength}">
+                            <div class="flex items-center">
+                                <img src="${country.flag}" alt="${country.name} flag" class="country-flag">
+                            <span>${country.name}</span>
+                            </div>
+                            <span class="country-code">${country.code}</span>
+                        </div>
+                    `)
+                    .join('');
+            }
+
+            // Function to filter countries
+            function filterCountries(searchTerm) {
+                const filtered = countriesData.filter(country =>
+                    country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    country.code.includes(searchTerm)
+                );
+                populateCountryList(filtered);
+            }
+
+            // Function to select a country
+            function selectCountry(code, countryCode, minLength, maxLength) {
+                selectedCountryCode.textContent = code;
+                selectedCountry = {
+                    code: code,
+                    countryCode: countryCode,
+                    minLength: parseInt(minLength, 10),
+                    maxLength: parseInt(maxLength, 10)
+                };
+
+                // Update flag
+                const country = countriesData.find(c => c.code === code);
+                if (country) {
+                    flagContainer.innerHTML = `<img src="${country.flag}" alt="${country.name} flag" class="flag-icon">`;
+                }
+
+                // Update phone number hint
+                updatePhoneHint();
+
+                // Clear and focus phone input
+                phoneNumberInput.value = '';
+                phoneNumberInput.focus();
+
+                countrySelector.classList.add('hidden');
+                countrySearch.value = '';
+                filterCountries('');
+            }
+
+            // Function to update phone hint based on selected country
+            function updatePhoneHint() {
+                if (!selectedCountry) return;
+
+                const { minLength, maxLength } = selectedCountry;
+                if (minLength === maxLength) {
+                    phoneHint.textContent = `Requires exactly ${minLength} digits`;
+                } else {
+                    phoneHint.textContent = `Requires ${minLength}-${maxLength} digits`;
+                }
+                phoneHint.style.display = 'block';
+            }
+
+            // Function to format phone number based on country
+            function formatPhoneNumber(value, country) {
+                if (!country) return value;
+
+                // Remove all non-digit characters
+                const cleaned = value.replace(/\D/g, '');
+
+                // Different formatting based on country code
+                if (country.code === '+1') {
+                    // US/Canada: XXX-XXX-XXXX
+                    return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                } else if (country.code === '+44') {
+                    // UK: XXXX XXXXXX
+                    return cleaned.replace(/(\d{4})(\d{6})/, '$1 $2');
+                } else if (country.code === '+91') {
+                    // India: XXXXX XXXXX
+                    return cleaned.replace(/(\d{5})(\d{5})/, '$1 $2');
+                } else if (country.code === '+234') {
+                    // Nigeria: XXX XXX XXXX
+                return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+                } else {
+                    // Generic formatting with spaces after every 3 digits
+                    return cleaned.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+                }
+            }
+
+            // Function to validate phone number
+            function validatePhoneNumber(phoneNumber, country) {
+                if (!country) {
+                    return {
+                        isValid: false,
+                        message: 'No country selected'
+                    };
+                }
+
+                const cleaned = phoneNumber.replace(/\D/g, '');
+
+                if (!cleaned) {
+                    return {
+                        isValid: false,
+                        message: 'Phone number is required'
+                    };
+                }
+
+                if (cleaned.length < country.minLength) {
+                    return {
+                        isValid: false,
+                        message: `Phone number is too short. ${country.name} numbers require at least ${country.minLength} digits.`
+                    };
+                }
+
+                if (cleaned.length > country.maxLength) {
+                    return {
+                        isValid: false,
+                        message: `Phone number is too long. ${country.name} numbers require at most ${country.maxLength} digits.`
+                    };
+                }
+
+                // Additional country-specific validation could go here
+                // For example, US numbers must start with certain digits, etc.
+
+                return {
+                    isValid: true,
+                    fullNumber: country.code + cleaned
+                };
+            }
+
+            // Initialize the app
+            async function initApp() {
+                // Show loading state
+                flagContainer.innerHTML = `<div class="loader"></div>`;
+
+                // Fetch countries data
+                const countries = await fetchCountries();
+
+                // Get user's country
+                const userCountryCode = await getUserCountry();
+
+                // Find user's country in our data
+                let userCountry = countries.find(c => c.cca2 === userCountryCode);
+                if (!userCountry) {
+                    userCountry = countries.find(c => c.code === '+1'); // Default to US
+                }
+
+                // Populate country list
+                populateCountryList(countries);
+
+                // Select user's country
+                if (userCountry) {
+                    selectCountry(userCountry.code, userCountry.cca2, userCountry.minLength, userCountry.maxLength);
+                }
+                // Check authentication status
+                checkAuthentication();
+            }
+
+            // Event listeners
+            countryCodeDisplay.addEventListener('click', function (e) {
+                e.stopPropagation();
+                countrySelector.classList.toggle('hidden');
+                if (!countrySelector.classList.contains('hidden')) {
+                    countrySearch.focus();
+                }
+            });
+
+            countrySearch.addEventListener('input', function () {
+                filterCountries(this.value);
+            });
+
+            countryList.addEventListener('click', function (e) {
+                const countryOption = e.target.closest('.country-option');
+                if (countryOption) {
+                    const code = countryOption.dataset.code;
+                    const countryCode = countryOption.dataset.countryCode;
+                    const minLength = countryOption.dataset.min;
+                    const maxLength = countryOption.dataset.max;
+                    selectCountry(code, countryCode, minLength, maxLength);
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!countryCodeDisplay.contains(e.target) && !countrySelector.contains(e.target)) {
+                    countrySelector.classList.add('hidden');
+                }
+            });
+
+            phoneNumberInput.addEventListener('input', function () {
+                if (selectedCountry) {
+                    this.value = formatPhoneNumber(this.value, selectedCountry);
+                }
+            });
+
+            phoneNumberInput.addEventListener('focus', function () {
+                if (phoneHint) {
+                    phoneHint.style.display = 'block';
+                }
+            });
+
+            phoneNumberInput.addEventListener('blur', function () {
+                if (phoneHint) {
+                    phoneHint.style.display = 'none';
+                }
+            });
+
+            // Login form submission
+            loginForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                if (!selectedCountry) {
+                    showAlert('Please select a country code');
+                    return;
+                }
+
+                const phoneNumber = phoneNumberInput.value.replace(/\D/g, '');
+                const passwordInput = password;
+
+                // Validate phone number
+                const validation = validatePhoneNumber(phoneNumber, selectedCountry);
+                if (!validation.isValid) {
+                    showAlert(validation.message);
+                    phoneNumberInput.classList.add('shake');
+                    setTimeout(() => phoneNumberInput.classList.remove('shake'), 500);
+                    return;
+                }
+
+                if (!passwordInput.value.trim()) {
+                    showAlert('Password is required');
+                    passwordInput.classList.add('shake');
+                    setTimeout(() => passwordInput.classList.remove('shake'), 500);
+                    return;
+                }
+
+                // Show loading state
+                loginButton.disabled = true;
+                loginButton.innerHTML = `
+                    <span class="mr-2">Logging in...</span>
+                    <i class="fas fa-spinner fa-spin mt-1"></i>
+                `;
+
+                try {
+                    const response = await fetch("/babanaa/auth/agents/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            phoneNumber: validation.fullNumber,
+                            password: passwordInput.value
+                        })
+                    });
+
+                    const data = await response.json();
+                    console.log(data);
+
+                    if (response.ok && !data.error) {
+                        console.log("Token received:", data.token);
+                        
+                        // For debugging only - this shows the payload of the JWT
+                        try {
+                            const payloadBase64 = data.token.split('.')[1];
+                            const payload = JSON.parse(atob(payloadBase64));
+                            console.log("Token payload:", payload);
+                        } catch (e) {
+                            console.error("Error decoding token:", e);
+                        }
+                        
+                        showAlert('Login successful! Redirecting...', 'success');
+
+                        // Store token in both localStorage and cookie
+                        localStorage.setItem('jwt_token', data.token);
+                        localStorage.setItem('isLoggedIn', 'true');
+                        
+                        // Set secure cookie
+                        document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; samesite=strict`;
+
+                        // Redirect to dashboard after a short delay
+                        setTimeout(() => {
+                            window.location.href = '/agent/dashboard';
+                        }, 1500);
+                    } else {
+                        // Show the specific error message from the backend
+                        showAlert(data.error || 'Login failed. Please check your credentials.');
+                        loginForm.classList.add('shake');
+                        setTimeout(() => loginForm.classList.remove('shake'), 500);
+                    }
+
+                    // Add this right after getting the response data:
+                    console.log('Login response:', {
+                        status: response.status,
+                        ok: response.ok,
+                        data: data
+                    });
+                } catch (error) {
+                    showAlert('An error occurred. Please try again later.');
+                    console.error('Login error:', error);
+                } finally {
+                    // Reset button state
+                    loginButton.disabled = false;
+                    loginButton.innerHTML = `
+                        <span class="mr-2">Login</span>
+                        <i class="fas fa-sign-in-alt mt-1"></i>
+                    `;
+                }
+            });
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function () {
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                 password.setAttribute('type', type);
-                
-                // Toggle eye icon
                 this.querySelector('i').classList.toggle('fa-eye');
                 this.querySelector('i').classList.toggle('fa-eye-slash');
             });
-            
-            // Login form submission
-            const loginForm = document.getElementById('loginForm');
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                // Validate inputs
-                if (!username || !password) {
-                    alert('Please enter both username and password');
-                    return;
-                }
-                
-                // Simulate authentication
-                // In a real app, you would make an API call to your backend
-                console.log('Logging in with:', { username });
-                
-                // Store authentication state
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('username', username);
-                
-                // Redirect to dashboard
-                window.location.href = '/agent/dashboard';
-            });
+
+            // Initialize the app
+            initApp();
+
         });
+
+        // Add these utility functions at the script level
+        function addAuthorizationHeader(token) {
+            // Create a new function that wraps the global fetch
+            if (!token) {
+                alert("token is null");
+                return;
+            }
+            alert(token);
+
+            const originalFetch = window.fetch;
+            window.fetch = function (resource, config = {}) {
+                // const token = localStorage.getItem('jwt_token');
+                config.headers = {
+                    ...config.headers,
+                    'Authorization': `Bearer ${token}`
+                };
+                return originalFetch(resource, config);
+            };
+
+        }
+        // Add function to check authentication on page load
+        function checkAuthentication() {
+            const token = localStorage.getItem('jwt_token');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (!token || !isLoggedIn) {
+                // If no token or not logged in, redirect to login page
+                if (!window.location.pathname.includes('/login')) {
+                    window.location.href = '/agent/login';
+                }
+            } else {
+                // If logged in and on login page, redirect to dashboard
+                if (window.location.pathname.includes('/login')) {
+                    window.location.href = '/agent/dashboard';
+                    return false;
+                }
+                // Add Authorization header to all future requests
+                // If we have a token, add it to future requests
+                addAuthorizationHeader(token);
+            }
+            return true;
+        }
     </script>
 </body>
+
 </html>

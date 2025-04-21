@@ -1,15 +1,14 @@
 package com.bitsvalley.babanaa.domains;
 
 import com.bitsvalley.babanaa.domains.good_delivery.DeliveryRequest;
-import com.bitsvalley.babanaa.domains.good_delivery.Goods;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -21,7 +20,7 @@ import java.util.List;
 //)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Data
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -69,12 +68,13 @@ public class User {
 
 //    for the register
 
-    public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto) {
+    public User(String username, String password, String email, String phoneNumber, byte[] profilePhoto, String createdBy) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.profilePhoto = profilePhoto;
+        this.createdBy = createdBy;
     }
 
 
@@ -99,11 +99,12 @@ public class User {
 
     }
 //    register without profile photo
-    public User(String username, String password, String email, String phoneNumber) {
+    public User(String username, String password, String email, String phoneNumber, String createdBy) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.createdBy = createdBy;
     }
 
     public User(Long userId, String username, String password, String email, String phoneNumber, byte[] profilePhoto, List<Booking> bookings) {
@@ -128,5 +129,40 @@ public class User {
     public void setLastUpdated() {
         this.lastUpdated = LocalDateTime.now();
     }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+//    @Override
+//    public String getUsername() {
+//        return this.phoneNumber;
+//    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
 
 }

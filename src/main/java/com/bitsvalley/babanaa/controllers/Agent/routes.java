@@ -11,7 +11,7 @@ public class routes {
     }
     @GetMapping("/agent/login")
     public String agentLoginPage(){
-        return "/Agent/agentLogin.html";
+        return "Agent/agentLogin";
     }
     @GetMapping("/agent/dashboard")
     public String agentDashboardPage(){

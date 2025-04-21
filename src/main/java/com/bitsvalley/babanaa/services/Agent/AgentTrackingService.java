@@ -54,4 +54,9 @@ public class AgentTrackingService {
                 agentId, startOfDay, endOfDay
         );
     }
+
+    public List<TrackingEvent> getAgentTrackingEvents(Long agentId) {
+        return trackingEventRepository.findByAgentUserId(agentId);
+    }
+
 }
