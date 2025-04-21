@@ -1,7 +1,9 @@
 package com.bitsvalley.babanaa.controllers.Agent;
 
 import com.bitsvalley.babanaa.domains.Agent.Route;
+import com.bitsvalley.babanaa.domains.Agent.RouteStop;
 import com.bitsvalley.babanaa.services.Agent.RouteService;
+import com.bitsvalley.babanaa.services.Agent.RouteStopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,10 @@ import java.util.Optional;
 public class AgentRoute_RouteStopController {
     @Autowired
     private RouteService routeService;
+
+    @Autowired
+    private RouteStopService routeStopService;
+
 
 
     @GetMapping
@@ -54,6 +60,27 @@ public class AgentRoute_RouteStopController {
         try {
             Optional<Route> updatedRoute = routeService.updateRoute(id, route);
             return updatedRoute.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+//  ---------------------  ROute Stop------------------
+
+    @GetMapping("/{id}/stops")
+    public ResponseEntity<List<RouteStop>> getRouteStops(@PathVariable Long id) {
+        try {
+            List<RouteStop> stops = routeStopService.getRouteStops(id);
+            return ResponseEntity.ok(stops);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/{id}/stops")
+    public ResponseEntity<RouteStop> addRouteStop(@PathVariable Long id, @RequestBody RouteStop routeStop) {
+        try {
+            RouteStop newStop = routeStopService.addRouteStop(id, routeStop);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newStop);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

@@ -1,0 +1,40 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication when dashboard loads
+    if (!checkAuthentication()) {
+        return; // This will redirect to login if not authenticated
+    }
+
+    // Get the token
+    const token = localStorage.getItem('jwt_token');
+    
+    // Function to load dashboard data
+    async function loadDashboardData() {
+        try {
+            const response = await fetch('/api/dashboard/data', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    // Token expired or invalid
+                    logout();
+                    return;
+                }
+                throw new Error('Failed to load dashboard data');
+            }
+
+            const data = await response.json();
+            // Handle dashboard data...
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+            showAlert('Error loading dashboard data', 'error');
+        }
+    }
+
+    // Load initial dashboard data
+    loadDashboardData();
+});
+</script> 
